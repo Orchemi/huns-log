@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 
-import { getAllPosts } from "@/libs/post";
+import { getAllPosts } from "@/libs/post.lib";
 
 export const getStaticPaths: GetStaticPaths = () => {
   const posts = getAllPosts();

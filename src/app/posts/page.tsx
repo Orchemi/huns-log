@@ -1,5 +1,5 @@
-import { getAllPosts } from "@/libs/post";
-import { IPost } from "@/types/blog/common";
+import { getAllPosts } from "@/libs/post.lib";
+import { IPost } from "@/types/blog/blog.type";
 
 export const getStaticProps = () => {
   return {
