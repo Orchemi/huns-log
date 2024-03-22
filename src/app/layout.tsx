@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import "dayjs/locale/ko";
 import dayjs from "dayjs";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
+      <Head>
+        <meta
+          name="google-site-verification"
+          content="ZcOdjUi6TELxVdMxoqWlQX6m5WvqrKsQlWJORDoJrJw"
+        />
+        <meta
+          name="naver-site-verification"
+          content="f2ef45cb1846a789a4326fc6990aada2bf02ccfb"
+        />
+      </Head>
       <body className={inter.className}>{children}</body>
     </html>
   );

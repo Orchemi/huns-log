@@ -4,11 +4,15 @@ import rehypeCodeTitles from "rehype-code-titles";
 import rehypeSlug from "rehype-slug";
 import remarkToc from "remark-toc";
 import remarkGfm from "remark-gfm";
+import { MDXRemoteSerializeResult } from "next-mdx-remote/rsc";
 
-export const serializeMdx = (source: string) => {
-  return serialize(source, {
+export const serializeMdx = async (
+  source: string
+): Promise<MDXRemoteSerializeResult> => {
+  return await serialize(source, {
     parseFrontmatter: true,
     mdxOptions: {
+      development: true,
       remarkPlugins: [remarkToc, remarkGfm],
       rehypePlugins: [
         rehypeSlug,
