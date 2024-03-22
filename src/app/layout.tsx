@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "./styles/globals.css";
+import "dayjs/locale/ko";
+import dayjs from "dayjs";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
+
+dayjs.locale("ko");
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
+      <Head>
+        <meta
+          name="google-site-verification"
+          content="ZcOdjUi6TELxVdMxoqWlQX6m5WvqrKsQlWJORDoJrJw"
+        />
+        <meta
+          name="naver-site-verification"
+          content="0c335a67f7e16e4eca72a7ac70ff775d7341846d"
+        />
+      </Head>
       <body className={inter.className}>{children}</body>
     </html>
   );
