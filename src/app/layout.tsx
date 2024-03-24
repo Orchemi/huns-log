@@ -3,7 +3,11 @@ import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import "dayjs/locale/ko";
 import dayjs from "dayjs";
-import Head from "next/head";
+import MonitoringInitializer from "@/components/MonitoringInitializer";
+import {
+  GoogleSearchEngineMetaTag,
+  NaverSearchEngineMetaTag,
+} from "@/components/SearchEngineMetaTags";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,15 +26,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head></head>
-      <meta
-        name="google-site-verification"
-        content="ZcOdjUi6TELxVdMxoqWlQX6m5WvqrKsQlWJORDoJrJw"
-      />
-      <meta
-        name="naver-site-verification"
-        content="0c335a67f7e16e4eca72a7ac70ff775d7341846d"
-      />
-      <body className={inter.className}>{children}</body>
+      <GoogleSearchEngineMetaTag />
+      <NaverSearchEngineMetaTag />
+      <body className={inter.className}>
+        <MonitoringInitializer />
+        {children}
+      </body>
     </html>
   );
 }
