@@ -8,6 +8,8 @@ export type EnvType = "production" | "development";
 export const ENV_TYPE: EnvType = (process?.env?.NEXT_PUBLIC_ENV ??
   ENV.DV) as EnvType;
 
+export const isDevMode = ENV_TYPE === ENV.DV;
+
 export const HOST = {
   [ENV.DV]: "http://localhost:3000",
   [ENV.PR]: "https://huns-log.vercel.app",
