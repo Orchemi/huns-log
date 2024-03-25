@@ -1,0 +1,24 @@
+// reference: https://github.com/bepyan/bepyan.github.io/blob/main/.vscode/keybindings.json
+// 적용 안 됨
+[
+  {
+    "key": "shift+cmd+v",
+    "command": "-notebook.cell.pasteAbove",
+    "when": "notebookEditorFocused && !inputFocus"
+  },
+  {
+    "key": "shift+cmd+v",
+    "command": "-markdown.showPreview",
+    "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+  },
+  {
+    "key": "shift+cmd+v",
+    "command": "-markdown.extension.closePreview",
+    "when": "markdownPreviewFocus"
+  },
+  {
+    "key": "shift+cmd+v",
+    "command": "extension.pasteImage",
+    "when": "editorTextFocus"
+  }
+]
