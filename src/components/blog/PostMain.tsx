@@ -1,5 +1,6 @@
 "use client";
 
+import Giscus from "@/components/Giscus";
 import { serializeMdx } from "@/libs/mdx.lib";
 import { IPost } from "@/types/blog/blog.type";
 import { Optional } from "@/types/common.type";
@@ -26,6 +27,7 @@ function PostMain({ post }: IProps) {
   return (
     <div className={"prose dark:prose-dark"}>
       <MDXRemote {...mdx} components={{}} />
+      <Giscus />
     </div>
   );
 }
