@@ -7,7 +7,7 @@ import readingTime from "reading-time";
 import { IPost, IPostMatter } from "@/types/blog/blog.type";
 import { Optional } from "@/types/common.type";
 
-const BASE_PATH = "/posts";
+const BASE_PATH = "posts";
 const POSTS_PATH = path.join(process.cwd(), BASE_PATH);
 
 const parsePost = (postPath: string): Optional<IPost> => {
