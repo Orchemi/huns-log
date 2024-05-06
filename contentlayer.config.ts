@@ -25,6 +25,13 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
+    tags: {
+      type: "list",
+      of: {
+        type: "string",
+      },
+      required: true,
+    },
     thumbnail: {
       type: "string",
       required: false,

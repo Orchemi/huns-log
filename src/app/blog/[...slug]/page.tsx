@@ -1,6 +1,7 @@
-import { allPosts } from "@/contentlayer/generated";
+import { type Post, allPosts } from "@/contentlayer/generated";
 import PostMain from "@/components/blog/PostMain";
 import notFound from "@/app/not-found";
+import { Optional } from "@/types/common.type";
 
 export const dynamicParams = true;
 
@@ -20,7 +21,7 @@ interface IProps {
   };
 }
 
-const getPostBySlug = async (slug: string) => {
+const getPostBySlug = async (slug: string): Promise<Optional<Post>> => {
   return allPosts.find((post) => post.slug.includes(slug));
 };
 
