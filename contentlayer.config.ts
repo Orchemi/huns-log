@@ -8,8 +8,6 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeHighlight from "rehype-highlight";
 
-import rehypeCodeWrap from "./src/libs/rehypeCodeWrap.lib";
-
 export const Post = defineDocumentType(() => ({
   name: "Post",
   contentType: "mdx",
@@ -63,7 +61,6 @@ const contentSource = makeSource({
     remarkPlugins: [remarkGfm, remarkToc],
     rehypePlugins: [
       [
-        rehypeCodeWrap,
         rehypePrism,
         rehypeSlug,
         rehypeHighlight,
