@@ -1,4 +1,3 @@
-// import { getAllPosts } from "@/libs/post.lib";
 import { allPosts } from "@/contentlayer/generated";
 import PostMain from "@/components/blog/PostMain";
 import notFound from "@/app/not-found";

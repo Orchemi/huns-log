@@ -1,6 +1,4 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
-import highlight from "rehype-highlight";
-import rehypePrettyCode from "rehype-pretty-code";
 import readingTime from "reading-time";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
@@ -10,7 +8,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeHighlight from "rehype-highlight";
 
-// import rehypeCodeWrap from './src/libs/rehypeCodeWrap';
+import rehypeCodeWrap from "./src/libs/rehypeCodeWrap.lib";
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
@@ -29,10 +27,10 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
-    // thumbnail: {
-    //   type: "string",
-    //   required: false,
-    // },
+    thumbnail: {
+      type: "string",
+      required: false,
+    },
     date: {
       type: "date",
       required: true,
@@ -47,14 +45,14 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       resolve: (post) => `/${post._raw.flattenedPath}`,
     },
-    // readingMinutes: {
-    //   type: "string",
-    //   resolve: (post) => Math.ceil(readingTime(post.body.raw).minutes),
-    // },
-    // wordCount: {
-    //   type: "number",
-    //   resolve: (post) => post.body.raw.split(/\s+/gu).length,
-    // },
+    readingMinutes: {
+      type: "string",
+      resolve: (post) => Math.ceil(readingTime(post.body.raw).minutes),
+    },
+    wordCount: {
+      type: "number",
+      resolve: (post) => post.body.raw.split(/\s+/gu).length,
+    },
   },
 }));
 
@@ -65,6 +63,7 @@ const contentSource = makeSource({
     remarkPlugins: [remarkGfm, remarkToc],
     rehypePlugins: [
       [
+        rehypeCodeWrap,
         rehypePrism,
         rehypeSlug,
         rehypeHighlight,
