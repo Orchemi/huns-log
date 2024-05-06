@@ -8,11 +8,9 @@ export const dynamicParams = true;
 export function generateStaticParams(): { slug: string[] }[] {
   const slugs: { slug: string[] }[] = allPosts.map((post) => {
     return {
-      slug: post.slug.split("\\"),
+      slug: post.slug.split("/").slice(1),
     };
   });
-  console.log("8888888888888888888888888888888");
-  console.log(slugs);
 
   return slugs;
 }
@@ -24,14 +22,12 @@ interface IProps {
 }
 
 const getPostBySlug = async (slug: string) => {
-  return allPosts.find((post) => post.slug === slug);
+  return allPosts.find((post) => post.slug.includes(slug));
 };
 
 export default async function PostPage({ params }: IProps) {
   const { slug } = params;
-  console.log("slug222222222", slug);
-  const joinedSlug = `${decodeURIComponent([...slug].join("\\"))}`;
-  console.log("joinedSlug", joinedSlug);
+  const joinedSlug = `${[...slug].join("/")}`;
   const post = await getPostBySlug(joinedSlug);
 
   if (!post) notFound();

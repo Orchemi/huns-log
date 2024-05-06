@@ -5,7 +5,7 @@ import { useMDXComponent } from "next-contentlayer/hooks";
 import { InferGetStaticPropsType } from "next";
 
 function PostMain({ post }: InferGetStaticPropsType<any>) {
-  const MDXComponent = useMDXComponent(post.body.code || "");
+  const MDXComponent = useMDXComponent(post?.body?.code || "");
 
   return (
     <div className={"prose dark:prose-dark"}>
