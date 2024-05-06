@@ -1,32 +1,22 @@
 "use client";
 
 import Giscus from "@/components/Giscus";
-import { serializeMdx } from "@/libs/mdx.lib";
-import { IPost } from "@/types/blog/blog.type";
-import { Optional } from "@/types/common.type";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { useEffect, useState } from "react";
+import { useMDXComponent } from "next-contentlayer/hooks";
+import { InferGetStaticPropsType } from "next";
 
-interface IProps {
-  post: Optional<IPost>;
-}
-
-function PostMain({ post }: IProps) {
-  const [mdx, setMdx] = useState<MDXRemoteSerializeResult | null>(null);
-  useEffect(() => {
-    const init = async () => {
-      if (!post) return;
-      const _mdx: MDXRemoteSerializeResult = await serializeMdx(post.content);
-      setMdx(_mdx);
-    };
-    init();
-  }, [post]);
-
-  if (!mdx) return null;
+function PostMain({ post }: InferGetStaticPropsType<any>) {
+  const MDXComponent = useMDXComponent(post.body.code || "");
 
   return (
     <div className={"prose dark:prose-dark"}>
-      <MDXRemote {...mdx} components={{}} />
+      {/* <div>
+        {Object.entries(post).map(([key, value]) => (
+          <div key={key}>
+            {JSON.stringify(key)}: {JSON.stringify(value)}
+          </div>
+        ))}
+      </div> */}
+      <MDXComponent />
       <Giscus />
     </div>
   );

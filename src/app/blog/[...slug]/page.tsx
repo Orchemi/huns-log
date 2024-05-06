@@ -1,16 +1,19 @@
-import { getAllPosts } from "@/libs/post.lib";
+// import { getAllPosts } from "@/libs/post.lib";
+import { allPosts } from "@/contentlayer/generated";
 import PostMain from "@/components/blog/PostMain";
 import notFound from "@/app/not-found";
 
 export const dynamicParams = true;
 
 export function generateStaticParams(): { slug: string[] }[] {
-  const posts = getAllPosts();
-  const slugs: { slug: string[] }[] = posts.map((post) => {
+  const slugs: { slug: string[] }[] = allPosts.map((post) => {
     return {
       slug: post.slug.split("\\"),
     };
   });
+  console.log("8888888888888888888888888888888");
+  console.log(slugs);
+
   return slugs;
 }
 
@@ -21,13 +24,14 @@ interface IProps {
 }
 
 const getPostBySlug = async (slug: string) => {
-  const posts = getAllPosts();
-  return posts.find((post) => post.slug === slug);
+  return allPosts.find((post) => post.slug === slug);
 };
 
 export default async function PostPage({ params }: IProps) {
   const { slug } = params;
-  const joinedSlug = `${[...slug].join("\\")}`;
+  console.log("slug222222222", slug);
+  const joinedSlug = `${decodeURIComponent([...slug].join("\\"))}`;
+  console.log("joinedSlug", joinedSlug);
   const post = await getPostBySlug(joinedSlug);
 
   if (!post) notFound();
