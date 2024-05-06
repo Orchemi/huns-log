@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build && next-sitemap && next-export-optimize-images",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@mdx-js/mdx": "^3.0.1",
@@ -27,7 +28,8 @@
     "rehype-prism-plus": "^2.0.0",
     "remark-gfm": "3.0.1",
     "remark-toc": "^9.0.0",
-    "shiki": "^1.4.0"
+    "shiki": "^1.4.0",
+    "type-check": "^0.4.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
