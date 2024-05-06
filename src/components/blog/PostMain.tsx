@@ -15,7 +15,6 @@ function PostMain({ post }: Props) {
 
   return (
     <div className={"prose dark:prose-dark"}>
-      <div>{JSON.stringify(post.body)}</div>
       <h2 className={"title"}>제목: {post.title}</h2>
       <hr />
       <p className={"description"}>설명: {post.excerpt}</p>
