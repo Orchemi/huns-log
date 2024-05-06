@@ -1,0 +1,176 @@
+---
+title: "[Next.js] 쓸데없이 error.ts로 파일 만들지 마라"
+excerpt: "Next.js api route 파일 이름에 error를 넣으면 에러가 난다."
+
+categories: "Trouble Shooting"
+
+tags:
+- [Trouble Shooting]
+
+date: 2024-01-20T11:00
+last_modified_at: 2024-01-20T11:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 문제 상황
+
+Next13의 api route를 활용해서 서버를 만들 때, 이해할 수 없는 오류가 발생했다. 이미 제목에서부터 스포했지만 결론부터 얘기하면, 예약어로 지정된 파일명을 사용했기 때문이었다. 예를 들면, 'error.ts'라는 파일명이다.
+
+<br />
+
+## 유추 과정
+
+아래는 회원가입을 하는 api의 일부 내용이다. 다양한 validation 로직을 거치며 충족하지 않으면 에러 응답을 반환한다.
+
+```tsx
+export const POST = async (request: NextRequest) => {
+  ...
+  // 같은 이메일이 있는지 확인
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (existingUser) {
+    return NextResponse.json<ErrorResponse>(
+      {
+        code: ERROR.ALREADY_EXISTS_USER,
+        message: ERROR_MESSAGE[ERROR.ALREADY_EXISTS_USER].EN,
+      },
+      { status: 422 },
+    );
+  }
+  ...
+}
+```
+
+<br />
+
+NextResponse를 return할 때 명확한 json 구성을 넣어주기 위해 generic 타입도 명시해주었다.
+
+```ts
+export interface ErrorResponse {
+  code: ErrorType;
+  message: string;
+}
+```
+
+<br />
+
+### 모듈화
+
+그런데 이렇게 작성하면서 점점 반환코드가 길어지다보니, 이를 분리해서 모듈화하고 싶었다.
+
+```tsx
+// src/app/api/(_helper)/error.ts
+
+export interface IGenerateErrorResponse {
+  code?: ErrorType;
+  message?: string;
+  language?: 'EN' | 'KR';
+}
+
+export const generateErrorResponse = ({
+  code = ERROR.SERVER_ERROR,
+  message = '',
+  language = 'EN',
+}: IGenerateErrorResponse): ErrorResponse => {
+  return {
+    code,
+    message: message || ERROR_MESSAGE[code][language],
+  };
+};
+```
+
+<br />
+
+### 왜 안 되시는지요?
+
+![image](https://github.com/Orchemi/PS/assets/86189596/1154a1d7-4192-413c-aafa-665edd2f465e)
+
+위와 같은 오류가 발생했다. client component이니 'use client'를 상단에 붙이란다. 그래서 붙였는데 서버에서는 client component를 쓸 수 없다고 한다. 당황스러웠다. 단순한 유틸 수준의 함수인데? 외부 라이브러리나 서버-클라이언트와 관련된 내부 유틸을 사용한 것도 아닌데?
+
+<br />
+
+### 소거법
+
+가장 간단한 방법은 하나하나 따져보는 것이었고, 타입부터 상수까지 모두 route.ts에서 대조해가며 이게 없으면? 저게 없으면? 이렇게 따져보았다. 그리고 깨달았다. `generateErrorResponse` 파일이 route.ts에 있으면 정상적으로 된다는 것을.
+
+<br />
+
+그러다 문득 그런 생각이 들었다. **어쩌면 이름 때문에..?** `generateErrorResponse` 함수의 파일을 다른 이름으로 바꾸면 되지 않을까? 라는 생각이 들었다. 그래서 `error.ts`를 `errorr.ts`로 임시로 바꾸어 시도해보니, 정상적으로 인식했다. 그렇다. 이름 때문이었다.
+
+<br />
+
+## error.ts는 왜 안 됐을까?
+
+오류 해결로 그쳐서는 안 되겠다. route이름에 `page.tsx`, `layout.tsx`처럼 몇몇 예약어가 있는 것을 알고 있었고, 이 각각은 나름의 역할을 하기 때문에 용도가 아니라면 피해서 사용하는 것이 맞다. 하지만 나는 이에 대해 나머지 이름들을 잘 모르고 있지 않았나 싶었다.
+
+<br />
+
+### route-handlers
+
+Next.js의 app router, api routes를 사용해 서버를 개발하고 있기 때문에, [route handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)를 먼저 보았다. 하지만 파일명에 대한 디테일한 정보는 찾을 수 없었다.
+
+<br />
+
+### error-handling
+
+그래서 다음으로 [error handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/error-handling)를 보았다. 이 챕터에서는 `error.ts`를 만들어서 에러 핸들링을 할 수 있다고 한다.
+
+![image](https://github.com/Orchemi/PS/assets/86189596/c6a59d62-ddcc-4787-82cf-171cb2d3ee8f)
+
+맞다. 알고 있었다. 그런데 /app/api/ 폴더 내에서는 서버라고 생각해서 분리되어 있을 줄 알았는데, 저 안에서도 `error.ts` 파일은 인식이 되었나 보다.
+
+그래서 나는 `response-error.ts`로 파일명을 바꾸어 해결했다.
+
+<br />
+
+## 더 나은 에러 처리
+
+사실 `NextResponse.json<ErrorResponse> => {...}` 부분으로 이어지는, 중복된 구조가 너무나 많았기 때문에 이를 모듈화하고 싶었던 것이 현재의 목표였다. 그래서 아예 함수 호출 하나로 `NextResponse` 데이터 자체를 반환하고 싶었던 것이다. (그래서 함수명도 `generateErrorResponse`로 지은 것이다.)
+
+<br />
+
+```tsx
+export const generateErrorResponse = ({
+  status = 500,
+  code = ERROR.SERVER_ERROR,
+  message = '',
+  language = 'EN',
+}: IGenerateErrorResponse): NextResponse => {
+  return NextResponse.json<ErrorResponse>(
+    {
+      code,
+      message: message || ERROR_MESSAGE[code][language],
+    },
+    { status },
+  );
+};
+```
+
+```tsx
+...
+if (existingUser) {
+  return generateErrorResponse({
+    status: 422,
+    code: ERROR.ALREADY_EXISTS_USER,
+  });
+}
+```
+
+NextResponse를 route.ts 파일 외부에서 호출했기 때문에 걱정했는데 문제 없이 동작되었다. 이렇게 해서 보다 깔끔한 형태로 해결할 수 있었다.
+
+<br />
+
+## References
+
+- [Next.js 공식문서: route-handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
+- [Next.js 공식문서: error-handling](https://nextjs.org/docs/app/building-your-application/routing/error-handling)

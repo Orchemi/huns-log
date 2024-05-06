@@ -1,13 +1,17 @@
-import { getAllPosts } from "@/libs/post.lib";
+import { type Post, allPosts } from "@/contentlayer/generated";
 import PostMain from "@/components/blog/PostMain";
+import notFound from "@/app/not-found";
+import { Optional } from "@/types/common.type";
 
 export const dynamicParams = true;
 
 export function generateStaticParams(): { slug: string[] }[] {
-  const posts = getAllPosts();
-  const slugs: { slug: string[] }[] = posts.map((post) => ({
-    slug: post.slug.replace("/", "").split("/"),
-  }));
+  const slugs: { slug: string[] }[] = allPosts.map((post) => {
+    return {
+      slug: post.slug.split("/").slice(1),
+    };
+  });
+
   return slugs;
 }
 
@@ -17,20 +21,16 @@ interface IProps {
   };
 }
 
-const getPostBySlug = async (slug: string) => {
-  const posts = getAllPosts();
-  return posts.find((post) => post.slug === slug);
+const getPostBySlug = async (slug: string): Promise<Optional<Post>> => {
+  return allPosts.find((post) => post.slug.includes(slug));
 };
 
 export default async function PostPage({ params }: IProps) {
   const { slug } = params;
-  const joinedSlug = `/${[...slug].join("/")}`;
+  const joinedSlug = `${[...slug].join("/")}`;
   const post = await getPostBySlug(joinedSlug);
 
-  if (!post)
-    return {
-      notFound: true,
-    };
+  if (!post) notFound();
 
   return <PostMain post={post} />;
 }
