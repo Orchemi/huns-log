@@ -3,29 +3,13 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.fixAll.stylelint": "explicit"
+    "source.fixAll.eslint": "explicit"
   },
-  "editor.formatOnSave": true,
-
   "css.lint.unknownAtRules": "ignore",
   "pasteImage.defaultName": "YYMMDD-HHmmss",
   "pasteImage.basePath": "${projectRoot}/public",
   "pasteImage.path": "${projectRoot}/public/images/posts/${currentFileNameWithoutExt}",
   "pasteImage.forceUnixStyleSeparator": true,
   "pasteImage.insertPattern": "![${imageFileNameWithoutExt}](${imageFilePath})",
-  "pasteImage.prefix": "/",
-
-  "stylelint.validate": ["css", "scss", "typescript", "typescriptreact"],
-  "stylelint.configFile": ".stylelintrc.json",
-  "stylelint.customSyntax": "postcss-styled-syntax",
-  "stylelint.enable": true,
-
-  "editor.tabSize": 2,
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  "pasteImage.prefix": "/"
 }
