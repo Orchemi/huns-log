@@ -1,15 +1,12 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./styles/globals.css";
-import "dayjs/locale/ko";
-import dayjs from "dayjs";
 import MonitoringInitializer from "@/components/MonitoringInitializer";
 import {
   GoogleSearchEngineMetaTag,
   NaverSearchEngineMetaTag,
 } from "@/components/SearchEngineMetaTags";
-
-const inter = Inter({ subsets: ["latin"] });
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+import type { Metadata } from "next";
+import "../styles/globals.css";
 
 dayjs.locale("ko");
 
@@ -28,7 +25,7 @@ export default function RootLayout({
       <head></head>
       <GoogleSearchEngineMetaTag />
       <NaverSearchEngineMetaTag />
-      <body className={inter.className}>
+      <body>
         <MonitoringInitializer />
         {children}
       </body>
