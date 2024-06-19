@@ -1,5 +1,13 @@
 .sidebar-container {
+  position: fixed;
   @include mix.flex(column);
-  width: 320px;
+  width: 240px;
+  height: 100vh;
   background-color: rgb(255, 0, 0, 0.1);
+}
+
+.space {
+  width: 240px;
+  height: 100vh;
+  flex-shrink: 0;
 }
