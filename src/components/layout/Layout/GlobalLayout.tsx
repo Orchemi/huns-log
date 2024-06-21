@@ -10,6 +10,7 @@ interface Props {
   showHeader?: boolean;
   showSidebar?: boolean;
   showFooter?: boolean;
+  contentContainerStyle?: React.CSSProperties;
 }
 
 const GlobalLayout: FC<PropsWithChildren<Props>> = ({
@@ -17,6 +18,7 @@ const GlobalLayout: FC<PropsWithChildren<Props>> = ({
   showHeader = true,
   showSidebar = true,
   showFooter = true,
+  contentContainerStyle,
 }) => {
   return (
     <div className={cx('global-layout')}>
@@ -24,7 +26,12 @@ const GlobalLayout: FC<PropsWithChildren<Props>> = ({
       <section className={cx('body-container')}>
         {showSidebar && <Sidebar />}
         <div className={cx('main-container')}>
-          <main className={cx('content-container')}>{children}</main>
+          <main
+            className={cx('content-container')}
+            style={contentContainerStyle}
+          >
+            {children}
+          </main>
           {showFooter && <Footer />}
         </div>
       </section>
