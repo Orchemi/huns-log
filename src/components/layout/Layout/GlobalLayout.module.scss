@@ -7,7 +7,7 @@
 
   .main-container {
     @include mix.flex(column, flex-start, flex-start);
-    min-width: calc(100vw - $global-sidebar-width);
+    width: 100%;
     min-height: calc(100vh - $global-header-height);
     max-height: calc(100vh - $global-header-height);
     overflow: auto;
