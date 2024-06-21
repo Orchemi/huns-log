@@ -1,8 +1,18 @@
+@import '@/styles/_layout.scss';
+
 .body-container {
   @include mix.flex(row, flex-start, flex-start);
   width: 100%;
   height: 100%;
 
   .main-container {
+    min-width: calc(100vw - $global-sidebar-width);
+    min-height: calc(100vh - $global-header-height);
+
+    .content-container {
+      width: 100%;
+      height: 100%;
+      padding: 60px 30px;
+    }
   }
 }

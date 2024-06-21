@@ -1,13 +1,15 @@
+@import '@/styles/_layout.scss';
+
 .sidebar-container {
   position: fixed;
   @include mix.flex(column);
-  width: 240px;
+  width: $global-sidebar-width;
   height: 100vh;
-  background-color: rgb(255, 0, 0, 0.1);
+  background-color: rgb(255, 220, 220);
 }
 
 .space {
-  width: 240px;
+  width: $global-sidebar-width;
   height: 100vh;
   flex-shrink: 0;
 }

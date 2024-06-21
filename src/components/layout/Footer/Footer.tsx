@@ -3,7 +3,7 @@ import styles from './Footer.module.scss';
 const cx = classnames.bind(styles);
 
 const Footer = () => {
-  return <footer className={cx('footer-container')}>footer</footer>;
+  return <footer className={cx('footer-container')}></footer>;
 };
 
 export default Footer;

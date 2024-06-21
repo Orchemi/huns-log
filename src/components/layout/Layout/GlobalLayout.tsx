@@ -23,10 +23,11 @@ const GlobalLayout: FC<PropsWithChildren<Props>> = ({
       {showHeader && <Header />}
       <section className={cx('body-container')}>
         {showSidebar && <Sidebar />}
-        <main className={cx('main-container')}>{children}</main>
+        <div className={cx('main-container')}>
+          <main className={cx('content-container')}>{children}</main>
+          {showFooter && <Footer />}
+        </div>
       </section>
-
-      {showFooter && <Footer />}
     </div>
   );
 };
