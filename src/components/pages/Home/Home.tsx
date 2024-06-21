@@ -10,7 +10,11 @@ const Dummy = () => {
         .map((_, i) => (
           <div
             key={i}
-            style={{ width: '100px', height: '100px', background: i % 2 ? 'black' : 'blue' }}
+            style={{
+              width: '100px',
+              height: '100px',
+              background: i % 2 ? 'black' : 'blue',
+            }}
             className={cx('dummy')}
           />
         ))}
@@ -21,7 +25,8 @@ const Dummy = () => {
 const Home = () => {
   return (
     <div className={cx('container')}>
-      <Dummy />
+      {/* <Dummy /> */}
+      {/* Home */}
     </div>
   );
 };

@@ -6,10 +6,12 @@
   height: 100%;
 
   .main-container {
+    @include mix.flex(column, flex-start, flex-start);
     min-width: calc(100vw - $global-sidebar-width);
     min-height: calc(100vh - $global-header-height);
 
     .content-container {
+      flex-grow: 1;
       width: 100%;
       height: 100%;
       padding: 60px 30px;
