@@ -3,7 +3,8 @@
 .footer-container {
   @include mix.flex(row, flex-start, center);
   width: 100%;
-  height: $global-footer-height;
+  min-height: $global-footer-height;
+
   margin-top: 60px;
   background-color: rgb(220, 220, 255);
 }

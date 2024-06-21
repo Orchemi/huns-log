@@ -25,7 +25,7 @@ const Dummy = () => {
 const Home = () => {
   return (
     <div className={cx('container')}>
-      {/* <Dummy /> */}
+      <Dummy />
       {/* Home */}
     </div>
   );

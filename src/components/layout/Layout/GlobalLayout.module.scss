@@ -9,6 +9,8 @@
     @include mix.flex(column, flex-start, flex-start);
     min-width: calc(100vw - $global-sidebar-width);
     min-height: calc(100vh - $global-header-height);
+    max-height: calc(100vh - $global-header-height);
+    overflow: auto;
 
     .content-container {
       flex-grow: 1;
