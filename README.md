@@ -10,7 +10,7 @@
 | release/v1.1.0 | seo 관련 1차 작업 | O |
 | release/v1.2.0 | mdx -> html -> post 1차 렌더링 | O |
 | release/v1.3.0 | 기본 스타일 라이브러리 설치 및 기반 작업 | O |
-| release/v1.3.1 | 전역 레이아웃 공간만 개발 ||
+| release/v1.3.1 | 전역 레이아웃 공간만 개발 | O |
 | release/v1.3.2 | post detail 레이아웃 개발 ||
 | release/v1.3.3 | 전역 기본 element 스타일링 ||
 | release/v1.3.4 | post detail 스타일링 ||

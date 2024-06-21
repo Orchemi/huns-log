@@ -1,0 +1,22 @@
+@import '@/styles/_layout.scss';
+
+.body-container {
+  @include mix.flex(row, flex-start, flex-start);
+  width: 100%;
+  height: 100%;
+
+  .main-container {
+    @include mix.flex(column, flex-start, flex-start);
+    min-width: calc(100vw - $global-sidebar-width);
+    min-height: calc(100vh - $global-header-height);
+    max-height: calc(100vh - $global-header-height);
+    overflow: auto;
+
+    .content-container {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      padding: 30px;
+    }
+  }
+}
