@@ -1,5 +1,6 @@
 'use client';
 
+import Divider from '@/components/@common/Divider/Divider';
 import Giscus from '@/components/Giscus';
 import { Post } from '@/contentlayer/generated';
 import { Optional } from '@/types/common.type';
@@ -16,9 +17,8 @@ function PostMain({ post }: Props) {
 
   return (
     <div className={'prose dark:prose-dark'}>
-      <h2 className={'title'}>제목: {post.title}</h2>
-      <hr />
-      <p className={'description'}>설명: {post.excerpt}</p>
+      <h2 className={'title'}>{post.title}</h2>
+      <p className={'description'}>{post.excerpt}</p>
       <div className={'categories'}>카테고리: {post.categories}</div>
       <div className={'tags'}>태그: {post.tags}</div>
       <div className={'read-time'}>
@@ -28,6 +28,7 @@ function PostMain({ post }: Props) {
       <div className={'modified-date'}>수정일시: {post.last_modified_at}</div>
       <hr />
       <MDXComponent />
+      <Divider height={'1px'} style={{ marginBlock: '80px' }} />
       <Giscus />
     </div>
   );
