@@ -10,22 +10,3 @@ pre {
     font-size: 12px;
   }
 }
-
-.title {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 0 0 10px 0;
-  text-align: center;
-  word-break: keep-all;
-}
-
-.description {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 0 0 50px 0;
-  text-align: center;
-  word-break: keep-all;
-  color: $color-gray-600;
-}

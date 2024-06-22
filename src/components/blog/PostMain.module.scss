@@ -1,0 +1,99 @@
+@mixin hover-effect {
+  &:hover {
+    filter: brightness(105%);
+  }
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 10px 0;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.description {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 20px 0;
+  word-break: keep-all;
+  color: $color-gray-500;
+}
+
+.tag-group {
+  @include mix.flex(row, center, center);
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 30px;
+
+  .item {
+    @include hover-effect;
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 4px 12px;
+    text-decoration: none;
+
+    @include mix.small {
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+
+    &.category {
+      @include mix.flex(row, center, center);
+      gap: 6px;
+      background-color: $color-blue-700;
+      color: $color-white;
+    }
+
+    &.tag {
+      background-color: $color-blue-100;
+      color: $color-blue-600;
+    }
+  }
+}
+
+.time-group {
+  @include mix.flex(row, center, center);
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+
+  @include mix.small {
+    gap: 12px;
+  }
+
+  .time-item {
+    @include mix.flex(column, center, center);
+    gap: 8px;
+    min-width: 60px;
+    list-style: none;
+    font-size: 12px;
+    color: $color-gray-600;
+
+    @include mix.small {
+      min-width: 40px;
+      font-size: 10px;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      color: $color-gray-600;
+
+      @include mix.mobile {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .divider {
+      width: 1px;
+      height: 10px;
+      background-color: $color-gray-300;
+    }
+  }
+}
