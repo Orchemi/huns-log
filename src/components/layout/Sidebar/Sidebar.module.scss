@@ -1,8 +1,8 @@
 @import '@/styles/_layout.scss';
 
 .sidebar-container {
+  @include responsive-sidebar;
   @include mix.flex(column);
-  width: $global-sidebar-width;
   height: calc(100vh - $global-header-height);
   background-color: rgb(255, 220, 220);
 }

@@ -4,3 +4,27 @@
   justify-content: $justify;
   align-items: $align;
 }
+
+@mixin small {
+  @media screen and (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width: 1025px) {
+    @content;
+  }
+}

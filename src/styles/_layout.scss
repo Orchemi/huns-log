@@ -1,3 +1,15 @@
 $global-header-height: 80px;
 $global-footer-height: 140px;
-$global-sidebar-width: 220px;
+
+@mixin responsive-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+
+  @include mix.tablet {
+    width: 80px;
+  }
+
+  @include mix.mobile {
+    width: 0;
+  }
+}

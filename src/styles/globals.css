@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "reset.css";
-@import "font.css";
-@import "intellij-prism.css";
-@import "prose.css";
+@import 'reset.css';
+@import 'font.css';
+@import 'intellij-prism.css';
+@import 'prose.css';
 
 html,
 body {
