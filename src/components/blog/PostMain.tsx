@@ -17,7 +17,7 @@ function PostMain({ post }: Props) {
 
   return (
     <div className={'prose dark:prose-dark'}>
-      <h2 className={'title'}>{post.title}</h2>
+      <h1 className={'title'}>{post.title}</h1>
       <p className={'description'}>{post.excerpt}</p>
       <div className={'categories'}>카테고리: {post.categories}</div>
       <div className={'tags'}>태그: {post.tags}</div>

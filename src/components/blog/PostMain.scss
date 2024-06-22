@@ -15,7 +15,8 @@ pre {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 0;
+  margin: 0 0 10px 0;
+  text-align: center;
   word-break: keep-all;
 }
 
@@ -23,6 +24,8 @@ pre {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin: 0;
+  margin: 0 0 50px 0;
+  text-align: center;
   word-break: keep-all;
+  color: $color-gray-600;
 }
