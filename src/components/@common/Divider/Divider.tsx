@@ -4,7 +4,6 @@ import styles from './Divider.module.scss';
 const cx = classnames.bind(styles);
 
 export interface DividerProps {
-  type?: 'horizontal' | 'vertical';
   width?: string | 'full';
   height?: string | 'full';
   color?: string;
@@ -12,7 +11,6 @@ export interface DividerProps {
 }
 
 const Divider = ({
-  type = 'horizontal',
   width: _width = 'full',
   height: _height = 'full',
   color = COLORS.gray300,
