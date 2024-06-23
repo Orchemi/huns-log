@@ -5,13 +5,14 @@ ul {
 
 ul {
   li {
+    position: relative;
     margin-bottom: 4px;
 
     &::before {
       content: '•';
-      position: relative;
-      top: -0.2em;
-      left: -1em;
+      position: absolute;
+      top: 0.1em;
+      left: -1.2em;
       font-size: 0.8em;
       color: $color-gray-600;
     }
