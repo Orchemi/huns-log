@@ -12,7 +12,8 @@
 | release/v1.3.0 | 기본 스타일 라이브러리 설치 및 기반 작업 | O |
 | release/v1.3.1 | 전역 레이아웃 공간만 개발 | O |
 | release/v1.3.2 | post detail 레이아웃 개발 | O |
-| release/v1.3.3 | post detail 스타일링 ||
+| release/v1.3.3 | post detail 스타일링 | O |
+| release/v1.3.4 | 전역 element 스타일링 ||
 | release/v1.4.0 | 대분류, 중분류, 소분류 페이지 라우팅 작업 ||
 | release/v1.4.1 | post 리스트 스타일링 ||
 | release/v1.4.2 | post 리스트 페이징 처리 ||
