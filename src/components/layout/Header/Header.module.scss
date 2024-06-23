@@ -4,5 +4,5 @@
   @include mix.flex(row, space-between, center);
   width: 100%;
   height: $global-header-height;
-  background-color: rgb(220, 255, 220);
+  border-bottom: 1px solid $color-gray-300;
 }
