@@ -1,6 +1,20 @@
+ol,
+ul {
+  padding-left: 1em;
+}
+
 ul {
   li {
     margin-bottom: 4px;
+
+    &::before {
+      content: '•';
+      position: relative;
+      top: -0.2em;
+      left: -1em;
+      font-size: 0.8em;
+      color: $color-gray-600;
+    }
   }
 }
 
