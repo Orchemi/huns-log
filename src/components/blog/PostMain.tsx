@@ -37,6 +37,8 @@ function PostMain({ post }: Props) {
     last_modified_at: lastModifiedAt,
   } = post;
 
+  const isEdited = date !== lastModifiedAt;
+
   const getCategories = (): string[] => {
     if (!_categories) return [''];
     if (typeof _categories === 'string') return [_categories];
@@ -80,16 +82,18 @@ function PostMain({ post }: Props) {
       </div>
       <ul className={cx('time-group')}>
         <li className={cx('time-item')}>
-          <StopwatchIcon className={cx('icon')} />
-          평균 {readingMinutes}분 소요
-        </li>
-        <li className={cx('time-item')}>
           <CalendarIcon className={cx('icon')} />
           {formatDate(date, { decimal: true })} 작성
         </li>
+        {isEdited && (
+          <li className={cx('time-item')}>
+            <Pencil1Icon className={cx('icon')} />
+            {formatDate(lastModifiedAt, { decimal: true })} 수정
+          </li>
+        )}
         <li className={cx('time-item')}>
-          <Pencil1Icon className={cx('icon')} />
-          {formatDate(lastModifiedAt, { decimal: true })} 수정
+          <StopwatchIcon className={cx('icon')} />
+          평균 {readingMinutes}분 소요
         </li>
       </ul>
       <Divider space={'40px'} />
