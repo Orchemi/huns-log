@@ -26,3 +26,20 @@ pre[class*='language-'] {
     padding-bottom: 0.4em;
   }
 }
+
+blockquote {
+  position: relative;
+  padding: 1.2em 0.8em 1.2em 3em;
+  margin-block: 1em;
+  border-radius: 0.4em;
+  background-color: $color-gray-100;
+
+  p:first-child {
+    &:before {
+      position: absolute;
+      content: url('/assets/icons/check.svg');
+      top: 1.3em;
+      left: 1em;
+    }
+  }
+}
