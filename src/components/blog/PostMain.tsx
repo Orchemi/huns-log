@@ -46,7 +46,7 @@ function PostMain({ post }: Props) {
   };
 
   return (
-    <div className={'prose dark:prose-dark'}>
+    <div>
       <h1 className={cx('title')}>{title}</h1>
       {excerpt && <p className={cx('description')}>{excerpt}</p>}
       <div className={cx('tag-group')}>

@@ -5,10 +5,10 @@
   --prism-selection: #484848;
 }
 
-code[class*="language-"],
-pre[class*="language-"] {
+code[class*='language-'],
+pre[class*='language-'] {
   color: var(--prism-foreground);
-  font-family: Consolas, Monaco, "Andale Mono", monospace;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
   direction: ltr;
   text-align: left;
   white-space: pre;
@@ -26,38 +26,41 @@ pre[class*="language-"] {
   hyphens: none;
 }
 
-pre[class*="language-"]::-moz-selection,
-pre[class*="language-"] ::-moz-selection,
-code[class*="language-"]::-moz-selection,
-code[class*="language-"] ::-moz-selection {
+pre[class*='language-']::-moz-selection,
+pre[class*='language-'] ::-moz-selection,
+code[class*='language-']::-moz-selection,
+code[class*='language-'] ::-moz-selection {
   color: inherit;
   background: var(--prism-selection);
 }
 
-pre[class*="language-"]::selection,
-pre[class*="language-"] ::selection,
-code[class*="language-"]::selection,
-code[class*="language-"] ::selection {
+pre[class*='language-']::selection,
+pre[class*='language-']::selection,
+code[class*='language-']::selection,
+code[class*='language-']::selection {
   color: inherit;
   background: var(--prism-selection);
 }
 
 /* Code blocks */
-pre[class*="language-"] {
-  padding: 1em;
-  margin: 0.5em 0;
-  overflow: auto;
-}
-
-:not(pre) > code[class*="language-"],
-pre[class*="language-"] {
+pre[class*='language-'] {
+  width: 100%;
   background: var(--prism-background);
+  padding: 1em 1em 0.6em 1em;
+  margin: 0.5em 0;
+  border-radius: 8px;
 }
 
 /* Inline code */
-:not(pre) > code[class*="language-"] {
-  padding: 0.1em;
-  border-radius: 0.3em;
+code:not(:where(pre *)) {
+  position: relative;
+  top: -0.1em;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--prism-background);
+  color: var(--prism-foreground);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
 }
 
 .token.comment,
@@ -206,9 +209,4 @@ code.language-css .token.selector > .token.pseudo-element {
   margin-left: -12px;
   color: var(--prism-comment);
   content: attr(line);
-}
-
-.prose pre {
-  color: var(--prism-foreground);
-  background-color: var(--prism-background);
 }

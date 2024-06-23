@@ -5,6 +5,31 @@
   align-items: $align;
 }
 
+@mixin text-ellipsis($line: 2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+}
+
+@mixin custom-slider($bg: #838383) {
+  /* 스크롤바의 폭 너비 */
+  &::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $bg; /* 스크롤바 색상 */
+    border-radius: 999px; /* 스크롤바 둥근 테두리 */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
 @mixin small {
   @media screen and (max-width: 480px) {
     @content;

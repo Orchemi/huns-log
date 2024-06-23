@@ -6,12 +6,17 @@ img {
   align-self: center;
 }
 
-pre {
-  margin: 10px 0 20px 0;
-  border-radius: 8px;
+pre[class*='language-'] {
   font-size: 14px;
 
   @include mix.small {
     font-size: 12px;
+  }
+
+  code {
+    @include mix.custom-slider(var(--prism-selection));
+    display: block;
+    overflow: auto;
+    padding-bottom: 0.4em;
   }
 }
