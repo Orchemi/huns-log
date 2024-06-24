@@ -5,4 +5,5 @@
   @include mix.flex(column);
   height: calc(100vh - $global-header-height);
   border-right: 1px solid $color-gray-300;
+  transition: width 0.3s ease-in-out;
 }

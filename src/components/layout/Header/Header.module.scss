@@ -5,4 +5,5 @@
   width: 100%;
   height: $global-header-height;
   border-bottom: 1px solid $color-gray-300;
+  transition: height 0.3s ease-in-out;
 }
