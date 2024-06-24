@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @import 'reset.css';
-@import 'font.css';
+@import '@/styles/font/font.css';
 @import 'intellij-prism.css';
 
 html,
