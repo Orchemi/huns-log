@@ -58,3 +58,39 @@ blockquote {
     }
   }
 }
+
+table {
+  @include mix.custom-slider($color-blue-300);
+  display: block;
+  max-width: fit-content;
+  overflow-x: auto;
+  margin: 2em 0 1em 0;
+  border-collapse: collapse;
+  border-top: 1px solid $color-blue-100;
+  padding-bottom: 0.6em;
+
+  thead {
+    background-color: $color-blue-50;
+
+    tr {
+      border-bottom: 1px solid $color-blue-100;
+
+      th {
+        font-weight: 600;
+      }
+    }
+  }
+
+  tbody {
+    tr:last-child {
+      border-bottom: 1px solid $color-blue-100;
+      padding-bottom: 1em;
+    }
+  }
+
+  td,
+  th {
+    padding: 0.3em 1em;
+    border-inline: 1px solid $color-blue-100;
+  }
+}
