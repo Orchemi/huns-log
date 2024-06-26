@@ -1,23 +1,32 @@
 import classnames from 'classnames/bind';
+import Link from 'next/link';
 import styles from './Home.module.scss';
 const cx = classnames.bind(styles);
 
 const Dummy = () => {
+  const BLOG_POST_ROUTES = {
+    DEV: {
+      TROUBLE_SHOOTING: '/blog/dev/trouble-shooting',
+    },
+  };
   return (
     <div>
-      {Array(30)
-        .fill(0)
-        .map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: '100px',
-              height: '100px',
-              background: i % 2 ? 'black' : 'blue',
-            }}
-            className={cx('dummy')}
-          />
-        ))}
+      <ul>
+        <li>
+          <Link
+            href={`${BLOG_POST_ROUTES.DEV.TROUBLE_SHOOTING}/next-api-route-file-name`}
+          >
+            [Next.js] 쓸데없이 error.ts로 파일 만들지 마라
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`${BLOG_POST_ROUTES.DEV.TROUBLE_SHOOTING}/eslint-curly-brace`}
+          >
+            [VSCode/ESLint] VSCode tsx 컴포넌트 props 자동완성시 중괄호 생성하기
+          </Link>
+        </li>
+      </ul>
     </div>
   );
 };
