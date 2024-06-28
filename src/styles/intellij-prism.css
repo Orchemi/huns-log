@@ -53,14 +53,11 @@ pre {
 
 /* Inline code */
 code:not(:where(pre *)) {
-  position: relative;
-  top: -0.1em;
-  display: inline-flex;
-  align-items: center;
   background-color: var(--prism-background);
   color: var(--prism-foreground);
-  padding: 0.2em 0.4em;
-  border-radius: 4px;
+  padding: 0 0.4em 0.12em;
+  margin-right: 0.05em;
+  border-radius: 0.3em;
 }
 
 .token.comment,
