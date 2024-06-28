@@ -4,11 +4,23 @@
   @include mix.flex(row, space-between, center);
   width: 100%;
   height: $global-header-height;
-  padding: 0 3em;
+  padding: 0 48px;
   border-bottom: 1px solid $color-gray-300;
   transition: height 0.3s ease-in-out;
+
+  @include mix.mobile {
+    padding: 0 24px;
+  }
+
+  @include mix.small {
+    padding: 0 16px;
+  }
 }
 
 .logo {
   margin: 0;
+
+  img {
+    margin: 0;
+  }
 }
