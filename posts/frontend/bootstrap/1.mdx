@@ -64,7 +64,7 @@ CDN via jsDelivr
 ></script>
 ```
 
-CSS와 JS CDN 방법으로 각각 link와 script 태그가 있으며, link 태그는 html의 head 부분에 위치시키면 되고, script 태그는 일반적으로 </body> 태그 직전에 위치시킨다. script 태그를 상단에 써도 되지만 body가 끝나기 전에 입력해넣는 이유는 HTML 파일을 모두 화면에 parsing한 이후에 JS파일을 parsing & excution 하기 위함이다.
+CSS와 JS CDN 방법으로 각각 link와 script 태그가 있으며, link 태그는 html의 head 부분에 위치시키면 되고, script 태그는 일반적으로 `</body>` 태그 직전에 위치시킨다. script 태그를 상단에 써도 되지만 body가 끝나기 전에 입력해넣는 이유는 HTML 파일을 모두 화면에 parsing한 이후에 JS파일을 parsing & excution 하기 위함이다.
 
 만약 script 태그를 head 태그 내에 썼는데 JS 파일의 용량이 큰 경우, HTML 파일을 모두 parsing하다가 script JS 파일을 parsing & excution 하고 HTML 파일을 마저 parsing하기 때문에 페이지를 보기까지의 시간, 즉 TTV(Time To View) 자체가 커진다. 이는 좋지 않은 사용자 경험(UX)을 야기한다.
 
