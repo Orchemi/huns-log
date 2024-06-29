@@ -1,0 +1,262 @@
+---
+title: "[Vue] 중앙상태관리와 Vuex"
+
+categories:
+  - Vue
+
+tags:
+  - [SPA, Vue]
+
+date: 2022-05-11T18:00
+last_modified_at: 2022-05-11T18:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Vuex
+
+### Vuex란?
+
+- vue.js의 Statement management pattern(상태관리패턴) + Library
+- state를 전역 저장소로 관리할 수 있도록 지원하는 라이브러리
+- **상태가 예측 가능한 방식으로만 변경될 수 있도록 보장하는 규칙** 설정
+- 애플리케이션의 모든 컴포넌트에 대한 **중앙 집중식 저장소** 역할
+- Vue의 공식 devtools와 통합되어 기타 고급 기능 제공
+
+<br />
+
+### State
+
+- data이자 해당 애플리케이션의 핵심이 되는 요소
+- 중앙에서 관리하는 모든 상태 정보
+
+<br />
+
+### 상태 관리 패턴
+
+- 컴포넌트의 공유된 상태를 추출하고 이를 **전역에서 관리**
+- **상태 관리 및 특정 규칙 적용과 관련된 개념을 정의하고 분리 → 코드의 구조와 유지 관리 기능 향상**
+- 컴포넌트는 커다란 view가 되며, 모든 컴포넌트는 트리에 상관없이 상태에 엑세스하거나 동작을 트리거할 수 있음
+- ※ 트리거 : 특정한 동작에 반응해 자동으로 필요한 동작을 실행하는 것
+
+<br />
+
+### (Origin) 기존 Pass props & Emit event
+
+- 각 컴포넌트는 독립적으로 데이터를 관리
+- 데이터는 단방향 흐름으로 부모자식 간의 전달만 가능
+- 반대의 경우 이벤트를 트리거
+
+<br />
+
+> 장점
+
+- 데이터의 흐름을 직관적으로 파악 가능
+
+<br />
+
+> 단점
+
+- 컴포넌트 중첩이 깊어지는 경우 **동위 관계의 컴포넌트로의 데이터 전달이 불편**해짐
+- 공통의 상태를 공유하는 여러 컴포넌트가 있는 경우 데이터 전달 구조가 매우 복잡
+- ex. 지나치게 중첩된 컴포넌트를 통과하는 prop
+
+<br />
+
+> 단방향 데이터 흐름
+
+- state : 앱을 작동하는 원본 소스(**data**)
+- view : state의 선언적 매핑(**화면**)
+- action : view에서 사용자 입력에 대해 반응적으로 state를 바꾸는 방법(**methods**)
+
+<br />
+
+### (New) Vuex management pattern
+
+- 중앙 저장소(store)에 state를 모아놓고 관리
+- 규모가 큰 (컴포넌트 중첩이 깊은) 프로젝트에서 매우 효율적
+- 각 컴포넌트에서는 중앙 집중 저장소의 state만 신경쓰면 됨
+- 동일한 state를 공유하는 다른 컴포넌트들도 동기화
+
+<br />
+
+### state 관리 A : 단방향 흐름에 의존
+
+> A-1. 규모가 작은 경우 : 문제가 없다.
+
+- 부모자식 간 컴포넌트 관계가 단순 또는 depth가 깊지 않은 경우
+- 데이터를 쉽게 이동, 직관적으로 데이터 흐름 파악 가능
+
+<br />
+
+> A-2. 규모가 큰 경우 : 어렵다.
+
+- 상태를 공유하는 컴포넌트의 상태 동기화 관리가 어려움
+- 상태를 전달할 때 상 → 하 로만 가능
+
+<br />
+
+> A-3. 동기화 방식
+
+- A 컴포넌트의 상태를 공유하는 다른 컴포넌트에 pass props & emit event 를 통해 동기화
+
+<br />
+
+### state 관리 B : Vuex 활용
+
+> B-1. 등장
+
+- 상태 변화에 따른 여러 흐름을 모두 관리해야 하는 불편 해소
+- 상태는 데이터를 주고받는 컴포넌트 사이의 관계도 충분히 고려해야 함
+- 때문에 상태 흐름 관리 매우 중요
+
+<br />
+
+> B-2. 의의
+
+- 상태를 **올바르게 관리하는 저장소**의 필요성
+- 상태를 한 곳(store)에 모두 모아 놓고 관리
+- 상태의 변화는 모든 컴포넌트에서 공유
+- 상태의 변화는 Vuex가 관리, 해당 상태를 공유하고 있는 모든 컴포넌트는 변화에 '반응'
+
+<br />
+
+> B-3. 동기화 방식
+
+- B 컴포넌트와 같은 상태를 공유하는 다른 컴포넌트는 신경쓰지 않고, 오로지 상태의 변화를 Vuex에 알림
+
+<br />
+
+## Vuex Core Concepts
+
+### State
+
+- 중앙에서 관리하는 모든 상태 정보(data)
+- Vuex는 **single state tree** 사용
+- 즉, 이 단일 객체는 모든 애플리케이션 상태를 포함하는 **원본소스**(single source of truth)의 역할을 함
+- 이는 **각 애플리케이션마다 하나의 저장소만 갖게 된다는 것**을 의미
+
+- 여러 컴포넌트 내부에 있는 특정 state를 중앙에서 관리
+- Vuex Store에서 각 컴포넌트에서 사용하는 state를 한눈에 파악 가능
+- state가 변화하면 해당 state를 공유하는 여러 컴포넌트의 DOM은 (알아서) 렌더링
+- 각 컴포넌트는 Vuex Store에서 state 정보를 가져와 사용
+
+<br />
+
+### Mutation
+
+- 실제로 state를 변경하는 유일한 방법
+- mutation의 handler(핸들러 함수)는 **반드시 동기적**이어야 함
+- 비동기적 로직(ex. 콜백함수)은 state가 변화하는 시점이 의도한 것과 달라질 수 있다.
+- 또한 콜백이 실제로 호출될 시기를 알 수 있는 방법이 없다. (추적 불가)
+
+- 첫 번째 인자로 항상 **state**를 받음
+- Actions에서 **commit() 메서드**에 의해 호출
+
+<br />
+
+### Actions
+
+- Mutations와 유사하지만 차이점이 있음
+
+1. state를 변경하는 대신 mutations를 commit() 메서드로 호출해서 실행
+2. mutations와 달리 **비동기 작업 포함 가능**(BE API와 통신해 Data Fetching 등의 작업 수행)
+
+- **context** 인자 받음
+- context 객체를 통해 store/index.js 파일 내에 있는 모든 요소의 속성 접근 & 메서드 호출 가능
+- 단, state를 직접 변경하지 않음(가능하지만 금지)
+- 컴포넌트에서 **dispatch() 메서드**에 의해 호출
+
+- ⭐ 결론 : Actions를 통해 state 조작 자체는 가능하지만 오로지 Mutation을 통해서만 조작!!
+- **명확한 역할 분담**을 통해 서비스 규모가 커져도 state를 올바르게 관리
+
+<br />
+
+### Getters
+
+- state를 변경하지 않고 활용하여 계산을 수행
+- **computed** 속성과 유사
+- 저장소의 state를 기준으로 계산
+- state 종속성에 따라 캐시(cached)되고, 종속성이 변경된 경우에만 재계산
+
+<br />
+
+## Component Binding Helper
+
+- JS Array Helper Method를 통해 배열 조작을 편하게 하는 것과 유사
+- 논리적인 코드 자체가 변하는 것이 아니라 **쉽게 사용할 수 있도록 하기 위함**
+- mapState, mapGetters, mapActions, mapMutations
+
+<br />
+
+### mapState
+
+- computed와 Store의 state를 매핑
+
+```js
+{%- raw -%}
+// vuex 모듈에서 mapState 메서드만 가져옴
+import { mapState } from 'vuex'
+{% endraw -%}
+```
+
+```js
+{%- raw -%}
+// store.state의 object를 computed 함수에 지정하는 방식
+computed: {
+  todos: function () {
+    return this.$store.state.todos
+  },
+}
+
+// computed 이름이 state 이름과 같을 때 문자열 배열 전달
+computed: mapState(['todos'])
+
+// object spread operator
+computed: {
+  ...mapState(['todos'])
+}
+{% endraw -%}
+```
+
+<br />
+
+### mapActions
+
+- actions을 전달하는 컴포넌트 method 옵션 생성
+- 주의📢 actions로 전달하는 데이터가 있는 경우
+  - dispatch는 **payload**로 데이터를 넘겨줌
+  - mapActions는 **pass prop**으로 변경해서 전달
+  - 콜백함수 지정에 (data)로 호출 시 보내는 데이터를 미리 지정하는 Vue의 특수 문법
+
+<br />
+
+## vuex-persistedstate
+
+- Vuex state를 자동으로 브라우저의 LoaclStorage에 저장하는 라이브러리
+- 페이지가 새로고침 되어도 Vuex state를 유지
+
+```bash
+$ npm i vuex-persistedstate
+```
+
+<br />
+
+```js
+{%- raw -%}
+// index.js
+import createPersistedState from 'vuex-persistedstate'
+
+export default new Vuex.Store({
+  plugins: [
+    createdPersistedState(),
+  ],
+})
+{% endraw -%}
+```

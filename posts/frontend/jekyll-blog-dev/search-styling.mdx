@@ -1,0 +1,793 @@
+---
+title: "[BlogDev] 검색 화면 스타일링"
+excerpt: "검색 화면을 스타일링 해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-02-06T14:57
+last_modified_at: 2022-02-06T14:57
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 주의사항
+
+본 포스트는 실패하고 실패하고 실패하다가 성공하는 과정을 남긴 기록입니다. 따라하실 거라면 무작정 따라하시지 마시고 결과를 보시고 하시기 바랍니다.
+
+<br />
+
+## 작업 동기
+
+어느날 블로그 masterhead에 있는 블로그 masterhead 에 있는 검색창이 사라진 것을 알게 되었다. 그 전의 모습을 보자.
+
+![image](https://user-images.githubusercontent.com/86189596/152665870-d7d65acb-d0b3-48d4-836d-b6acf2c7426e.png)
+
+navigation.yml에 의해 여러 링크들이 있다. 나에 대한 내용을 보여주는 `About` 링크, 카테고리별로 포스트를 모아보여주는 `Category`, 연도마다 내 포스트를 시간순으로 보여주는 `Archive`, 그리고 포스트들 중에 원하는 내용을 찾는 `search` 기능이다.
+
+그런데 `About` 은 아직 제대로 넣을 내용도 없는 개발 새내기라 시기상조인 것 같고(빈 페이지), `Category` 는 이미 사이드바를 통해 구현하였다. 뭐 나중에 Category 화면을 디자인해서 좀 멋있게 카테고리별로 이동할 수 있게 하려고 생각중이긴 하지만 말이다. `Archive`는 연도별이라면 너무 많은 포스트가 있어서 의미가 없다고 생각이 든다.
+
+그래서 이들의 링크와 화면 표시를 관장하는 `navigation.yml` 에서 이 링크들을 당분간은 주석 처리해두었다.
+
+<br />
+
+📃 navigation.yml
+
+```yml
+# main links
+main:
+  # - title: "About"
+  #   url: /about/
+  # - title: "Category"
+  #   url: /categories/
+  # - title: "Archive"
+  #   url: /year-archive/
+```
+
+어 그런데 그 뒤로 search 버튼이 보이지 않았다. 그래서 다시 📃navigation.yml 파일의 주석을 되돌려보았는데도 활성화가 되지 않았다. 인터넷과 minima 디렉토리를 엄청나게 뒤져보았다.
+
+<br />
+
+## 검색 기능 활성화
+
+정답은 📃 config.yml 에 있었다. 파일 내에서 전체 검색으로 search를 검색하면 나오면 몇 가지가 있는데, 이 중에서 아래의 코드처럼 설정한다.
+
+📃 config.yml
+
+```yml
+search: true # true, false (default)
+search_full_content: true # true, false (default)
+search_provider: lunr # lunr (default), algolia, google
+```
+
+각각 search 기능을 사용할 것인지, full_content를 검색할 것인지, search_provider로는 뭘 쓸 것인지 설정하는 것이다. 기본 설정으로는 모두 false나 주석처리 되어 있다. 이게 false와 주석처리가 되어있는데 그동안 어떻게 검색 기능을 사용했는지는 알 수 없지만 아무튼 이것들을 활성화 하니까 검색 아이콘이 masterhead에 나오게 되었다. search_provider가 정확히 뭔지 모르겠어서 인터넷을 찾아보았고, 다음의 링크를 참고하였다.
+
+[lunr.js를 이용한 Search 기능 추가](https://moon9342.github.io/jekyll-search)
+
+그동안 검색을 하면 제목에 키워드만 검색되어 내부 내용 검색이 되지 않아 불편했는데 search_full_content를 사용하면 포스트 내부의 글까지 검색이 되는 모양이다. 이 기능을 원해서 true로 하였다. 개인 기호에 따라 달리하면 될 것 같다.
+
+<br />
+
+## 검색 화면 스타일링
+
+### Before
+
+![image](https://user-images.githubusercontent.com/86189596/152666304-d18218a0-6a81-4733-81dd-ad1d551a922d.png)
+
+검색 화면이다. 음. 너무 구리지 않은가? 검색어를 입력하는 슬롯은 너무 크다. 그래 참을 수 있다고 치자. 그런데 검색을 하게 되면 더 가관이다.
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/152666331-94c2aea1-4aa8-4daa-8983-acedcacd3fe0.png)
+
+Github에 임시 프로필 사진으로 걸어둔 내 프로필 사진이다. 처음에 📃_config.yml파일을 설정할 때 그냥 설정해두었다. teaser image로 포스트마다 지정이 되어있는데, 이것이 그대로 보인다. 그것도 일렬로. 그것도 엄청 큰 사이즈로.
+
+여러 가지 스타일링이 필요할 것 같다. 나는 이 쓸모 없는 티저 사진을 없애는 것을 가장 중요한 일로 오늘의 포스트를 다룰 것이다.
+
+<br />
+
+## 디렉토리 분석: 실패의 역사
+
+### 📃search.html 레이아웃 파일 분석
+
+지피지기면 백전백승이다. search 화면은 다른 레이아웃과 다르기 때문에 분명히 별도의 레이아웃 html 파일이 있을 것이라고 판단했다. search 기능은 📃search.html 파일에서 관장하는 것을 알게 되었다. 참고로 📂_layout 폴더 안에 있다.
+
+우선 전체 코드를 살펴보자.
+
+```liquid
+{%- raw -%}
+---
+layout: default
+---
+
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+  {% include page__hero.html %}
+{% endif %}
+
+{% if page.url != "/" and site.breadcrumbs %}
+  {% unless paginator %}
+    {% include breadcrumbs.html %}
+  {% endunless %}
+{% endif %}
+
+<div id="main" role="main">
+  {% include sidebar.html %}
+
+  <div class="archive">
+    {% unless page.header.overlay_color or page.header.overlay_image %}
+      <h1 id="page-title" class="page__title">{{ page.title }}</h1>
+    {% endunless %}
+
+    {{ content }}
+
+    {%- assign search_provider = site.search_provider | default: "lunr" -%}
+    {%- case search_provider -%}
+      {%- when "lunr" -%}
+        <input type="text" id="search" class="search-input" placeholder="{{ site.data.ui-text[site.locale].search_placeholder_text | default: 'Enter your search term...' }}" />
+        <div id="results" class="results"></div>
+      {%- when "google" -%}
+        <form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+        <input type="text" id="cse-search-input-box-id" class="search-input" placeholder="{{ site.data.ui-text[site.locale].search_placeholder_text | default: 'Enter your search term...' }}" />
+        </form>
+        <div id="results" class="results">
+          <gcse:searchresults-only></gcse:searchresults-only>
+        </div>
+      {%- when "algolia" -%}
+        <div class="search-searchbar"></div>
+        <div class="search-hits"></div>
+    {%- endcase -%}
+  </div>
+</div>
+{% endraw -%}
+```
+
+필요한 것에 대해서 설명해보겠다.
+
+<br />
+
+```liquid
+{%- raw -%}
+<!-- post.header.teaser가 있다면 teaser는 post.header.teaser, 아니라면 site.teaser-->
+{% if post.header.teaser %}
+  {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
+{% else %}
+  {% assign teaser = site.teaser %}
+{% endif %}
+{% endraw -%}
+```
+
+post의 header 부분에 teaser를 따로 설정해두었다면 그 사진이 뜨고, 아니면 사이트에 기본적으로 설정해둔, 즉 \_config.yml의 teaser_img를 쓰겠다는 말이다. 나의 경우 post에 teaser를 쓸 일은 전혀 없고, search를 할 때에도 teaser_img는 나오지 않길 바라기 때문에 크게 상관은 없다.
+
+다만 현재 포스트를 내리면 하단에 다른 포스트 목록에 티저가 같이 뜨기 때문에 필요하다면 나중에는 설정할 수도 있겠다.
+
+<br />
+
+그 밖에는 search 화면에 대한 것이 아니라 메인 화면에 대한 내용이고, search_provider에 따라 검색 화면을 어떻게 할지 구분하는 코드들이다. 포스트가 표시되는 코드에 대한 힌트가 없다.
+
+<br />
+
+### 📃default.html 파일 분석
+
+📃search.html의 모체가 되는 📃default.html 파일로 가보자. 눈에 띄는 구간을 하나 발견할 수 있었다.
+
+<br />
+
+```liquid
+{%- raw -%}
+  {% if site.search == true %}
+      <div class="search-content">
+        {% include_cached search/search_form.html %}
+      </div>
+  {% endif %}
+{% endraw -%}
+```
+
+즉, site.search가 활성화되어있으면 search-content 안에 📂search📃search_form.html을 include하라는 말이다. 실제로 검색 화면을 개발자 모드로 살펴보면 search-content가 있다. 알았다. 가보자.
+
+<br />
+
+### 📃search_form.html 파일 분석
+
+```liquid
+{%- raw -%}
+<div class="search-content__inner-wrap">
+  {%- assign search_provider = site.search_provider | default: "lunr" -%}
+  {%- case search_provider -%}
+  {%- when "lunr" -%}
+  <form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      {{ site.data.ui-text[site.locale].search_label_text | default: 'Enter your search term...' }}
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="{{ site.data.ui-text[site.locale].search_placeholder_text | default: 'Enter your search term...' }}" />
+  </form>
+  <div id="results" class="results"></div>
+  {%- when "google" -%}
+  <form onsubmit="return googleCustomSearchExecute();" id="cse-search-box-form-id">
+    <label class="sr-only" for="cse-search-input-box-id">
+      {{ site.data.ui-text[site.locale].search_label_text | default: 'Enter your search term...' }}
+    </label>
+    <input type="search" id="cse-search-input-box-id" class="search-input" tabindex="-1" placeholder="{{ site.data.ui-text[site.locale].search_placeholder_text | default: 'Enter your search term...' }}" />
+  </form>
+  <div id="results" class="results">
+    <gcse:searchresults-only></gcse:searchresults-only>
+  </div>
+  {%- when "algolia" -%}
+  <div class="search-searchbar"></div>
+  <div class="search-hits"></div>
+  {%- endcase -%}
+</div>
+{% endraw -%}
+```
+
+복잡하게 나와있지만 여러 검색 툴에 대해서 코드를 쓰기 때문에 많아 보이는 것이고 우리는 lunr.js를 사용하기 때문에 해당하는 부분만 살펴보면 된다.
+
+<br />
+
+```liquid
+{%- raw -%}
+<div class="search-content__inner-wrap">
+  <form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      {{ site.data.ui-text[site.locale].search_label_text | default: 'Enter your search term...' }}
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="{{ site.data.ui-text[site.locale].search_placeholder_text | default: 'Enter your search term...' }}" />
+  </form>
+  <div id="results" class="results"></div>
+</div>
+{% endraw -%}
+```
+
+검색 결과가 나오기 전의 검색 슬롯을 구성하는 코드들이다. 포스트 표시에 대한 힌트는 찾을 수 없다. 크롬의 개발자 도구를 살펴보면 results 공간 내부에 검색 결과들이 리스트로 주르륵 나온다. 하지만 현재 HTML results 태그에는 내용이 없다. include도 없다.
+
+이것으로 보아 **lunr.js 파일이 input 태그에 검색하는 데이터에 따라서 HTML을 구성해주는 것으로 판단할 수 있다.**
+
+<br />
+
+### 난관에 봉착
+
+일이 어려워지고 있다. lunr.js 파일은 3,400줄에 달하는 js 파일이고, 관련된 태그를 js 파일 내에서 검색해봐도 제대로 나오지가 않는다. 사이트 내부의 작은 검색 엔진이다. 자체적으로 해결할 방법이 없을까.
+
+<br />
+
+## 대안 모색
+
+음. 나는 사실 teaser를 잘 쓰지 않기 때문에 📃archive-single.html 자체에서 teaser를 넣는 코드를 주석 처리하면 어떨까 싶었다. 📃archive-single.html은 메인 화면 및 카테고리, 태그별 화면에서도 사용하는 include 파일인만큼 파괴적인 방법이라 마음에 걸리긴 하지만, 어차피 teaser를 사용할 일이 없다면 해결방안을 찾는 당분간은 주석 처리를 하는 것이 좋겠다.
+
+<br />
+
+### 📃archive-single.html: teaser image 제거
+
+우선 📃archive-single.html 파일을 보자.
+
+```liquid
+{%- raw -%}
+<!-- post.header.teaser가 있다면 teaser는 post.header.teaser, 아니라면 site.teaser-->
+{% if post.header.teaser %}
+  {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
+{% else %}
+  {% assign teaser = site.teaser %}
+{% endif %}
+
+<!-- post.id가 있다면 title은 <p> 태그 제거하고 마크다운화, 아니라면 그냥 post.title -->
+{% if post.id %}
+  {% assign title = post.title | markdownify | remove: "<p>" | remove: "</p>" %}
+{% else %}
+  {% assign title = post.title %}
+{% endif %}
+
+<!-- class는 include.type, 기본값은 list -->
+<div class="{{ include.type | default: 'list' }}__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+
+    <!-- grid가 있고 teaser가 있으면 이미지 티저와 상대경로 표시 / index에는 grid 타입 아니므로 무시 -->
+    {% if include.type == "grid" and teaser %}
+      <div class="archive__item-teaser">
+        <img src="{{ teaser | relative_url }}" alt="">
+      </div>
+    {% endif %}
+
+    <!-- post에 link가 있다면 ~~이렇게 표시, url에 대해 링크 걸음-->
+    <h2 class="archive__item-title" itemprop="headline">
+
+      <!-- 캘린더 모양과 작성일자 표시 -->
+      {% if post.date %}
+        <p class="page__meta"><i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ post.date | date: "%Y.%m.%d" }}</p>
+      {% endif %}
+
+      {% if post.link %}
+        <a href="{{ post.link }}">{{ title }}</a> <a href="{{ post.url | relative_url }}" rel="permalink"><i class="fas fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
+      {% else %}
+        <a href="{{ post.url | relative_url }}" rel="permalink">{{ title }}</a>
+      {% endif %}
+    </h2>
+
+    <!--
+    post에 excerpt가 있다면 표시 : 나는 생략
+    {% if post.excerpt %}<p class="archive__item-excerpt" itemprop="description">{{ post.excerpt | markdownify | strip_html | truncate: 160 }}</p>{% endif %}
+    -->
+
+    <!-- 태그를 표시하는 html을 include -->
+    {%- include post__taxonomy2.html -%}
+  </article>
+</div>
+{% endraw -%}
+```
+
+<br />
+
+여기에서 teaser를 표시하는 코드를 주석처리할 것이다.
+
+```liquid
+{%- raw -%}
+{% if include.type == "grid" and teaser %}
+  <div class="archive__item-teaser">
+    <img src="{{ teaser | relative_url }}" alt="">
+  </div>
+{% endif %}
+{% endraw -%}
+```
+
+<br />
+
+아래처럼 전체를 주석 처리해보자.
+
+```liquid
+{%- raw -%}
+<!-- grid가 있고 teaser가 있으면 이미지 티저와 상대경로 표시 / index에는 grid 타입 아니므로 무시
+    {% if include.type == "grid" and teaser %}
+      <div class="archive__item-teaser">
+        <img src="{{ teaser | relative_url }}" alt="">
+      </div>
+    {% endif %}
+    -->
+{% endraw -%}
+```
+
+<br />
+
+### 결과: 실패
+
+안된다. 아마도 search 화면은 archive-single.html에 영향을 받는 것이 아니라 lunr.js에서 HTML을 그리는 어떤 로직에 관련이 되어있나보다.
+
+<br />
+
+### 깨달음을 얻다.
+
+archive\_\_item을 전체 검색했는데 📃lunr.js 가 아닌 📃lunr-en.js 파일이 따로 있는 것을 발견했다. 📃lunr-gr.js 파일도 있긴 한데 이번 시도가 실패하면 다뤄볼 것이다.
+
+<br />
+
+### 📃lunr-en.js
+
+```js
+var idx = lunr(function () {
+  this.field("title");
+  this.field("excerpt");
+  this.field("categories");
+  this.field("tags");
+  this.ref("id");
+
+  this.pipeline.remove(lunr.trimmer);
+
+  for (var item in store) {
+    this.add({
+      title: store[item].title,
+      excerpt: store[item].excerpt,
+      categories: store[item].categories,
+      tags: store[item].tags,
+      id: item,
+    });
+  }
+});
+
+$(document).ready(function () {
+  $("input#search").on("keyup", function () {
+    var resultdiv = $("#results");
+    var query = $(this).val().toLowerCase();
+    var result = idx.query(function (q) {
+      query.split(lunr.tokenizer.separator).forEach(function (term) {
+        q.term(term, { boost: 100 });
+        if (query.lastIndexOf(" ") != query.length - 1) {
+          q.term(term, {
+            usePipeline: false,
+            wildcard: lunr.Query.wildcard.TRAILING,
+            boost: 10,
+          });
+        }
+        if (term != "") {
+          q.term(term, { usePipeline: false, editDistance: 1, boost: 1 });
+        }
+      });
+    });
+    resultdiv.empty();
+    resultdiv.prepend(
+      '<p class="results__found">' +
+        result.length +
+        ' {{ site.data.ui-text[site.locale].results_found | default: "Result(s) found" }}</p>'
+    );
+    for (var item in result) {
+      var ref = result[item].ref;
+      if (store[ref].teaser) {
+        var searchitem =
+          '<div class="list__item">' +
+          '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">' +
+          '<h2 class="archive__item-title" itemprop="headline">' +
+          '<a href="' +
+          store[ref].url +
+          '" rel="permalink">' +
+          store[ref].title +
+          "</a>" +
+          "</h2>" +
+          '<div class="archive__item-teaser">' +
+          '<img src="' +
+          store[ref].teaser +
+          '" alt="">' +
+          "</div>" +
+          '<p class="archive__item-excerpt" itemprop="description">' +
+          store[ref].excerpt.split(" ").splice(0, 20).join(" ") +
+          "...</p>" +
+          "</article>" +
+          "</div>";
+      } else {
+        var searchitem =
+          '<div class="list__item">' +
+          '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">' +
+          '<h2 class="archive__item-title" itemprop="headline">' +
+          '<a href="' +
+          store[ref].url +
+          '" rel="permalink">' +
+          store[ref].title +
+          "</a>" +
+          "</h2>" +
+          '<p class="archive__item-excerpt" itemprop="description">' +
+          store[ref].excerpt.split(" ").splice(0, 20).join(" ") +
+          "...</p>" +
+          "</article>" +
+          "</div>";
+      }
+      resultdiv.append(searchitem);
+    }
+  });
+});
+```
+
+긴 코드이지만 우리는 teaser를 내놓는 부분만 살펴보면 된다.
+
+```js
+for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+```
+
+엄청나게 길지만, 태그만 보아도 검색 결과에 해당하는 내용의 포스트들에 대해 HTML 코드를 구성하는 것인데, teaser가 있다면 teaser에 해당하는 코드를 추가해 붙이고 아니라면 teaser 없이 내보내는 것임을 알 수 있다. 마음 속에서 유레카를 외쳤다.
+
+자. 📃archive-single.html에서 했던 것처럼 teaser 부분을 주석처리 해보겠다. 사실 이 if문 자체가 teaser 여부에 따라 코드를 달리하는 것이라 teaser를 안 쓸 거라면 한 문단 자체를 지워버려도 되지만 사람일 모르기 때문에 일단 주석처리 하겠다.
+
+<br />
+
+```js
+if (store[ref].teaser) {
+  var searchitem =
+    '<div class="list__item">' +
+    '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">' +
+    '<h2 class="archive__item-title" itemprop="headline">' +
+    '<a href="' +
+    store[ref].url +
+    '" rel="permalink">' +
+    store[ref].title +
+    "</a>" +
+    "</h2>" +
+    // '<div class="archive__item-teaser">'+
+    //   '<img src="'+store[ref].teaser+'" alt="">'+
+    // '</div>'+
+    '<p class="archive__item-excerpt" itemprop="description">' +
+    store[ref].excerpt.split(" ").splice(0, 20).join(" ") +
+    "...</p>" +
+    "</article>" +
+    "</div>";
+}
+```
+
+for문만 따로 빼온 것인데 js 파일이기 때문에 이렇게 주석처리 해주면 되겠다.
+
+<br />
+
+### 결과
+
+![image](https://user-images.githubusercontent.com/86189596/152668173-d382f6a3-1590-4d80-a179-95214e68c947.png)
+
+감격스러워서 눈물이 날 뻔 했다. teaser 사진만 없을 뿐인데 너무나 정갈한 포스트가 되었다. title과 excerpt가 조화로워서 굳이 태그나 카테고리를 넣지 않아도 적당할 것 같다. results 부분은 이미 완성이다.
+
+<br />
+
+## 검색창 스타일링
+
+문제는 검색창이다. scss 속성만 바꾸는 거라 어렵지는 않을 것 같다.
+
+<br />
+
+### 📃_search.scss: search 디자인의 모든 것
+
+📂_sass📂minimal-mistakes📃_search.scss에 search와 관련된 모든 디자인 scss 파일들이 들어있다. 뭘 먼저 건드려볼까.
+
+<br />
+
+### font-size 설정
+
+일단 PC 버전으로 보았을 때 검색 글자의 크기가 너무 크다고 느껴졌다. 그런데 개발자 도구에서 다른 px로 화면을 보았을 때는 나름 제목의 title과 크기도 맞고 조화롭게 느껴졌다. 그렇다면 scss 파일 내에서 breakpoint로 font-size를 설정한 것이 조금 알맞지 않다는 얘기가 되겠다.
+
+<br />
+
+```scss
+.search-input {
+  display: block;
+  margin-bottom: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: $type-size-3;
+
+  @include breakpoint($large) {
+    font-size: $type-size-2;
+  }
+
+  @include breakpoint($x-large) {
+    font-size: $type-size-1;
+  }
+}
+```
+
+텍스트를 입력하는 input 태그의 클래스인 `.search-input` 의 scss 속성이다. breakpoint마다 폰트 사이즈를 달리했다. 여기서 📃_variables.scss 파일을 참고해보겠다.
+
+`$large`는 현재 1024px, `$x-large`는 1400px로 설정되어있다. 그리고 font-size 변수인 `$type-size-1`, `$type-size-2`, `$type-size-3`은 각각 2.441em, 1.953em, 1.563em이다.
+
+그래서 위의 .search-input 속성을 다시 해석하면 1024px 전까지는 1.563em이로 두다가 1024px보다 큰 화면 사이즈에서는 1.953em, 그리고 1400px보다 더 크면 2.441em으로 하라는 말이다.
+
+개발자 모드로 보니까 화면 크기가 1024px일 때부터 검색창의 글자의 크기가 커지기 때문에 나는 breakpoint에 따라 font-size의 구분을 두지 않고 그냥 1.563em인 `$type-size-3`으로 font-size를 통일하려 한다.
+
+<br />
+
+```scss
+.search-input {
+  display: block;
+  margin-bottom: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: $type-size-3;
+
+  // @include breakpoint($large) {
+  //  font-size: $type-size-2;
+  // }
+
+  // @include breakpoint($x-large) {
+  //  font-size: $type-size-1;
+  // }
+}
+```
+
+이렇게 주석처리하여 모든 화면 크기에서 같은 font-size를 유지하게 하면 된다.
+
+<br />
+
+### 결과
+
+- 1440px일 때(일반 PC)
+
+![image](https://user-images.githubusercontent.com/86189596/152668578-70793658-9ee7-451b-8fbe-3273f8c0c166.png)
+
+<br />
+
+- 1024px일 때
+
+![image](https://user-images.githubusercontent.com/86189596/152668597-38bcf7b0-1bea-4020-8967-b5dc33906bf6.png)
+
+<br />
+
+- 768px일 때(태블릿)
+
+![image](https://user-images.githubusercontent.com/86189596/152668612-e83803f8-6235-4ab9-86da-f390f9380592.png)
+
+<br />
+
+- 425px일 때(모바일)
+
+![image](https://user-images.githubusercontent.com/86189596/152668628-339ee671-2cf4-4a7b-aefa-a9b23595def5.png)
+
+모두 적당한 크기를 유지하고 있다.
+
+<br />
+
+### 검색창 스타일링
+
+이제는 검색창과 검색 결과의 구분이 필요할 것 같다. 검색엔진처럼 테두리와 박스의 배경색을 조금 달리해서 검색창을 스페셜하게 바꿔보려 한다.
+
+검색창은 `.search-content__form` 클래스를 사용하므로 scss 파일에서 이 클래스에 속성을 추가하거나 수정해주면 되겠다.
+
+scss 답게 `.search-content`에 `&__form`으로 nesting해서 속성이 적용되어있으니 참고하길 바란다.
+
+<br />
+
+```scss
+.search-content {
+  ...
+
+  &__form {
+    background-color: transparent;
+  }
+```
+
+현재로서는 form에 대한 어떠한 속성도 없고, 단지 배경이 투명이라는 것 밖에 없다. 그래서 나는 이 코드를 아래와 같이 수정했다.
+
+<br />
+
+```scss
+.search-content {
+  ...
+
+  &__form {
+    background-color: $inputbox-color;
+    border: 2px solid $text-color;
+    border-radius: 5px;
+    padding: 0.3em 0 0.3em 1em;
+    margin: 1em 1em 3em 1em;
+  }
+```
+
+브라우저 상의 개발자 도구에서 경험적으로 바꿔보며 최적의 스타일을 찾아 넣은 것이며, 각각의 코드가 무엇을 의미하는지 설명하겠다.
+
+<br />
+
+> background-color: $inputbox-color;
+
+배경색을 블로그 배경색보다 약간 밝은 색으로 설정하였다. `$inputbox-color`처럼 앞에 `$`표시가 붙은 것은 SCSS에서 변수를 사용할 때 쓰는 것인데, 원래 테마에 있는 변수는 아니고 내가 `_dark.scss` 파일에 추가해준 것이다. `$inputbox-color: #3e4244 !default;` 이렇게 추가했고, 위치는 크게 상관 없다. 유지보수할 때 알아차릴 수 있도록 비슷한 코드 주변에 추가하면 되겠다.
+
+굳이 변수를 설정한 이유는 나중에 다크모드 기능을 추가할 계획이기 때문에 하드코딩을 최대한 피하기 위해서이다. 뭐 사실상 지금이 다크모드이니 화이트 버전을 추가하려고 한다고 해야할까.
+
+<br />
+
+> border: 2px solid $text-color;
+> border-radius: 5px;
+
+border는 본격적으로 테두리를 설정하는 과정이다. 마찬가지로 변수를 사용하였다. 2px 두께의 #eaeaea색 실선을 테두리에 감아달라는 말이다. 또한 border-radius는 5px 만큼 꼭지점을 깎아달라는 말이다. 보다 부드러운 느낌을 준다.
+
+<br />
+
+> padding: 0.3em 0 0.3em 1em;
+> margin: 1em 1em 3em 1em;
+
+padding과 margin은 각각 내부와 외부에 여백을 얼마나 줄지를 결정하는 것이다. form 내부에 검색 글씨가 있으므로 padding이 커질수록 검색글씨를 둘러싼 검색창의 크기가 커질 것이다.
+
+margin은 사뭇 다른데, 이미 검색창이 페이지의 100%를 차지하고 있으므로 좌우의 margin이 커질수록 검색창은 좌우 여백을 확보하기 위해 자신을 줄이게 되고, 상하의 margin이 커질수록 상하 여백이 생길 것이다.
+
+띄어쓰기를 기준으로 상우하좌 시계방향으로 속성을 부여한다. 나는 검색창과 검색 결과 사이의 여백으로 구분하고 싶었기 때문에 3em만큼 margin을 두었다. 나머지는 각각 1em 씩이다.
+
+상하 padding을 조절해서 검색창의 크기를 적당히 조절했고, padding-left로 1em을 두어 검색 글씨가 창의 좌측에 딱 붙지 않도록 했다.
+
+<br />
+
+### 결과
+
+- 1440px일 때(일반 PC)
+
+![image](https://user-images.githubusercontent.com/86189596/152669241-cca6000c-b602-4a1b-b8e6-2e4e2713bcc1.png)
+
+<br />
+
+- 1024px일 때
+
+![image](https://user-images.githubusercontent.com/86189596/152669248-7b3b0b58-91fc-406b-b9fc-a67a88527dbf.png)
+
+<br />
+
+- 768px일 때(태블릿)
+
+![image](https://user-images.githubusercontent.com/86189596/152669259-f23217b3-f9f2-4832-8c2c-6a52acbd2d42.png)
+
+<br />
+
+- 425px일 때(모바일)
+
+![image](https://user-images.githubusercontent.com/86189596/152669268-78dd19b4-8917-429b-ae1d-32c7a616cfb2.png)
+
+매우매우 적당하다. 아주 만족스럽다.
+
+<br />
+
+### 검색 결과 스타일링
+
+검색 결과를 표시하는 글자가 너무 작고 동떨어져 보이기 때문에 하단에 실선을 하나 추가하고 글자 크기도 조금 키워줘야겠다.
+
+```scss
+.results__found {
+  margin-top: 0.5em;
+  font-size: $type-size-6;
+}
+```
+
+기존 코드이고
+
+```scss
+.results__found {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid $text-color;
+  margin-top: 0.5em;
+  font-size: $type-size-5;
+}
+```
+
+바꾼 코드이다. 각각의 의미는 위의 form에서 자세히 설명했기 때문에 생략한다.
+
+<br />
+
+### 결과
+
+- 1440px일 때(일반 PC)
+
+![image](https://user-images.githubusercontent.com/86189596/152669430-817b03e8-c8b9-4e71-a408-229b854001ea.png)
+
+<br />
+
+- 425px일 때(모바일)
+
+![image](https://user-images.githubusercontent.com/86189596/152669452-43f87cc6-3229-454b-b16e-8f411fa00066.png)
+
+다 비슷하기 때문에 중간은 생략하고 PC와 모바일 버전의 결과를 보여준다. 적당히 잘 바뀐 것 같다.
+
+<br />
+
+## 소감
+
+### 작지만 강하다
+
+사실 만만하게 생각해서 오전 중에 끝내고 오후에 자바스크립트를 공부하겠다고 계획을 세웠는데, 생각 이상으로 정말 오래 걸린 작업이었다. 그래도 화면 하나를 재구성했다고 생각하면 뿌듯하다.
+
+특히 js 파일을 건들게 될 줄은 몰랐는데 간단한 주석 처리이지만 js 파일도 다뤄본 것이 감회가 새롭다. js 파일이 HTML을 짜주는 역할임을 이해하면서 생긴 큰 변화인 것 같다.
+
+<br />
+
+### \_docs..?
+
+그리고 navigation.yml이나 여러 가지를 검색해보다가 📂doc📂_docs에 있는 여러 md 파일들을 보게 되었는데, 개발자들의 그냥 사용설명서 정도로만 생각하고 간과하고 지나갔던 파일들이다. 영어였기 때문이다. 그런데 생각보다 sidebar category 라던지 여러 기능들에 대한 설명이 있는 것 같다.
+
+사실 아직 yml 파일이나 page, layout 등 모르는 게 투성이인데 이 문서들을 참고하면 더 수월하게 커스텀을 할 수 있지 않을까 싶다. 잘 모르는 영어이지만 조금씩 탐구해서 minimal-mistakes 테마를 완벽히 이해하고 블로그를 내 것으로 만들어갈 수 있으면 좋겠다는 생각이 들었다.
+
+어쩌면 사이드바 카테고리 작업한 거를 다 뒤집어 엎어야 될 수도 있는데 이것이 판도라의 상자가 될까 두렵긴 하다.

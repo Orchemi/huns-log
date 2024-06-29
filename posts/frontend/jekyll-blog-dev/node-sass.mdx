@@ -1,0 +1,74 @@
+---
+title: "[BlogDev] 페이지에 sass 파일 적용하기"
+excerpt: "페이지에 sass 파일의 스타일 속성을 적용하는 방법을 알아보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, node-sass]
+
+date: 2022-01-31T16:11
+last_modified_at: 2022-01-31T16:11
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 참고자료
+
+[HEROPY Tech](https://heropy.blog/2018/01/31/sass/)
+
+<br />
+
+## 페이지에 scss 파일을 적용
+
+우선 브라우저 상에서는 HTML, CSS, JS 파일만 로드해서 읽을 수 있다. 하지만 CSS의 Superset이자 Preprocesser(전처리기)인 SCSS는 그동안 minimal-mistakes 테마 자체적으로 렌더링을 해주었기 때문에 적용방법에 대해 그리 생각하지 않았는데, 이번에 사이드바 카테고리 디자인 작업을 진행하면서 즉각적인 변화를 살피고 싶었다. github에 push하고 블로그에 렌더링이 되기까지 기다리는 시간이 jekyll 엔진 특성상 시간차가 발생하기 때문이다.
+
+때문에 VSC의 Live Server를 이용해 scss 속성의 변화가 화면상에서 어떻게 렌더링되는지 즉각적으로 확인해보기 위해 scss를 활용한 간단한 화면 구성 테스트를 해보겠다.
+
+<br />
+
+## 컴파일 방법 : node-sass
+
+node-sass는 Node.js를 컴파일러인 LibSass에 바인딩한 라이브러리이다. NPM으로 전역 설치하여 사용한다.
+
+<br />
+
+```
+$ npm install -g node-sass
+```
+
+`npm install [option] [pkg]` 의 명령어로 패키지를 install한다. 파이썬에서 pip를 install하는 과정과 비슷하다고 생각이 든다. option은 써도 되고 안 써도 된다. 여기에서는 `-g` 옵션을 두었다. 이는 `--global`과 같은 의미로 전역적으로 설치를 해준다는 것이다.
+
+<br />
+
+```
+$ node-sass [option] <scss파일 경로> [css파일 경로]
+```
+
+나의 경우 Test 폴더의 Frontend-practice 폴더에 `index.html`, `main.scss`, `main.css` 파일을 만들었다. index.html 파일에서 header에 stylesheet link로 main.css 파일을 설정해주었다. 이제 위의 명령어로 main.scss 파일에 작성한 scss 코드를 main.css 파일로 컴파일해서 넘겨준다는 말이다. 여기서 중요한 것은 이 명령어를 입력하는 경로이다. 나는 frontend-practice 폴더에 페이지 구성에 필요한 index.html 파일, 그리고 나머지 두 파일을 두었기 때문에 명령어에서 폴더 경로를 따로 설정하지 않았지만, 만약 scss 폴더나 css폴더가 따로 있고 그 안에 참조하는 css, scss 파일이 있다면 그 경로를 확실히 설정해주어야 한다.
+
+또한 명령어를 입력하고 있는 터미널의 경로는 index.html 파일이 있는 디렉토리 위치로 보인다.
+
+<br />
+
+```
+$ node-sass -w main.scss main.css
+```
+
+옵션으로는 `--watch`와 같은 의미를 지닌 `-w`를 두면 편리하다. 이는 런타임 중 파일을 감시하여 저장 시 자동으로 변경 사항을 컴파일하는 옵션이다. 위의 코드의 의미는 다음과 같다.
+
+```
+"index.html 파일이 있는 디렉토리 내의 main.scss 파일이 바뀌어서 저장되는대로 main.css 파일로 컴파일해줘."
+```
+
+<br />
+
+이렇게 scss 파일을 html 파일로 바인딩하는 방법을 알아보았다. VSC의 Live Server Extension과 함께 사용하면 scss 조작이 화면의 변화에 어떤 영향을 미치는지 즉각적인 테스트를 해볼 수 있다.

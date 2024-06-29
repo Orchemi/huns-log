@@ -1,0 +1,347 @@
+---
+title: "[Vue] Vue Router"
+
+categories:
+  - Vue
+
+tags:
+  - [SPA, Vue]
+
+date: 2022-05-09T18:00
+last_modified_at: 2022-05-09T18:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Vue Router
+
+### router란?
+
+- router : 위치에 대한 최적의 경로를 지정, 이 경로를 따라 데이터를 다음 장치로 전향시키는 장치
+- route에 컴포넌트를 매핑한 후, 어떤 주소에서 렌더링할 지 알려줌
+- SPA 상에서 라우팅을 쉽게 개발할 수 있는 기능 제공
+
+<br />
+
+### 설치 및 시작
+
+> Vue Router plugin 설치
+
+```bash
+$ vue add router
+```
+
+이후 commit 여부와 history mode 사용 여부 모두 'YES' 체크
+
+<br />
+
+> 주의사항 📢
+
+- 기존 프로젝트를 진행하던 도중에 추가하면 App.vue를 덮어씀
+- 프로젝트 내에서 router 추가 전에 필요한 경우 파일을 백업
+
+<br />
+
+> 변화 ⭐
+
+- App.vue에 **router-link 컴포넌트**와 **router-view 컴포넌트** 생성
+- router/index.js 생성
+- views 디렉토리 생성
+
+<br />
+
+### index.js
+
+- 라우트에 관련된 정보 및 설정 작성
+
+```js
+{%- raw -%}
+import Vue from "vue";
+import VueRouter from "vue-router";
+import HomeView from "../views/HomeView.vue";
+
+Vue.use(VueRouter);
+
+const routes = [
+  {
+    path: "/",
+    name: "home",
+    component: HomeView,
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: AboutView,
+  },
+];
+{% endraw -%}
+```
+
+<br />
+
+### router-link
+
+```js
+{%- raw -%}
+<router-link to="/">Home</router-link> |
+<router-link to="/about">About</router-link>
+{% endraw -%}
+```
+
+- 사용자 네비게이션을 가능케 하는 컴포넌트
+- 목표 경로는 **to** prop으로 지정
+- HTML5 히스토리 모드에서 router-link는 클릭 이벤트를 차단 → 브라우저가 페이지 reload X
+
+<br />
+
+> a 태그와의 차이점
+
+- 기존 a 태그는 GET 요청을 보냄
+- router-link 역시 a 태그이지만 **기본 GET 요청을 보내는 이벤트 제거**한 형태로 구성
+
+<br />
+
+### router-view
+
+```js
+{%- raw -%}
+<router-view/>
+{% endraw -%}
+```
+
+- 주어진 route에 대해 일치하는 컴포넌트를 렌더링하는 컴포넌트
+- 실제 component가 DOM에 부착되어 보이는 자리를 의미
+- router-link를 클릭하면 해당 경로와 연결되어 있는 index.js에 정의한 컴포넌트가 위치
+
+<br />
+
+## History mode
+
+- HTML HIstory API를 사용해 router를 구현한 것
+- **브라우저에 히스토리는 남기지만 실제 페이지는 이동하지 않는 기능 지원**
+- 페이지 reload 없이 URL을 탐색 가능
+- SPA의 단점 중 하나인 "URL이 변경되지 않는다"는 점을 해결
+
+<br />
+
+> cf) History API
+
+- DOM의 **Window 객체**는 **history 객체**를 통해 **브라우저의 세션 기록에 접근**할 수 있는 방법 제공
+- history 객체의 기능
+  - 사용자를 자신의 방문 기록 앞과 뒤로 보냄
+  - 기록의 특정 지점으로 이동
+  - 이외 여러 유용함 메서드와 속성 존재
+
+<br />
+
+## Named Routes
+
+- 이름을 가지는 route
+- 명명된 경로로 이동하려면 객체를 vue-router 컴포넌트 요소의 prop에 전달
+- 객체 전달은 JS 문법이므로 **v-bind를 이용** 
+
+```js
+{%- raw -%}
+// router/index.js
+
+...
+const routes = [
+  {
+    path: "/",
+    name: "home", 🔆
+    component: HomeView,
+  },
+  {
+    path: "/about",
+    name: "about", 🔆
+    component: AboutView,
+  },
+];
+{% endraw -%}
+```
+
+```js
+{%- raw -%}
+<!-- App.vue -->
+<nav>
+  <!-- <router-link to="/">Home</router-link> |
+  <router-link to="/about">About</router-link> -->
+  <router-link :to="{ name: 'home' }">Home</router-link> |
+  <router-link :to="{ name: 'about' }">About</router-link>
+</nav>
+{% endraw -%}
+```
+
+<br />
+
+## 프로그래밍 방식 네비게이션
+
+- 네비게이션은 다음의 방식을 사용하여 정의한다.
+
+<br />
+
+> 가. 선언적 방식
+
+- `<router-link>`를 사용하여 **선언적 방식**으로 탐색을 위한 a 태그 생성 방식
+- `<router-link to="...">`
+
+<br />
+
+> 나. 프로그래밍 방식
+
+- router의 인스턴스 메서드를 사용하여 **프로그래밍 방식**으로 같은 작업 수행 가능
+- $router.push(...)
+
+<br />
+
+### 프로그래밍 방식? ⭐
+
+- Vue 인스턴스 내부에서 router 인스턴스에 **$router**로 접근할 수 있음
+- 다른 URL로 이동하려면 this.$router.push를 호출
+- 새로운 항목을 **history stack**에 넣기 때문에 이전 URL로 이동 가능
+- `<router-link>`를 클릭할 때 내부적으로 호출되는 메서드
+
+<br />
+
+### 작성 인자 예시 ⭐
+
+```js
+{%- raw -%}
+// literal string path
+router.push('home')
+
+// object
+router.push({ path: 'home' })
+
+// named route ⭐
+router.push({ name: 'user', params: { userId: '123' } })
+
+// with query, resulting in /register?plan=private ⭐
+router.push({ path: 'register', query: { plan: 'private' } })
+{% endraw -%}
+```
+
+<br />
+
+### 코드 예시
+
+> About route에서 Home route로 이동
+
+```js
+{%- raw -%}
+...
+moveToHome: function () {
+  // this.$router.push('/')
+  this.$router.push({ name: 'home' })
+}
+{% endraw -%}
+```
+
+<br />
+
+## Dynamic Route Matching
+
+- **동적 인자** 전달
+- 주어진 패턴을 가진 route를 동일한 컴포넌트에 매핑해야 하는 경우
+- 모든 User에 대해 동일한 레이아웃을 가지지만, 다른 User ID로 렌더링되어야 하는 User 컴포넌트 예시
+
+```js
+{%- raw -%}
+const routes = [
+  {
+    path: '/user/:userId', 🔆
+    name: 'User',
+    component: User,
+  }
+]
+{% endraw -%}
+```
+
+- 동적 인자를 **:param** 방식으로 붙임
+- 컴포넌트에서 **this.$route.params**로 사용 가능
+- 즉, 해당 동적 인자를 가진 컴포넌트는 this.$route.params(object)로 데이터로 사용 가능
+
+<br />
+
+> 예시 1
+
+- pattern : /user/:userName 
+- matched path : /user/john
+- $route.params : { username: 'john' }
+
+<br />
+
+> 예시 2
+
+- pattern : /user/:userName/article/:articleId
+- matched path : /user/john/article/12
+- $route.params : { username: 'john', articleId: 12 }
+
+<br />
+
+## components와 views
+
+- 기본적으로 작성된 구조에서 components 폴더와 views 폴더 내부에 각기 다른 컴포넌트 존재
+- 컴포넌트를 작성할 때 정해진 구조가 있는 것은 아님
+- 주로 아래와 같이 구조화하여 활용
+
+<br />
+
+> App.vue
+
+- 최상위 컴포넌트
+
+<br />
+
+> views/
+
+- **router(index.js)에 매핑되는 컴포넌트**들의 폴더
+- ex. App 컴포넌트 내부에 AboutView & HomeView 컴포넌트 등록
+- pages 라고 생각하면 좋음
+
+<br />
+
+> components/
+
+- **router에 매핑된 컴포넌트 "내부에 작성"하는 컴포넌트**를 모아두는 폴더
+- ex. Home 컴포넌트 내부에 HelloWorld 컴포넌트 등록
+
+<br />
+
+## Vue Router가 필요한 이유
+
+### SPA의 등장
+
+> SPA 등장 이전
+
+- 서버가 모든 라우팅 통제
+- 요청 경로에 맞는 HTML 제공
+
+<br />
+
+> SPA 등장 이후
+
+- 서버는 index.html 하나만 제공
+- 이후 모든 처리는 HTML 위에서 JS 코드를 활용해 진행
+- **요청에 대한 처리를 더 이상 서버가 하지 않음**
+
+<br />
+
+### 라우팅 처리 차이
+
+> SSR
+
+- 라우팅에 대한 결정권은 **서버**
+
+<br />
+
+> CSR
+
+- 클라이언트는 더 이상 서버로 요청을 보내지 않고 응답받은 HTML 문서 안에서 주소가 변경되면 특정 주소에 맞는 컴포넌트 렌더링
+- 라우팅에 대한 결정권은 **클라이언트**

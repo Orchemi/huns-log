@@ -1,0 +1,125 @@
+---
+title: "[Bootstrap] 부트스트랩의 설치와 특징"
+
+categories:
+  - Bootstrap
+
+tags:
+  - [FE Language, CSS, Bootstrap]
+
+date: 2022-02-08T17:18
+last_modified_at: 2022-02-08T17:18
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Bootstrap
+
+### Bootstrap 이란?
+
+![image](https://user-images.githubusercontent.com/86189596/152941115-f4a610b7-000e-4727-afce-d5ae45871723.png)
+
+HTML, CSS, JS 프레임워크로, 빠른 웹 디자인, 특히 반응형 웹을 제작할 때 유용하게 쓸 수 있다. Github 오픈소스 star수 전체 9위에 달할만큼 인기 있는 오픈 소스이다. CSS 프레임워크로써 인기가 있으며, Grid 레이아웃을 활용하기 정말 편한 코드이다.
+
+대표적으로는 넷플릭스가 있고, Github과 eduSSAFY 사이트도 부트스트랩 일부를 사용해서 제작했다고 한다. 왠지 익숙한 컴포넌트들이 많다 싶었다.
+
+<br />
+
+### 설치 방법 : 직접 다운로드
+
+[Download](https://getbootstrap.com/docs/5.1/getting-started/download/) 링크에서 파일을 직접 다운 받을 수 있다.
+
+<br />
+
+### 설치 방법 : CDN 이용
+
+[Introduction](https://getbootstrap.com/docs/5.1/getting-started/introduction/) 링크에 CSS, JS의 CDN 링크가 있다. 물론 위의 [Download](https://getbootstrap.com/docs/5.1/getting-started/download/) 링크에도 있다.
+
+CDN은 Contents Delievery/Distribution Network의 약자로, Contents(CSS, JS, Image, Text etc...)을 효율적으로 전달하기 위해 여러 노드에 가진 네트워크에 데이터를 제공하는 시스템이다.
+
+장점으로는 파일을 로컬에 직접 다운 받지 않고 태그와 링크로 연결하여 공유받기 때문에 본인 서버의 부하를 줄일 수 있다. 또한 개별 end-user에 가까운 서버를 통해 정보를 빠르게 전달할 수 있으며, 변경사항이 생겼을 때 버전을 업그레이드하지 않아도 되는 것이 장점이다.
+
+하지만 Bootstrap 서버 자체에 문제가 생길 경우 이를 CDN으로 연결한 사이트 역시 장애가 생길 수 있다. 희박한 확률이지만 말이다.
+
+<br />
+
+CDN via jsDelivr
+
+```html
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+  crossorigin="anonymous"
+/>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+  crossorigin="anonymous"
+></script>
+```
+
+CSS와 JS CDN 방법으로 각각 link와 script 태그가 있으며, link 태그는 html의 head 부분에 위치시키면 되고, script 태그는 일반적으로 </body> 태그 직전에 위치시킨다. script 태그를 상단에 써도 되지만 body가 끝나기 전에 입력해넣는 이유는 HTML 파일을 모두 화면에 parsing한 이후에 JS파일을 parsing & excution 하기 위함이다.
+
+만약 script 태그를 head 태그 내에 썼는데 JS 파일의 용량이 큰 경우, HTML 파일을 모두 parsing하다가 script JS 파일을 parsing & excution 하고 HTML 파일을 마저 parsing하기 때문에 페이지를 보기까지의 시간, 즉 TTV(Time To View) 자체가 커진다. 이는 좋지 않은 사용자 경험(UX)을 야기한다.
+
+defer을 사용하는 방법이 있지만, 아직은 잘 모르기 때문에 이에 대해 공부하고 나중에 포스트로 다뤄보려 한다.
+
+<br />
+
+## Bootstrap의 특징
+
+### Box sizing
+
+부트스트랩에서는 box-sizing을 모두 border-box 스타일로 지정한다. width를 지정할 때 일반적으로는 content의 width가 지정이 되는데, 이것이 꽤나 번거롭고 문제를 일으키는 경우도 많기 때문에 이를 border-box로 초기화해버린 것이다.
+
+```css
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+```
+
+::before, ::after에도 border-box를 설정해 이 규격을 웬만하면 벗어나지 않도록 강하게 제어하였다.
+
+<br />
+
+### !important
+
+![image](https://user-images.githubusercontent.com/86189596/152944425-46771452-27dd-407f-83a9-e2f0f62974ab.png)
+
+!important는 css 속성을 정의할 때 최우선 순위로 적용되게 하는 설정이다. id를 직접 지정해 css 속성을 부여한 것보다 다른 위치에서 !important로 지정한 속성을 끌고 오면 !important 속성이 최종적으로 적용이 되니, css 세계관에서는 최강자라고 할 수 있다.
+
+다만 이런 성질 때문에 일반적으로는 사용하는 것을 지양하라고 하지만, 부트스트랩은 중복되는 클래스명이 있을 때 부트스트랩에 사용된 클래스명을 최종적으로 사용하게 하기 위해 많은 곳에 !important를 적용해 두었다.
+
+부트스트랩의 모든 css 코드를 담은 bootstrap.css 코드인데, !important가 1300개에 달하는 것을 볼 수 있다.
+
+<br />
+
+### 소분류
+
+![image](https://user-images.githubusercontent.com/86189596/152944930-9cef0eeb-98a8-4360-b68d-288025917db6.png)
+
+부트스트랩의 CSS 폴더이다. 부트스트랩은 파일의 크기가 워낙 크고 기능이 다양하기 때문에 이를 소분류로 쪼개서 사용할 수 있도록 하였다. 그래서 강점 중에 하나인 Grid와 관련되 css 파일만 link해서 Grid만 사용할 수도 있고, utility만 사용할 수도 있다.
+
+rtl은 right to left의 약자인데, 문화권에 따라 글을 오른쪽에서 왼쪽으로 쓰는 곳도 있기 때문에 사용된다. global service를 노린다면 필요할 수 있겠지만, 굳이 rtl이 불필요하다면 이 css 파일을 사용하지 않아도 된다.
+
+CDN을 사용한다면 영향을 조금 덜 받을 수 있겠지만 이 역시 불필요한 용량까지 로드할 수 있으니 적절하게 사용하면 되겠다.
+
+<br />
+
+### min file
+
+위의 사진을 보면 또 한 가지 알 수 있는 점이 있다. min이라는 옵션이 붙은 파일이 많다는 것이다. 이 min 파일을 열어보면 아래처럼 생겼다.
+
+![image](https://user-images.githubusercontent.com/86189596/152945630-616fe007-fb39-46f7-9abb-256573eda9a9.png)
+
+그렇다. 인간이 알아볼 수는 없겠지만, 컴퓨터는 알아볼 수 있는 한 줄로 주욱 이어진 파일이다. 공백을 모두 제거하였기 때문에 공백에 해당하는 용량을 절약할 수 있다. bootstrap.css파일은 526KB, bootstrap.min.css.map은 441KB로 대략 15~20%의 용량을 절약하는 셈이다.
+
+보통 부트스트랩은 수정하지 않기 때문에 더 빠른 로드를 위해서라면 min 파일을 링크하는 것도 좋겠다.

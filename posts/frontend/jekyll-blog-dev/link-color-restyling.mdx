@@ -1,0 +1,157 @@
+---
+title: "[BlogDev] 링크 스타일링"
+excerpt: "블로그 기본 링크의 색상과 디자인을 재설정해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, tag_anchor]
+
+date: 2022-01-18T23:44
+last_modified_at: 2022-01-19T00:13
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 수정파일 경로
+
+📁_sass📁minimal-mistakes📃_variables.scss
+📁_sass📁minimal-mistakes📁skin📃_dark.scss
+
+<br />
+
+## 설계 목적
+
+블로그 메인 페이지의 태그 리스트 및 디자인을 재설정하면서 어려움을 느낀 부분은 `<a>` 태그의 color 처리였다. 기존 `<a>` 태그는 text-decoration을 none으로 처리하며 밑줄선을 제거하는 것만 알았고, 방문했던 사이트를 href하는 `<a>` 태그의 css 처리 방법에 대해서는 몰랐기 때문이다.
+
+그런데 이번에 메인 사이트를 재설정하며 알게된 것들을 통해 페이지의 default 링크 색상과 여러 상황에서의 디자인을 어떻게 설정하는지 정리해보도록 하겠다.
+
+<br />
+
+## 기존 링크 디자인의 문제점
+
+현재 어느정도 개발이 진행중이어서 이전에 사용했던 메인 페이지를 가져와보았다.
+
+![image](https://user-images.githubusercontent.com/86189596/149799325-7e341693-b6fd-4574-bbff-7e141e0c201c.png)
+
+<br />
+
+나는 minimal-mistakes 테마의 dark모드를 사용하고 있다. 이 테마는 링크의 색상을 위의 사진처럼 청동색?으로 설정해두는데, 이번 태그 디자인 작업을 하면서 `<a>` 태그의 css 속성에 color:white 를 넣었음에도 불구하고 어떤 태그는 흰색, 어떤 태그는 청동색을 띄었다.
+
+그래서 더 클릭해보며 알게된 것은 **해당 태그를 한 번이라도 눌렀다면 기존 흰색의 태그가 청동색으로 바뀐다는 것이다.** 여기서 힌트를 얻게 되었다. **눌렀던 `<a>` 태그에 대해서는 다른 css 속성이 부여되는 것이고, 이를 별도로 지정해줄 필요가 있다는 것이다.**
+
+<br />
+
+## 개선점 파악 : default link-color 변경
+
+나는 블로그 포스트들의 제목에 default로 설정되어있는 청동색 색상을 변경하고 싶었다. 이는 해당 `<a>` 태그에 대한 클래스를 scss 속성을 따로 부여해서 color로 지정하더라도 한 번 방문하면 visited한 `<a>` 태그, 즉 `a:visited` 에 대해서 속성이 재설정되기 때문에 의미가 없다.
+
+만약 해당 클래스에만 visited를 따로 설정해 css 속성을 부여한다면 해당 클래스에서는 원하는 디자인을 설정할 수 있을 것이다. 하지만 다른 링크들에 대해서는 적용되지 않는다. 나는 이 문제를 근본적으로 해결해 모든 `<a>` 태그들이 방문전후, hover에 대해서도 같은 디자인을 가지면 좋겠다고 생각했다.
+
+또한 하드코딩이 아닌, **색상값 변수를 활용해서 언제든지 이 색만 바꾸면 모두 바꿔지는 유기적인 연결**이 되길 바랐다.
+
+<br />
+
+## scss 속성 변경
+
+각 태그의 클래스마다 scss 속성을 부여하는 것은 상당히 하드코딩적인 모습이다. 그래서 scss 장점을 살린 `변수(variables)`라는 개념이 📁_sass📁minimal-mistakes📃_variables.scss 에 존재한다. 그리고 각 테마마다 이 default 값을 재설정해서 해당 테마에 맞게 색이나 여러 요소들을 재설정한다.
+
+다시 정리하면, 📃_variables.scss는 default variables를 지정하고, 📃_dark.scss, 즉 사용자가 설정한 테마에서 재설정되는 변수들이 default variables에 대해 덮어씌워지게 된다. 때문에 해당 테마의 scss 파일(나의 경우 📃_dark.scss)의 변수들에 scss 속성들을 설정해주어 변수들을 재정의해주어야 한다.
+
+<br />
+
+## 알 수 없는 구조
+
+그런데 코드를 조작하며 디자인하면서 이상한 점을 느꼈다. 분명히 📃_dark.scss 파일의 $link-color 등에 대한 코드가 있으면, 기존 default로 존재하는 📃_variables.scss 파일의 변수들이 재정의되어야 한다.
+
+하지만 `$link-color`와 관련된 코드들은 📃_variables.scss 파일 내의 변수들의 속성에 좌우되어 렌더링되는 것이었다. 그렇다면 📃_dark.scss 파일의 변수가 먼저 정의되고 📃_variables 파일의 변수들이 후에 정의되어 `$link-color`가 📃에 맞게 정의되는 것이 아닐까?
+
+<br />
+
+아니다. 합리적인 가정이었고, 나 역시 그 생각을 했다. 하지만 그 생각이 맞다면 '알 수 없는 구조'라는 식으로 소제목을 짓지 않았을 것이다. `$link-color` 코드들에 색상 속성에는 `$primary-color` 변수가 사용되는데, 문제는 `$primary-color`에 대한 코드는 📃_dark.scss 문서의 코드를 적용한다는 것이다.
+
+정리하면 📃_dark.scss 파일의 색상값 변수를 가져다가 📃_variables.scss 파일의 링크 색상 코드에 사용한다는 것이다. 📃_variables.scss 파일 내에 `$primary-color`가 버젓이 있는데도 말이다.
+
+<br />
+
+> 어떡하죠?
+
+이유를 꽤 오래 고심했지만, 알 수 없으므로 미래에 더 발전한 나에게 분석을 맡기고 오늘은 📃_variables.scss의 link-color 관련 코드에 대해서만 다루어보고자 한다. 이미 📃_dark.scss 파일의 `$primary-color`에 대해서는 고정이 완료되었기 때문이다.
+
+<br />
+
+> 고작 몇 시간 미래에서 왔다. scss 파일을 유심히 살펴보던 중 모든 항목 뒤에 `!default`가 있는데, 내가 코드를 작성하면서 그 `!default`를 넣어주지 않았던 것이다. 📃_dark.scss와 📃_variables.scss 파일 모두 link-color와 관련된 코드에 `!default`를 꼭 붙여주도록 한다. 이후 소개할 코드에는 내가 붙여놓도록 하겠다!
+
+<br />
+
+## link-color
+
+링크를 다루기 위해서는 `$link-color`, `$link-color-hover`, `$link-color-visited` 이 3가지 변수들에 대해 설정해주면 되겠다. 각각의 역할에 대해 알아보자. 참고로 이 내용은 기본 html, css, scss 에서 통용되는 것이 아닌 minimal-mistakes 테마를 이용하는 경우에만 필요하다.
+
+<br />
+
+> `$link-color`
+
+링크의 글자 색상을 결정하는 변수이다. visited가 따로 있기 때문에 이는 방문한 적이 없는 링크가 어떤 색을 가지게 될 것인지를 결정한다.
+
+<br />
+
+> `$link-color-hover`
+
+링크에 마우스를 올리는 경우 css 속성을 다르게 설정하기 위해서 사용한다. link-color로 특정지었기 때문에 글자의 색상에 대한 속성만 부여한다.
+
+<br />
+
+> `$link-color-visited`
+
+이전에 방문했던, 즉 한 번 눌렀던 링크의 색상을 설정할 때 사용하는 변수이다. 흔히 HTML 문서에서 누르기 전에는 파란색, 누르고 나서는 보라색으로 변하는 것이 이 visited 속성을 달리 설정되어있기 때문이다.
+
+<br />
+
+## 디자인 스타일링
+
+### 디자인
+
+나는 기존의 청동색 링크보다는 테마의 메인 색상($primary-color) 계열을 아주 밝게 하여 거의 흰색에 가깝게 설정하고, 이 위에 마우스를 올리면(hover) 메인 색상에 조금 더 가깝게 색을 변경하고 싶다.
+
+<br />
+
+### 코드 구현
+
+```scss
+$link-color: lighten($primary-color, 40%) !default;
+$link-color-hover: lighten($primary-color, 20%) !default;
+$link-color-visited: $link-color !default;
+```
+
+scss에는 `lighten(color, %)`과 `darken(color, %)` 함수가 있다. 각각 인자로 지정된 color를 % 만큼 밝게/어둡게 한다는 뜻이다. 나는 이 color에 $primary-color를 집어넣고 퍼센티지를 조절하여 밝기를 조절했다.
+
+포인트는 지정한 $link-color를 $link-color-visited에 부여해서 방문 전후의 텍스트 색이 같도록 했다는 것이다.
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/149957486-4a3d5d41-ebf8-4b31-907e-5a92fd124ba8.png)
+
+hover하면 더 진한 색이 나오고, 일반적으로는 옅은 노란색, lightyellow에 가까운 색을 띄게 되었다. 조금 디자인적으로 개선할 필요가 있을 것 같지만, 일단은 기능 구현에 필요한 코드는 완성.
+
+<br />
+
+그런데 문제가 몇 개 있다.
+
+- ~~갑자기 뜬금없이 2주 전 포스트가 최근 게시물 목록에 떴다.~~
+  - 일시적인 오류였다.
+- ~~오늘 작성한 몇 개의 포스트 중 한 개만 남기고 최근 포스트에서 사라졌다. 문제는 최근 포스트에만 없지 소분류 카테고리를 누르면 다 확인할 수 있는 포스트이다.~~
+  - 일시적인 오류였다.
+- ~~`_dark.scss` 파일과 `_variables.scss` 파일의 인과관계에 대해 정확히 규명하지 못했다.~~
+  - 해결
+
+~~어째 의문만 남기고 끝내는 것 같지만 일단 기록을 마친다.~~
+모두 잘 마쳤다 :)

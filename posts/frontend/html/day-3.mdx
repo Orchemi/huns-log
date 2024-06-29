@@ -1,0 +1,207 @@
+---
+title: "[HTML] 레이아웃에 관한 태그와 속성"
+
+categories:
+  - HTML
+
+tags:
+  - [FE Language, HTML, 모두의HTML5&CSS3]
+
+author_profile: true
+
+date: 2021-07-05T21:40
+last_modified_at: 2021-07-05T21:40
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 웹 사이트 공간을 정의하는 태그
+
+### 가. `<header>` 태그
+
+- 웹 사이트의 머리글에 해당
+- `<h1>`~`<h6>` 태그를 사용하여 회사 이름이나 슬로건 입력  
+  `<img>` 태그를 사용하여 회사 로고를 삽입하거나 페이지 전환을 위한 메뉴 버튼 배치
+
+<br />
+
+### 나. `<nav>` 태그
+
+- 메뉴 버튼을 담는 공간
+- `<nav>` 태그 안에는 버튼을 만들 때 사용하는 `<ul>`, `<il>`, `<a>` 태그 사용
+
+<br />
+
+### 다.`<section>` 태그
+
+- 웹 사이트 영역을 설정할 때 사용
+- 각 장(chapter)에 해당
+- 웹 표준에 맞게 사용하려면 반드시 `<h2>`~`<h6>` 태그 중 하나는 있어야 함
+
+<br />
+
+### 라. `<article>` 태그
+
+- 웹 사이트의 주요 내용이 담기는 공간
+- 신문의 본문 내용과 같은 개념
+- 웹 표준에 맞게 사용하려면 반드시 `<h2>`~`<h6>` 태그 중 하나는 있어야 함
+
+<br />
+
+### 마. `<aside>` 태그
+
+- 본문 내용과 연관성이 적은 애용이 담기는 공간
+- 웹 사이트의 왼쪽 또는 오른쪽 가장자리에 정보를 담는 공간
+- 흔히 **'사이드 바'** 라고 부름
+- 배너나 관련 상품처럼 본문 내용과 직접적으로 관련이 적은 내용을 담음
+
+<br />
+
+### 바. `<main>` 태그
+
+- 웹 사이트의 본문 내용 전체를 감쌀 때 사용
+- **HTML 문서 한 개당 한 번밖에 사용할 수 없음**
+- **인터넷 익스플로러(IE)에서는 지원하지 않음**  
+  IE를 지원하려면 `role` 속성을 추가하여 main 속성값을 따로 지정
+
+```html
+<!--IE에서 지원할 수 있도록 <main> 태그 사용 시 role 속성 꼭 입력하자.-->
+<main role="main">
+  <section>
+    <h2>Portfolio</h2>
+    <article>
+      <h3>Project One</h3>
+    </article>
+  </section>
+</main>
+```
+
+<br />
+
+### 사. `<footer>` 태그
+
+- `<footer>` 태그는 웹 사이트 하단에 들어가는 정보를 담는 공간
+- 보통 사업자등록번호, 주소, 연락처, 이메일 주소, 저작권 표시 등  
+  해당 웹 사이트를 관리하는 회사 정보를 입력할 때 사용
+
+<br />
+
+### 아. `<div>` 태그
+
+- 큰 공간 안에서 작은 구역을 만들 때 사용하는 태그
+- `<div>` 태그 안에 여러 컨텐츠가 있어도 한 번에 수정할 수 있어
+  유지 보수가 용이  
+  (DAY 12에서 자세히 다룰 예정)
+
+<br />
+
+---
+
+## Block 요소와 Inline 요소
+
+- Block 요소와 Inline 요소는 웹 사이트 레이아웃 작업에 영향을 미치는 요소
+- 다음과 같은 특징이 있음
+  > 줄 바꿈 현상 유무  
+  > width와 height 속성 적용 유무  
+  > margin-top/bottom, padding-top/bottom 속성 적용 유무
+
+<br />
+CSS를 배우지 않았기 때문에 줄 바꿈 현상으로만 특징을 살펴본다.
+
+```html
+<!--Block 요소-->
+<p>Hello World</p>
+<p>Hello World</p>
+<p>Hello World</p>
+
+<!--Inline 요소-->
+<span> Nice to neet you</span>
+<span> Nice to neet you</span>
+<span> Nice to neet you</span>
+```
+
+실행결과
+
+<!--Block 요소-->
+
+> <p>Hello World</p>
+> <p>Hello World</p>
+> <p>Hello World</p>
+>
+> <!--Inline 요소-->
+>
+> <span> Nice to neet you</span> > <span> Nice to neet you</span> > <span> Nice to neet you</span>
+
+- `<p>` 태그처럼 세로로 정렬되는 태그는 **Block 요소**
+- `<span>` 태그처럼 가로로 정렬되는 태그는 **Inline 요소**
+
+<br />
+
+#### Block 요소(줄 바꿈 O)
+
+```html
+<h1>
+  ~
+  <h6>
+    ,
+    <p>,</p>
+    <header>
+      ,
+      <section>
+        <main>
+          ,
+          <aside>
+            ,
+            <footer>
+              ,
+              <div></div>
+            </footer>
+          </aside>
+        </main>
+      </section>
+    </header>
+  </h6>
+</h1>
+```
+
+<br />
+
+#### Inline 요소(줄 바꿈 X)
+
+```html
+<span
+  >, <a>, <input /></a
+></span>
+```
+
+<br />
+
+### +) `display` 속성
+
+- 콘텐츠의 정렬 방식을 바꾸려고 할 때 사용  
+  ex) `<li>` 태그는 Block 요소이므로 세로로 정렬되는데 이를 가로 정렬로 바꾸고 싶을 때
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>display 속성의 사용</title>
+    <!--display 속성으로 HTML 태그의 성격을 변경하자-->
+    <style>
+      li {
+        display: inline;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li>메뉴 1</li>
+      <li>메뉴 2</li>
+      <li>메뉴 3</li>
+    </ul>
+  </body>
+</html>
+```

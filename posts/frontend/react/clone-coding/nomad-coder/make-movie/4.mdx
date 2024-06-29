@@ -1,0 +1,416 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 3.2. Input과 State"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-03-26T22:20
+last_modified_at: 2022-03-26T22:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## JSX과 input
+
+> JSX에서는 input과 label의 for을 사용하면 안된다. 왜?
+
+- for은 이미 **JavaScript에서 사용하고 있는 예약어**이다.
+- html 문법으로 작성하면 문제가 될 수 있다.
+- html 문법이 아닌 JSX 문법으로 작성해야 한다.
+
+<br />
+
+### 기존 HTML
+
+```html
+<h1 class="hi">Super Converter</h1>
+<label for="minutes">Minutes</label>
+<input id="minutes" placeholder="Miniutes" type="number" />
+<label for="hours">Hours</label>
+<input id="hours" placeholder="Hours" type="number" />
+```
+
+<br />
+
+### JSX 문법
+
+```jsx
+<h1 className="hi">Super Converter</h1>
+<label htmlFor="minutes">Minutes</label>
+<input id="minutes" placeholder="Miniutes" type="number" />
+<label htmlFor="hours">Hours</label>
+<input id="hours" placeholder="Hours" type="number" />
+```
+
+<br />
+
+### input과 state
+
+> input이 있는데 왜 state를 써야하는거죠?
+
+- React JS 입장에서 이 input은 **uncontrolled** 요소
+- input의 value를 통제할 수 없다는 말
+- **state를 이용해 value를 control**하자!
+
+<br />
+
+```js
+function App() {
+  const [minutes, setMinutes] = React.useState();
+  const onChange = () => {
+    console.log("wrote");
+  };
+  return (
+    <div>
+      <h1 className="hi">Super Converter</h1>
+      <label htmlFor="minutes">Minutes</label>
+      <input
+        value={minutes}
+        id="minutes"
+        placeholder="Miniutes"
+        type="number"
+        onChange={onChange}
+      />
+      <label htmlFor="hours">Hours</label>
+      <input id="hours" placeholder="Hours" type="number" />
+    </div>
+  );
+}
+```
+
+- onChange 함수에 의해 minutes의 value가 바뀔 때마다 함수가 호출, console에 wrote 출력
+
+<br />
+
+## SyntheticBaseEvent
+
+> onChange 함수를 다음과 같이 바꿔보자.
+
+```js
+const onChange = (event) => {
+  console.log(event);
+};
+```
+
+- event 매개변수를 이용해 event에 대한 정보를 받아와 console에 출력한다.
+- 위와 같이 바꾸고 console을 다시 보면 아래와 같은 모습을 볼 수 있다.
+
+![image](https://user-images.githubusercontent.com/86189596/160236653-1126311a-f57b-4fa5-aa3b-d0494233db81.png)
+
+<br />
+
+> 뭐죠 이건?
+
+- 합성 이벤트(SyntheticEvent)이다.
+- ReactJS는 event를 최적화하는 과정을 거치기 때문에 가짜 이벤트를 발생
+- 이 내부의 **nativeEvent**가 우리가 알던 event정보
+- 이 nativeEvent 내부의 target의 value가 input 내부의 값
+
+<br />
+
+> Then How?
+
+아래와 같이 작성하면 input 내부의 값을 console에 출력할 수 있다.
+
+```js
+const onChange = (event) => {
+  console.log(event.target.value);
+};
+```
+
+<br />
+
+### setState와 input value
+
+> 저는 event 내부 input의 value를 화면에 띄우고 싶어요.
+
+- setState 함수를 이용해 event 정보로부터 state를 정의해 render해보자.
+
+```js
+const onChange = (event) => {
+  setMinutes(event.target.value);
+};
+```
+
+- 그러면 **setMinutes**의 state인 **minutes**에 **event.target.value** 값 지정 후 render
+
+<br />
+
+- input value는 이미 차있으므로, input value로부터 값을 받아 minutes에 저장한 후 render할 다른 컴포넌트를 만들어 확인
+- 아래는 "You want to convert ???"로 render하는 방식
+
+```jsx
+<label htmlFor="minutes">Minutes</label>
+<input value={minutes} id="minutes" placeholder="Miniutes" type="number" onChange={onChange}/>
+<h4>You want to convert {minutes}</h4>
+```
+
+state를 이용해 이 input은 **controlled 요소**가 되었다.
+
+<br />
+
+> 분 -> 시 변환에 적용해보자.
+
+```jsx
+<div>
+  <label htmlFor="minutes">Minutes</label>
+  <input value={minutes} id="minutes" placeholder="Miniutes" type="number" onChange={onChange}/>
+</div>
+
+<div>
+  <label htmlFor="hours">Hours</label>
+  <input value={minutes/60} id="hours" placeholder="Hours" type="number" disabled />
+</div>
+```
+
+- 변수 값을 적절히 나누어 이와 같이 작성하였다.
+- hours 부분은 **disabled** 속성을 두어 입력하지 못하도록 하였다.
+
+<br />
+
+## Hours 부분
+
+> 저는 분에서 시 변환 뿐만 아니라 반대로 시에서 분 변환도 하고 싶은데요?
+
+<br />
+
+> disabled props와 Flip 버튼을 이용해 활성화-비활성화를 변경해보자.
+
+```js
+const [flipped, setFlipped] = React.useState(false);
+const onFlip = () => setFlipped((current) => !current);
+return (
+  <div>
+    <h1 className="hi">Super Converter</h1>
+    <div>
+      <label htmlFor="minutes">Minutes</label>
+      <input
+        value={minutes}
+        id="minutes"
+        placeholder="Miniutes"
+        type="number"
+        onChange={onChange}
+        disabled={!flipped}
+      />
+    </div>
+
+    <div>
+      <label htmlFor="hours">Hours</label>
+      <input
+        value={minutes / 60}
+        id="hours"
+        placeholder="Hours"
+        type="number"
+        disabled={flipped}
+      />
+    </div>
+    <button onClick={reset}>Reset</button>
+    <button onClick={onFlip}>Filp</button>
+  </div>
+);
+```
+
+- **disabled** 속성은 bool 형식을 이용해 그 자체를 활성화/비활성화가 가능
+- onFlip 함수를 이용해 flipped state를 true/false를 교환
+- 이 상태에 대한 조건문을 disabled에 적용하거나 boolean형 변수를 적용해 default disabled 상태 정의
+- flipped가 최초 false에서 true가 되면 disabled 적용도 반대 상태
+
+<br />
+
+### 조건문과 삼항연산자
+
+> 활성화/비활성화가 아니라 시 부분에서 값을 바꾸고 싶다니까요?
+
+- hours의 value에 값을 입력하면 minutes도 \*60 되어서 적용되어야 한다.
+- filpped 상태에 따라 이를 적용하는 건 어떨까?
+- 삼항연산자를 활용해서 flipped 상태에 따라 공식 적용을 달리 해보자.
+
+<br />
+
+> 문법
+
+```
+조건 ? true일 때 : false일 때
+```
+
+```jsx
+// input#hours의 value prop
+
+// 적용 전
+value ={Math.round(amount / 60)}
+
+// 적용 후
+value={flipped ? amount : Math.round(amount / 60)}
+```
+
+- 단위 변환의 혼동이 있을 수 있어 minutes와 setMinutes 부분을 amount와 setAmount로 변경
+- flipped가 true라면 amount, false라면 Math.round(amount / 60)
+
+- flipped가 false : 초기상태(분 -> 시)
+- flipped가 true : flip상태(시 -> 분)
+
+<br />
+
+## select와 JSX
+
+> 시분 변환 말고 다른 변환도 쓸 수는 없나요?
+
+HTML의 **select 태그**를 이용해서 다른 변환을 선택해보자.
+
+<br />
+
+### 컴포넌트 분리
+
+- 지금까지 시분 변환을 App 컴포넌트 내에서 작성
+- 이제 App은 전체 컨테이너로 사용하고, 변환 항목마다 컴포넌트화 실시
+- MinutesToHours 컴포넌트로 분리
+
+```jsx
+function App() {
+  return (
+    <div>
+      <h1>Super Converter</h1>
+      <MinutesToHours />
+      <KmToMiles />
+    </div>
+  );
+}
+```
+
+- App은 단순히 컴포넌트를 담는 컨테이너의 역할
+- MinutesToHours 컴포넌트에서 h1을 제거하고 다음과 같이 쓰면 이전의 모습과 동일
+- 다른 변환 예시인 KmToMiles 컴포넌트를 만들었다고 가정
+
+<br />
+
+### select 태그 사용
+
+```jsx
+function App() {
+  const [index, setIndex] = React.useState("0");
+  const onSelect = (event) => {
+    setIndex(event.target.value);
+  };
+  return (
+    <div>
+      <h1>Super Converter</h1>
+      <select value={index} onChange={onSelect}>
+        <option value="0">Minutes & Hours</option>
+        <option value="1">Km & Miles</option>
+      </select>
+      {index === "0" ? <MinutesToHours /> : null}
+      {index === "1" ? <KmToMiles /> : null}
+    </div>
+  );
+}
+```
+
+- select마다 선택사항인 option을 두어 어떤 컴포넌트 활성화할건지 선택
+- **변화가 생길 때마다(onSelect) value(index)를 받아 setIndex(setState) 함수로 전달해 index(state)에 반영**
+- **삼항연산자 조건문을 이용해 컴포넌트 포함할지 말지 결정**
+- JSX 내부에 그냥 글을 쓰면 HTML로 인식, **중괄호({}) 내에 쓰면 JS로 인식**
+
+<br />
+
+## 전체 코드
+
+```jsx
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.17.8/babel.min.js"></script>
+  <script type="text/babel">
+    function MinutesToHours() {
+      const [amount, setAmount] = React.useState();
+      const [flipped, setFlipped] = React.useState(false);
+      const onChange = (event) => {
+        setAmount(event.target.value);
+      };
+      // minutes의 값을 0으로 초기화
+      const reset = () => setAmount(0);
+
+      const onFlip = () => {
+        // flip 시 값을 초기화하기 위해 reset() 함수 호출
+        reset();
+        // 현재 flipped state의 상태와 반대인 bool을 state에 지정
+        //const onFlip = () => setFlipped(!flipped);
+        // flipped state의 정말 현재 상태를 가져오기 위해 arrow 함수 사용
+        setFlipped((current) => !current);
+      };
+
+      return (
+        <div>
+          <div>
+            <label htmlFor="minutes">Minutes</label>
+            <input
+              value={flipped ? amount * 60 : amount}
+              id="minutes"
+              placeholder="Miniutes"
+              type="number"
+              onChange={onChange}
+              disabled={flipped}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="hours">Hours</label>
+            <input
+              value={flipped ? amount : Math.round(amount / 60)}
+              id="hours"
+              placeholder="Hours"
+              type="number"
+              onChange={onChange}
+              disabled={!flipped}
+            />
+          </div>
+          <button onClick={reset}>Reset</button>
+          <button onClick={onFlip}>{flipped ? "Filp Back" : "Flip"}</button>
+        </div>
+      );
+    }
+    function KmToMiles() {
+      return <h3>KM 2 Miles</h3>;
+    }
+
+    function App() {
+      const [index, setIndex] = React.useState("0");
+      const onSelect = (event) => {
+        setIndex(event.target.value);
+      };
+      return (
+        <div>
+          <h1>Super Converter</h1>
+          <select value={index} onChange={onSelect}>
+            <option value="0">Minutes & Hours</option>
+            <option value="1">Km & Miles</option>
+          </select>
+          <hr />
+          {index === "0" ? <MinutesToHours /> : null}
+          {index === "1" ? <KmToMiles /> : null}
+        </div>
+      );
+    }
+
+    const root = document.getElementById("root");
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
+```

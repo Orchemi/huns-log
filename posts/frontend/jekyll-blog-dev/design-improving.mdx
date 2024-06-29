@@ -1,0 +1,86 @@
+---
+title: "[BlogDev] 디자인 개선 작업"
+excerpt: "page 로딩 속도 개선 작업"
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github]
+
+date: 2022-11-27T09:00
+last_modified_at: 2022-11-27T09:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 작업 동기
+
+SSAFY 1년의 과정을 마치고 그동안 조금씩 개선하고 싶었던 블로그 디자인들을 손을 볼 여유가 생겨서 조금씩 해보려 한다.
+
+<br />
+
+## 작업 내용
+
+### 메인 폰트 변경
+
+> BEFORE
+
+![image](https://user-images.githubusercontent.com/86189596/203918675-23569831-8cde-4870-b90a-95452d807d85.png)
+
+초반에는 뭔가 몽골몽골하니 마음에 들었던 폰트였는데, 가독성이 그리 좋지 않다는 느낌을 받았다. 가독성이 더 좋은 계열의 폰트로 변경을 해보고자 했다.
+
+메인 폰트의 변경은 꽤나 큰 결심이었다.
+
+<br />
+
+> AFTER
+
+![image](https://user-images.githubusercontent.com/86189596/204112669-ab9ef83b-35d3-4b15-97a3-7cc9b70a5f62.png)
+
+구글 슬라이드에서 그나마 이쁜 폰트여서 종종 썼던 [고운돋움체](https://fonts.google.com/specimen/Gowun+Dodum)를 메인폰트로 사용하게 되었다. 이전보다 더 깔끔해진 느낌이 돋보인다.
+
+<br />
+
+### 태그 스타일 변경
+
+> BEFORE
+
+![image](https://user-images.githubusercontent.com/86189596/204113245-75df34fa-951d-4c25-b629-c32a2a3ef05d.png)
+
+이전에는 조금 깔끔한 느낌을 주고 싶어 각진 태그 스타일을 고수했다.
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/203918675-23569831-8cde-4870-b90a-95452d807d85.png)
+
+하지만 위에처럼 여러 포스트들이 나열된 경우 태그들 역시 나란히 나열되며 투박한 느낌을 주는 것 같았다.
+
+<br />
+
+> AFTER
+
+![image](https://user-images.githubusercontent.com/86189596/204113306-b54fa684-3358-4137-94cd-5ce23e1ffe9b.png)
+
+폰트의 차이도 있겠지만 padding을 소폭 줄이고 그림자를 흰색 계열로 변경하였다. 조금 네온의 느낌을 주는 것도 같다.
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/204113338-564dd179-02a6-45f5-b991-b24ac1aed538.png)
+
+전체적인 느낌을 고려하더라도 나름 깔끔한 UI로 개선했다고 느껴진다.
+
+<br />
+
+## 느낀 점
+
+커밋이 반영되고 github CI/CD를 통해 빌드를 마치는 과정까지 대략 10분이나 걸리기 때문에 CSS 수준에서 디자인을 개선하는 것은 개발자도구에서 건드려보며 작업을 해야 했다. 번거롭다면 번거로운 것이 사실이지만, 아름다움을 위해서는 끊임없이 깎아낼 필요가 있다.
+
+지금도 사실 해야할 일이 더 있어서 간단한 것부터 건드렸지만 이후에는 summary-detail의 애니메이션 효과를 부여하거나 리스트 스타일을 소폭 변경하는 등의 변화를 줘보려고 한다.

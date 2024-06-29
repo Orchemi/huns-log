@@ -1,0 +1,156 @@
+---
+title: "[BlogDev] 카테고리별 페이지 구분 도전기"
+excerpt: "카테고리별 포스트들을 pagination 설정하는 과정을 남긴다."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-02-01T21:46
+last_modified_at: 2022-02-01T21:46
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 설계 목적
+
+포스트 내부 페이지와 home 페이지, 사이드바 카테고리의 구성 및 디자인은 얼추 끝냈다. 하지만 카테고리별로 포스트를 모아둔 archive 페이지의 디자인은 마치지 못했다.
+
+![image](https://user-images.githubusercontent.com/86189596/151936977-badca239-6f7d-4035-a361-3ff267501be1.png)
+
+정말 빼곡하고 가독성이 좋지 않은 archive 방식이다. 포스트의 수가 늘어나면 늘어날수록 그렇다. home.html과 달리 pagination, 즉 포스트의 수를 일정 간격으로 잘라서 페이지로 나뉘어 있지도 못한다. 이를 개선해보려고 한다.
+
+a태그의 모양은 home.html에 있는 것처럼 크고, 작성일자는 a태그의 위, 태그는 a태그의 아래에 배치해보려 한다.
+
+<br />
+
+## Paging?
+
+지금껏 페이징이 되는 유일한 파일은 📃home.html이었고, 거기에는 다른 레이아웃 파일에는 없는 paginator.html 파일을 include해주는 코드가 존재한다. 나는 그래서 paginator.html 파일이 페이지를 나누어주는데 결정적인 역할을 하는구나 느끼게 되었다.
+
+그래서 📃paginator.html 파일의 코드를 한 줄 한 줄 엄청나게 열심히 분석했는데, paginator.html 파일 자체는 포스트를 나누어 페이지를 분리해주는 역할을 해주는 것이 아니라 현재 페이지를 기준으로 이전이나 다음 페이지로 이동하는 **trail**을 만드는 코드였다. 그렇다면 도대체 코드를 나누는 것은 어떤 파일이 어떻게 하는 것일지 궁금하기 이르렀다.
+
+<br />
+
+## 개선의 노력
+
+### 레퍼런스 조사
+
+인터넷을 엄청나게 뒤지고 파일 디렉토리를 다 뒤져보았는데도 그 구조나 원리를 알 수는 없었다. jekyll의 공식 홈페이지와 github의 README는 모두 다 읽어보았는데도 해결이 되지 않았다. 이제는 조금씩 지쳐갔다.
+
+<br />
+
+### Trial&Error
+
+부딪혀보고 안 되면 다르게 하고 안 되면 다른 방식을 찾아서 또 하고. 이렇게 부딪히다 보면 언젠가는 맞는 방식을 찾아서 해결해낼 수 있을 줄 알았다. 그래서 구글에서 영어로도 검색하고 한글로도 검색하면서 이전에 같은 문제를 겪었던 블로거들의 코드도 그대로 따라해보고 내 방식대로 바꿔도 보고 했다.
+
+<br />
+
+### paginate 플러그인 사용
+
+위에서 설명한 방식은 paginate plugin을 따로 다운받는 것이다. 인터넷에 있는 플러그인이란 플러그인은 모두 도전해보았다.
+
+먼저 jekyll-paginate-categories였다. 애초에 주류 플러그인이 아닌 것 같고 이를 소개한 블로거의 실력 또한 그리 좋아보이지는 않았기 때문에 기대는 하지 않았지만 다운 받아서 할 수 있는 것은 다해보고 안 돼서 포기했다.
+
+다음으로는 jekyll-paginate-v2 플러그인이다. 이를 다룬 블로그 포스트가 많고, Jekyll 공식 레퍼런스에도 언급이 된만큼 내 문제를 해결할 수 있는 key라고 생각하고 모든 시간을 투자해 절실하게 매달렸다.
+
+Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에서 하라는대로 해보고, 그것이 잘 통하지 않아서 Google의 많고 많은 블로그 포스트들을 정독하며 그 사람들처럼도 해보고 안 되면 permalink나 header, \_config.yml 파일의 설정을 조금씩 바꿔가며 끊임없이 도전했다.
+
+<br />
+
+### 결과
+
+그런데 안 된다. 며칠을 매달렸는데 안 된다.
+
+<br />
+
+## paginator의 배신
+
+기존에 paginator.html을 계속 include 해보려 했는데 공식 레퍼런스를 원문으로 자세히 읽어보니 이런 글이 있었다.
+
+![image](https://user-images.githubusercontent.com/86189596/151937289-0abc56fe-babc-4208-a87b-729f80cff7e7.png)
+
+"Pagination은 태그나 카테고리에는 안 돼요^^" 라는 내용이다. 즉, home.html에만 pagination이 적용되었던 이유는 home.html은 최근 게시물을 모두 보여주는 페이지이고, pagination은 site의 모든 post들을 조회하기 때문에 home.html에만 사용할 수 있는 것이었다.
+
+즉, paginator.html을 include하는 모든 노력들은 의미가 없었다는 얘기다.
+
+<br />
+
+## jekyll-paginate-v2의 배신
+
+위의 paginator.html이 카테고리나 태그를 지원하지 않는다는 내용은 아쉬웠지만 그래도 상심이 크지 않았다. 왜냐하면 처음에 paginator를 include해본 노력도 없지는 않았지만 블로거나 공식 레퍼런스를 참고하면서 paginator를 include하지 않은 코드도 많이 도전했기 때문이다. 아마 안 넣은 코드가 더 많았을 것이다.
+
+그런데 안 좋은 소식이 또 있었다. StackOverFlow에 누군가 pagination이 되지 않는다며 자신의 \_config.yml 파일과 categoriy md 파일들을 올려놓은 것이다. 그리고 그에 대한 답변이다.
+
+![image](https://user-images.githubusercontent.com/86189596/151966258-a244d798-d0fc-49f4-a374-906135e6687d.png)
+
+"Paginate는 모든 포스트에 적용돼서 카테고리나 태그는 안 됨. Pageinate v2는 collection이라는 걸로 이걸 되게 하는데 Github Page에는 이 플러그인 못 돌림ㅎㅎ"
+
+아. Github Page에서는 쓸 수가 없는 모양이었다. 나는 지금껏 무슨 싸움을 해온 것일까?
+
+절망이 스친 뒤에 드는 생각이 있었다. 사실 StackOverFlow가 개발세계에서는 유명한 사이트이지만 개인의 의견이나 답변이고, 신뢰할 수 없는 답변이라고 생각하기도 했다.
+
+![image](https://user-images.githubusercontent.com/86189596/151969260-e490ba73-cf3f-45e2-b4cf-2fd417cd5dbd.png)
+
+현실 부정이었다. Github Pages에서 지원하는 플러그인이나 기타 프로그램들의 version을 체크하는 페이지에 jekyll-paginate-v2 플러그인은 없었다. jekyll-paginate는 1.1.0 ver로 떡하니 있지만 말이다. 두 번을 넘게 전체 페이지를 올리고 내려보며 눈 씻고 찾아봐도 없었다.
+
+<br />
+
+## 절충안
+
+당장은 이를 해결할 수도 없을 것 같기도 했고, 해결하려고 한다고 해도 너무 많은 시간이 필요할 것 같았다. 그런데 나는 이번 연휴에 파이썬도 정리하고 PS도 해야했다. 이를 미루고 블로그 커스텀을 위해 이렇게 시간투자를 했는데 더 이상 여기에만 도전할 수 없었다.
+
+그래서 절충안을 생각했다. 현재 각 카테고리마다 포스트를 긁어모으는 category md파일은 해당 카테고리를 가진 post만 모아 각각의 post를 archive-single2.html 형식으로 렌더링했다. 그런데 이 archive-single2.html이 바로 위에서처럼 빼곡하게 줄줄이 있는 페이지인 것이다.
+
+그렇다면 이것만이라도 피하고자 모든 카테고리 md파일의 archive-single2.html 을 archive-single.html로 변경하였다. 이 파일은 home.html 레이아웃에서 site.posts를 렌더링하는, 즉 작성일자-링크-태그 순으로 크게 표시되는 형식으로 렌더링하는 파일이다. 나는 이렇게라도 해야겠다고 생각이 들었다.
+
+<br />
+
+## 결과
+
+![image](https://user-images.githubusercontent.com/86189596/151967031-b547ad5f-6df6-4502-ab8e-4430451f94ba.png)
+
+이렇게 하는 경우 포스트마다 차지하는 면적이나 포스트간 간격이 커져 세로축이 길어지는 단점이 있다. 그래서 되도록이면 paging을 하여 포스트들을 일정 단위로 나누고 싶었던 것이다.
+
+그런대로 디자인은 챙겨갔다. 다만 한 카테고리가 너무 많은 포스트를 가지지 않도록 카테고리 세분화를 앞으로도 잘 해나가야겠다고 생각이 들었다.
+
+<br />
+
+## 느낀점
+
+정말 어려운 도전이었다. 스타일 하나 바꿔보겠다며 거의 며칠을 매달렸으니 말이다. 그런데 Github에서 Plugin을 지원하지 않고, Jekyll 자체의 jekyll-paginate 플러그인은 카테고리나 태그별 paging을 지원하지 않으니 별달리 방법이 없었다. 엔진 자체가 지원을 안하니... 정말 오래 부딪혀서라도 해내고 싶었는데 너무 분하다. 언젠가 이 문제를 해결해낼 수 있을거라 믿고 일단은 당장 쓸 수 있는 디자인으로 레이아웃만 스타일링하는 것으로 만족하기로 했다. 속상하다.
+
+그래도 내 최선을 다해 노력했고, 문제 해결이 안 되는 것이 내 노력이나 능력의 부재라기 보다는 플랫폼의 구조적인 문제였으니 내가 할 수 있는 최선을 다했다는 것에 의의를 두려고 한다.
+
+어쩌면 이 문제를 해결할 방법이 숨어있을지도 모르고, 앞으로 플러그인을 지원해서 가능하게 될 수도 있다. 나는 이 문제를 덮고 지나가는 것이 아니라 때를 기다리는 것이다. 언젠가 이 문제를 꼭 해결할 것이다.
+
+<br />
+
+## Reference
+
+### 공식 레퍼런스
+
+- [Jekylllrb.com](https://jekyllrb.com/docs/pagination/)
+- [Github - jekyll-paginate-categories](https://github.com/jguyomard/jekyll-paginate-categories)
+- [Github - jekyll-paginate-v2](https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md)
+- [Github Pages - version](https://pages.github.com/versions/)
+
+<br />
+
+### Blog
+
+- [Jekyll에서 카테고리 페이지 나누기](https://pengpengto.gitlab.io/blog/tech/2017/06/08/jekyll-category_pagination.html)
+- [Dev Ari - Github Page Jekyll에 카테고리 추가하기](https://blog.devari.kr/2019/jekyll/jekyll-category-setting)
+- [jekyll-paginate-v2 사용](https://calofmijuck.tistory.com/7)
+- [DeKu - pagination 플러그인 사용](https://dev-yakuza.posstree.com/ko/jekyll/pagination-plugin/)
+- [나의 Jekyll template 제작기](https://shlrur.github.io/develog/2018/12/10/jekyll-template-story-2/)
+- [StackOverFlow - How to paginate categories in Jekyll with Github Pages?](https://stackoverflow.com/questions/56065176/how-to-paginate-categories-in-jekyll-with-github-pages)

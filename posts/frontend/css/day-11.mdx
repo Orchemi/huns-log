@@ -1,0 +1,294 @@
+---
+title: "[CSS] 메뉴 버튼 만들기"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-08T23:20
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+<h2 style="margin-top:50px">
+    1. 정적 메뉴 버튼
+</h2>
+
+<h3 style="margin-top:30px">
+    가. 메뉴 리스트 생성
+</h3>
+
+- `<nav>` 태그를 사용하여 메뉴 버튼을 담는 공간 제작
+- 순서가 없는 리스트이므로 `<ul>` 태그와 `<li>`사용
+- 메뉴 버튼 클릭 시 페이지 전환을 위해 `<li>` 태그 안에 `<a>` 사용
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>정적 메뉴 버튼</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        <li><a href="#">메뉴1</a></li>
+        <li><a href="#">메뉴2</a></li>
+        <li><a href="#">메뉴3</a></li>
+      </ul>
+    </nav>
+  </body>
+</html>
+```
+
+- 실행결과 가운뎃점과 밑줄(\_)이 함께 표시된 세로 정렬 메뉴가 생성되었다.
+  이는 `<ul>`과 `<a>` 태그가 가진 list-style과 text-decoration 속성 때문
+- list-style 속성 : 리스트 정보를 표기하는 디자인에 영향
+- text-decoration 속성 : 텍스트에 밑줄/윗줄/가운뎃줄 넣을 때 사용
+- **속성값을 none으로 입력하면 제거 가능**
+
+```css
+*css파일 ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+```
+
+- **html, body 태그에 margin/padding: 0을 적용하는 것처럼
+  항상 적용하도록 하자.**
+
+<h3 style="margin-top:30px">
+    나. 메뉴 버튼 생성
+</h3>
+
+```css
+*css파일 li {
+  width: 100px;
+  height: 50px;
+  background-color: yellow;
+
+  /* 5px 두께의 빨간색 테두리 */
+  border: solid 5px red;
+}
+```
+
+<h3 style="margin-top:30px">
+    다. 메뉴 버튼 내 글자 정렬
+</h3>
+
+- 메뉴 버튼 내의 글자를 정렬하자.
+  - text-align : x축을 기준으로 글자를 수평 정렬
+  - line-height : 텍스트 위아래 줄 간격 지정  
+    y축 중앙에 배치하고 싶다면 **버튼의 높이(50px)와 같은 값을 입력**
+
+```css
+*css파일 li {
+  width: 100px;
+  height: 50px;
+  background-color: yellow;
+  border: solid 5px red;
+
+  text-align: center; /* 수평 중앙 정렬 */
+  line-height: 50px; /* height 속성값과 동일한 속성값 입력 */
+}
+```
+
+<h3 style="margin-top:30px">
+    라. 메뉴 버튼 내 가로 정렬
+</h3>
+
+- `<li>` 태그는 block 요소이므로 세로 정렬된다.
+- 메뉴버튼의 줄 바꿈 현상을 제거하고 width/height 속성을 적용하려면,
+  linline과 block 요소의 특징을 모두 가진 inline-block 속성값 입력
+
+```css
+*css파일 li {
+  display: inline-block;
+  width: 100px;
+  height: 50px;
+  background-color: yellow;
+  border: solid 5px red;
+  text-align: center;
+  line-height: 50px;
+}
+```
+
+<h3 style="margin-top:30px">
+    마. 메뉴 버튼 간 공백 제거
+</h3>
+
+- display: inline-block; 을 사용하면 메뉴 버튼 사이에 공백 발생
+- 공백을 제거하기 위해서는 display: inline-block 대신 float: left; 사용  
+  = "왼쪽부터 차곡차곡 태그를 배치하겠다."
+
+```css
+*css파일 li {
+  float: left;
+  width: 100px;
+  height: 50px;
+  background-color: yellow;
+  border: solid 5px red;
+  text-align: center;
+  line-height: 50px;
+}
+```
+
+<h2 style="margin-top:50px">
+    2. 정적 메뉴 버튼 수정
+</h2>
+
+- 앞에서 제작한 정적 메뉴 버튼에 마우스를 올리면 글자 영역에서는 손가락으로
+  바뀌지만 노란색 영역에서는 화살표가 나타난다.
+- 이는 현재 메뉴 버튼의 동작 범위가 글자에만 적용되어 있기 때문
+- **동작 범위를 노란색 영역까지 넓히고 싶다면 `<a>` 태그의 범위를 확장해야 한다.**
+
+<h3 style="margin-top:30px">
+    a 태그 설정
+</h3>
+
+- position: absolute; 적용
+- absolute 속성은 어디로 튈지 모르기 때문에 **자식에 absolute 속성값을 적용할
+  때는 부모에 relative 속성값을 적용하는 안전장치를 만드는 것이 좋다.**
+- width/height : 100%; 적용
+- 글자가 정중앙에 배치되도록 `<a>` 태그 안에
+  text-align과 line-height 속성 적용
+
+```css
+*css파일 a {
+  text-decoration: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 50px;
+}
+
+li {
+  position: relative;
+  float: left;
+  width: 100px;
+  height: 50px;
+  background-color: yellow;
+  border: solid 5px red;
+  /* text-align: center; */
+  /* line-height: 50px; */
+}
+```
+
+> `<a>` 태그는 Inline 요소의 특징을 가지므로 width/height 속성이
+> 적용되어서는 안되지만 Inline 요소에 position: absolute; 속성을
+> 사용하면 width/height 속성을 적용할 수 있다.
+
+<h2 style="margin-top:50px">
+    3. 동적 메뉴 버튼
+</h2>
+
+- transition 속성을 사용
+- 메뉴 버튼에 마우스 포인터를 올리면 버튼이 움직이면서 배경색이 달라지는
+  동적인 메뉴 버튼
+
+<h3 style="margin-top:30px">
+    가. CSS 기본 속성 초기화
+</h3>
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>동적 메뉴 버튼</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Portfolio</a></li>
+        <li><a href="#">Sign in</a></li>
+      </ul>
+    </nav>
+  </body>
+</html>
+```
+
+```css
+*css파일 html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+```
+
+<h3 style="margin-top:30px">
+    나. 메뉴 버튼 디자인
+</h3>
+
+- `<a>` 태그의 CSS 속성으로 text-transform 추가
+  - uppercase 적용 : 모든 글자가 대문자
+  - lowercase 적용 : 모든 글자가 소문자
+- border-top 속성으로 상단에만 테두리 적용
+  - border-right/bottom/left 다 된다.
+
+```css
+*css파일 a {
+  text-decoration: none;
+  color: #fff; /* 흰색 글씨 */
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+li {
+  width: 250px;
+  background-color: #000; /* 검정 배경색 */
+  padding: 20px;
+  border-top: solid 5px #dfdfdf; /* 상단에만 두께 5px의 회색 실선 테두리*/
+}
+```
+
+<h3 style="margin-top:30px">
+    다. transition 속성 적용
+</h3>
+
+- 마우스 포인터를 올렸을 때 메뉴 버튼이 오른쪽으로 움직이면서 배경색이 바뀌는
+  효과 적용
+
+```css
+*css파일 li {
+  width: 250px;
+  background-color: #000; /* 검정 배경색 */
+  padding: 20px;
+  border-top: solid 5px #dfdfdf; /* 상단에만 두께 5px의 회색 실선 테두리*/
+  transition: background-color 0.2s, margin-left 0.5s;
+}
+
+li:hover {
+  background-color: gray;
+  margin-left: 10px;
+}
+```

@@ -1,0 +1,103 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 13. Weather API"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-11T03:00
+last_modified_at: 2022-03-11T20:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 위치 정보 확인
+
+### navigator.geolocation.getCurrentPosition()
+
+- `navigator.geolocation.getCurrentPosition(success, error, [options])`식으로 사용
+- success인 경우 position 정보 object 제공
+- error인 경우 에러 메시지 반환할 콜백함수 지정
+
+- [참고자료 : MDN - getCurrentPosition](https://developer.mozilla.org/ko/docs/Web/API/Geolocation/getCurrentPosition)
+
+<br />
+
+```js
+function onGeoOk(position){
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+  console.log("You live in", lat, lon);
+}
+function onGeoError(){
+  alert("Can't find you. No weather for you.")
+}
+
+navigator.geolocation.getCurrentPosition(onGeoOk, onGeoError);
+```
+
+<br />
+
+### OpenWeather
+
+- [OpenWeather 사이트](https://home.openweathermap.org/)
+- 위도, 경도 정보로 해당 좌표의 날씨 정보를 가져오는 API 제공
+- 기타 여러 날씨 관련 데이터 API 제공
+
+<br />
+
+### current weather data api
+
+- [Current weather data](https://openweathermap.org/current)
+- 위도, 경도 데이터와 내 api key를 이용해 날씨 데이터를 얻을 수 있다.
+
+```
+https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}&units=metric
+```
+
+- {lat}과 {lon} 자리에 latitude(위도), longitude(경도) 정보 넣기
+- {API key} 자리에 내 profile의 api key 넣기
+- &units=metric : 화씨 온도를 섭씨 온도로 변환하는 query
+
+<br />
+
+### fetch(url)
+
+- 괄호 내의 url을 브라우저에서 call하는 함수
+- fetch()함수는 promise의 일종, 바로 실행되지 않는다는 것!
+- `fetch().then(response => response.json());` 처럼 then()을 이용해 정보를 받은 이후의 작업을 설정
+
+<br />
+
+### then()
+
+- JS promise에 덧붙여 `~~가 된다면~`의 의미의 함수
+- promise는 바로 실행되는 것이 아닌 함수이므로 기다려서 데이터가 오면 그 이후에 다음 코드나 함수를 실행하는 의미
+
+```js
+// weather.js
+
+function onGeoOk(position){
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+  fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const weather = document.querySelector("#weather span:first-child");
+    const city = document.querySelector("#weather span:last-child");
+    city.innerText = data.name;
+    weather.innerText = `${data.weather[0].main} / ${data.main.temp}`;
+  });
+```
+
+- weather.js의 일부 코드이다. promise이기 때문에 바로 실행되지 않는 fetch()함수 뒤에 then이 2차례 있다.
+- url을 조회해 정보를 받아오면 → then 내부 실행 → 받아온 데이터를 json형태로 변환
+- 이를 data라고 하고 weather.innerText의 정의에 다시 사용

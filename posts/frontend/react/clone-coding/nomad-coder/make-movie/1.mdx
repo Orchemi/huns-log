@@ -1,0 +1,127 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 2.1. React의 설치와 기초"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-03-22T03:19
+last_modified_at: 2022-03-22T03:19
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Import React
+
+React CDN([다운로드 링크](https://ko.reactjs.org/docs/cdn-links.html))을 html 파일에 Import해보자.
+
+```js
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+```
+
+- React JS : **App이 interactive**하게 만들어주는 library
+- React-DOM : 모든 **React element들을 HTML body에** 둘 수 있게 하는 library
+
+<br />
+
+## React JS
+
+조금 어려운 방식이고, 실제로는 이렇게 작업하지는 않겠지만, 기본 동작을 알기 위한 코드
+
+<br />
+
+### React.createElement : Element 생성
+
+```js
+const span = React.createElement("span");
+```
+
+span 태그 element를 만들고, 이를 span에 저장
+
+<br />
+
+### element에 property 부여
+
+```js
+// special-span id 부여
+const span = React.createElement("span", { id: "special-span" });
+
+// color: red; style 부여
+const span = React.createElement("span", style: { color: "red" });
+```
+
+- **두 번째 argument에 중괄호**를 넣고, property와 value 넣기
+- django의 context와 비슷
+
+<br />
+
+### element에 content 부여
+
+```js
+const span = React.createElement("span", { id: "special-span" }, "Hello, I'm a span");
+```
+
+- **세 번째 argument**에 string 형식으로 넣기
+
+<br />
+
+## React-DOM
+
+- 화면에 React element를 rendering 할 때 사용
+
+<br />
+
+### ReactDOM.render() : React element HTML에 삽입
+
+```js
+const root = document.getElementById("root");
+const span = React.createElement("span");
+ReactDOM.render(span, root);
+```
+
+- "#root element 내에 span element를 넣어 render하겠다!"
+- React JS로 만든 react element를 HTML에 반영하겠다.
+
+<br />
+
+### 다중 삽입할 때 : array 사용
+
+```js
+const root = document.getElementById("root");
+const h3 = React.createElement("h3", null, "Hello, I'm a h3" );
+const btn = React.createElement("button", null, "Click me");
+const container = React.createElement("div", null, [h3, btn]);
+ReactDOM.render(container, root);
+```
+
+- "container div 안에 h3과 btn을 넣고 root 내에 render하겠다."
+- array에 element 삽입
+
+<br />
+
+## JavaScript와 React
+
+- Vanilla JS : HTML element 만들기 → JS에서 수정
+- React JS : React element에서 다 만들기 → HTML에 반영
+- element의 업데이트에 더 용이
+
+<br />
+
+## Event in React
+
+```js
+const btn = React.createElement("button", {
+  onClick: () => console.log("I'm clicked"),
+}, "Click me");
+```
+
+- btn element에 "click" eventListener를 add한 상황
+

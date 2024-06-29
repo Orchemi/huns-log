@@ -1,0 +1,327 @@
+---
+title: "[BlogDev] 사이드바 카테고리 스타일링"
+excerpt: "사이드바의 카테고리를 보다 가시성 있게 바꿔보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-01-10T02:05
+last_modified_at: 2022-01-10T02:52
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 파일 경로
+
+사이드바 카테고리의 여러 부분들을 커스터마이징하기 위해서 수정하거나 확인해야 하는 파일이다.
+
+1. 📁_sass📁minimal-mistakes📃_navigation.scss
+2. 📁_sass📁minimal-mistakes📃_variables.scss
+3. 📁_data📃ui-text.yml
+
+<br />
+
+## 대분류별 간격 띄우기
+
+![image](https://user-images.githubusercontent.com/86189596/148686904-ef0ba2ee-8ada-41ba-bfee-27fc3559f00e.png)
+
+각 대분류끼리가 너무 가까워서 각각의 카테고리가 너무 붙어있는 느낌이 든다. 크롬의 개발자 도구를 이용해 해당 요소를 클릭하면 css가 어떻게 되어있는지 볼 수 있는데, 해당 항목은 `.nav__sub-title` 클래스의 요소이다.
+
+```css
+/* 변경 전 */
+
+.nav__sub-title {
+  margin: 0.5rem 0;
+}
+```
+
+변경 전의 margin이 위아래로 0.5rem 이었기 때문에 이를 아래처럼 바꿔준다.
+
+<br />
+
+```css
+/* 변경 후 */
+
+.nav__sub-title {
+  margin: 1.5rem 0 0.3rem 0;
+}
+```
+
+![image](https://user-images.githubusercontent.com/86189596/148688537-e5d4bca3-03e0-43b1-b7d8-4b19e438ae54.png)
+
+사진처럼 대분류마다 간격이 생겨서 구분이 용이해졌다.
+
+<br />
+
+## 대분류 카테고리 폰트 크기 변경
+
+![image](https://user-images.githubusercontent.com/86189596/148688537-e5d4bca3-03e0-43b1-b7d8-4b19e438ae54.png)
+
+대분류 카테고리간 간격을 벌렸지만, 대분류 카테고리와 소분류 카테고리의 글자색과 크기가 비슷해서 구분이 잘 되지 않는다. 그래서 대분류 카테고리의 폰트의 크기를 소폭 키워보겠다.
+
+<br />
+
+`.nav__sub-title`의 폰트 크기를 확인하기 위해 📃_navigation.scss 파일의 `.nav__sub-title` 파트의 font-size 를 살펴보면 다음과 같다.
+
+```css
+/* 변경 전 */
+
+.nav__sub-title {
+  font-size: $type-size-6;
+}
+```
+
+이때, sass는 css와 달리 변수를 지정할 수 있고, minimal-mistakes 에서는 📃_variables.scss 에서 이 변수들을 한 번에 지정해두었다. 때문에 정확한 사이즈의 측정을 위해 📃_variables.scss 에서 `$type-size-6` 와 관련된 부분을 살펴보았다.
+
+<br />
+
+```css
+/* type scale */
+$type-size-1: 2.441em !default; // ~39.056px
+$type-size-2: 1.953em !default; // ~31.248px
+$type-size-3: 1.563em !default; // ~25.008px
+$type-size-4: 1.25em !default; // ~20px
+$type-size-5: 1em !default; // ~16px
+$type-size-6: 0.75em !default; // ~12px
+$type-size-7: 0.6875em !default; // ~11px
+$type-size-8: 0.625em !default; // ~10px
+```
+
+<br />
+
+즉, 현재 0.75em의 폰트 사이즈를 가지고 있다는 것인데, 크기를 소폭 키우기 위해 아래처럼 `$type-size-5` 로만 바꿔주면 되겠다. 결론적으로는 0.75em -> 1em이 된다.
+
+```css
+/* 변경 후 */
+
+.nav__sub-title {
+  font-size: $type-size-5;
+}
+```
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/148689021-c1d88026-84ba-443d-aa2a-b47ebb50c8e3.png)
+
+대분류 카테고리의 폰트 사이즈가 확실히 소폭 커져서 소분류 카테고리와 구분이 되는 것을 알 수 있다.
+
+<br />
+
+## 대분류 카테고리 폰트 색 변경
+
+![image](https://user-images.githubusercontent.com/86189596/148689021-c1d88026-84ba-443d-aa2a-b47ebb50c8e3.png)
+
+대분류 카테고리의 폰트가 소폭 커지며 구분은 되지만, 조금은 아쉬운 상황이다. 그래서 폰트의 사이즈를 더 키울까 했는데, 이는 과한 것 같다고 생각이 들었다. 그래서 폰트의 색을 변경해서 대분류와 소분류를 구분해보고자 하였다.
+
+<br />
+
+📃_variables.scss의 .nav\_\_sub-title 파트에는 color가 따로 지정되어 있지 않다. 그래서 기본 폰트색이 나오는 것. 그래서 새롭게 color를 지정해주면 된다. 내 블로그의 초반 색 설정은 [공부하는 식빵맘](https://ansohxxn.github.io/)님의 블로그에서 따왔는데, 이 색을 통일시켜주기로 했다.
+
+```css
+.nav__sub-title {
+  color: mix(#fff, $primary-color, 40%);
+}
+```
+
+해당 부분은 원하는 색상을 하드코딩해도 되고, 이렇게 따라해도 좋다. 나는 추후 블로그 컬러를 바꿀 의향이 있어서 일단 이렇게 설정해두었다.
+
+![image](https://user-images.githubusercontent.com/86189596/148689727-41e9fc0e-8cc3-44eb-a50c-60c54537436c.png)
+
+확연히 눈에 띄는 색으로 탈바꿈했다.
+
+<br />
+
+## 모바일 버전 카테고리 버튼 바꾸기
+
+![image](https://user-images.githubusercontent.com/86189596/148689803-310a30fc-4eca-4e74-88a4-ba84ce2596e7.png)
+
+모바일 버전으로 확인해보니, `토글 메뉴 +` 라는 버튼이 눈에 띄었다. 즉, PC버전에서 사이드바 카테고리가 모바일버전에서는 기본으로 접혀있다가 버튼을 누르면 드롭다운 되는 형식인데, 이 버튼의 텍스트가 '토글 메뉴' 인 것이 마음에 들지 않았다.
+
+그래서 이를 `카테고리 +` 로 바꿀 것이다.
+
+<br />
+
+📁_data📃ui-text.yml 파일을 보면, 각 언어마다 ui의 텍스트를 어떻게 나타낼 것인지를 지정할 수 있다.
+
+```yaml
+menu_label: "카테고리"
+```
+
+menu_label을 위와 같이 '카테고리' 로 바꿔주면, 아래처럼 잘 반영이 된 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/86189596/148690780-589bc44f-522e-49ea-83e4-3e737c75f46e.png)
+
+<br />
+
+추가로 모바일 버전을 확인할 때 직접 휴대폰 화면을 캡쳐하긴 했지만, 크롬의 개발자 모드에서 화면 픽셀을 조정해서 모바일 버전을 확인할 수도 있다.
+
+![image](https://user-images.githubusercontent.com/86189596/148690916-90100c06-2c63-441e-a3a6-9b6f4d14b96c.png)
+
+<br />
+
+## 모바일 버전 카테고리 행간격 설정
+
+![image](https://user-images.githubusercontent.com/86189596/148690916-90100c06-2c63-441e-a3a6-9b6f4d14b96c.png)
+
+모바일 버전의 화면을 보면 알 수 있지만, 행간격이 상당하다. 이를 보기 좋은 정도까지 줄여보자.
+
+PC 버전과 태블릿 버전, 모바일 버전을 보았을 때, toc으로서 카테고리가 줄어드는 것은 태블릿 버전과 모바일 버전 뿐이다. 어차피 PC 버전은 왼쪽에 사이드바로 있기 때문이다. 그렇다면 화면의 크기에 따라 적용이 되거나 안 되는 코드가 있다는 말이다.
+
+우선 개발자 모드에서 어떤 코드때문에 이런 공백이 생기는지 확인해본다.
+
+![image](https://user-images.githubusercontent.com/86189596/148691849-a66b1f08-5ab4-4feb-ba19-47b8800bcfa9.png)
+
+중분류를 구분하는 `<ul>` 태그의 margin-bottom이 1em으로 설정되어 있다. 그렇다면 이 코드는 어디에 있는 것일까?
+
+<br />
+
+### 📃_navigation.scss
+
+📃_navigation.scss의 .nav\_\_list 를 보면 `@include breakpoint(max-width $large - 1px)` 등으로 해서 화면의 크기에 따라 적용되는 코드가 다른 부분들이 눈에 띈다.
+
+```scss
+.nav__list {
+  ... @include breakpoint(max-width $large - 1px) {
+    ...
+
+    /* on hover show expand*/
+    ...
+
+    ul {
+      margin-bottom: 1em;
+    }
+  }
+}
+```
+
+주석을 해석하면 **해당 화면크기에서 활성화되는 카테고리 접힘이 확장(expand)되면, 특정 코드들이 활성화되게 하라** 정도로 해석할 수 있다. 즉, 여기서 ul 태그의 margin-bottom: 1em을 주석 처리하면 될 것이다. 처리 후의 코드는 다음과 같다.
+
+<br />
+
+```scss
+.nav__list {
+  ... @include breakpoint(max-width $large - 1px) {
+    ...
+
+    /* on hover show expand*/
+    ...
+
+    ul {
+      // margin-bottom: 1em;
+    }
+  }
+}
+```
+
+<br />
+
+여기서 주석 처리한 이유는 이후에 사용하게 될지도 모르기 때문이다. 굳이 필요 없을 것 같다면 아예 삭제해도 좋다.
+
+![image](https://user-images.githubusercontent.com/86189596/148692553-3794525c-aa63-4c29-9758-998859afb6ae.png)
+
+잘 반영되어 불필요한 여백 없이 중분류 카테고리가 정리되었다.
+
+<br />
+
+## 모바일 버전 카테고리 클릭버튼 확장
+
+![image](https://user-images.githubusercontent.com/86189596/148692553-3794525c-aa63-4c29-9758-998859afb6ae.png)
+
+`카테고리 +` 버튼이 너무 작아서 옹졸해보인다. 이것을 한 라인 전체를 차지하도록 바꾸고 싶다.
+
+<br />
+
+### 📃_navigation.scss
+
+이전에서 `ul`의 margin-bottom: 1em을 주석처리했던 📃_navigation.scss 에서 코드 수정이 진행된다. 또 똑같이 .nav\_\_list의 코드를 수정하면 된다.
+
+```scss
+.nav__list {
+  ... @include breakpoint(max-width $large - 1px) {
+    label {
+      display: inline-block;
+    }
+  }
+}
+```
+
+display: inline-block으로 설정되어있기 때문에 텍스트 크기와 그를 감싸는 padding만큼만 버튼의 크기가 결정되는 것이다. 이 display를 block으로 바꿔보자.
+
+<br />
+
+```scss
+.nav__list {
+  ... @include breakpoint(max-width $large - 1px) {
+    label {
+      display: block;
+    }
+  }
+}
+```
+
+<br />
+
+그러면 아래와 같이 한 라인 전체가 공간으로 차지되어 정리됨을 볼 수 있다. 개인마다 호불호가 갈릴 수는 있겠지만 개인적으로는 보다 깔끔해보여서 유지할 것이다.
+
+![image](https://user-images.githubusercontent.com/86189596/148693973-6ec48441-96c2-4473-bed5-efeb7bd8b727.png)
+
+<br />
+
+## Visual Studio Code
+
+### 검색/변경 단축키
+
+나는 VSC(Visual Studio Code) IDE를 사용하고 있는데, 위에서 내가 '토글 메뉴' 텍스트를 찾을 때 사용했던 단축키와 함께 필수적으로 알면 좋은 단축키가 있어서 소개한다.
+
+1. ctrl + 'F' : 작업중인 파일 내에서 원하는 키워드 찾기
+2. ctrl + 'H' : 작업중인 파일 내에서 특정 키워드를 원하는 키워드로 바꾸기
+3. ctrl + shift + 'F' : 전체 파일 내에서 원하는 키워드 찾기
+4. ctrl + shift + 'H' : 전체 파일 내에서 특정 키워드를 원하는 키워드로 바꾸기
+
+나는 3번의 `ctrl + shift + 'F'` 단축키로 전체 파일에서 '토글 메뉴' 텍스트를 검색해 해당 파일을 찾을 수 있었다.
+
+<br />
+
+### Format On Save
+
+추가로 minimal-mistakes 테마의 경우 yaml 파일이 굉장히 예쁘게 정렬되어 있다.
+
+![image](https://user-images.githubusercontent.com/86189596/148690438-66b26de1-6598-4ca6-bc15-d824753d9ac1.png)
+
+그런데 VSC에서 생각없이 yaml 파일을 바꾼 뒤 저장하게 되면, 자동으로 줄 정렬을 해주어 아래와 같이 변하곤 한다.
+
+![image](https://user-images.githubusercontent.com/86189596/148690489-9defc85b-1208-4854-9230-6c31e28bdc5f.png)
+
+평소엔 굉장히 편한 기능일 수 있으나, yaml 의 포맷을 망칠 수 있는 기능이다. (TMI : 그래서 \_config.yml 파일을 망쳐버리기도 했다.) 이 기능을 끄는 방법을 찾다가 인터넷에서 발견할 수 있었는데, 다음의 과정을 통해서 바꿀 수 있다. 출처는 <https://myhappyman.tistory.com/182>
+
+<br />
+
+> 설정 과정
+
+우선 설정을 들어간다. `[파일 - 기본설정 - 설정]`으로 들어갈 수도 있으나, `ctrl + ,` 단축키를 통해 들어갈 수도 있다.
+
+<br />
+
+검색창에 'Format On Save'를 입력한다.
+
+![image](https://user-images.githubusercontent.com/86189596/148690688-1df954d7-a4ce-476b-994a-9f9106be04e1.png)
+
+이렇게 체크가 되어있는 것을 확인할 수 있다.
+
+<br />
+
+이를 체크 해제하고 파일을 저장하면 된다. 이를 통해 yaml 파일의 포맷이 깨지는 것을 방지할 수 있다.
+
+```
+
+```

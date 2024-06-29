@@ -1,0 +1,194 @@
+---
+title: "[CSS] Flex"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS]
+
+date: 2022-02-08T01:55
+last_modified_at: 2022-02-08T01:55
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## CSS Flexible Box Layout
+
+### Flexbox layout의 개념
+
+- 행과 열 형태로 아이템들을 배치하는 1차원 레이아웃 모델
+- 축
+
+  - main axis (메인 축)
+  - cross axis (교차 축)
+
+- 구성 요소
+
+  - Flex Container(부모 요소)
+  - Flex Item(자식 요소)
+
+![image](https://user-images.githubusercontent.com/86189596/152825986-1da6f279-62a6-4759-ba4b-1ce893ebf4f1.png)
+
+<br />
+
+### Flexbox의 의의
+
+이전까지 Normal Flow를 벗어나는 수단은 Float 혹은 Position이었는데, 수동 값 부여 없이 `수직 정렬`, `아이템 너비/높이/간격 균일` 의 조작이 어려웠다. 이를 과감하게 해결한 것이 Flexbox
+
+<br />
+
+### 구성요소 : Container와 Item
+
+- Flex Container (부모 요소)
+
+  - flexbox 레이아웃을 형성하는 가장 기본적인 모델
+  - Flex Item들이 놓여있는 영역
+  - display 속성을 flex 혹은 inline-flex로 지정
+
+- Flex Item (자식 요소)
+  - 컨테이너에 속해있는 컨텐츠(박스)
+  - 부모의 display: flex 에 의해 조작을 받는 자식도 display: flex를 통해 자신의 자식 태그의 flex container가 될 수 있다.
+
+<br />
+
+## Flex의 속성
+
+### 배치
+
+#### flex-direction
+
+- Main axis 기준 방향 설정
+- 부모 container에 display: flex 설정 시 기본적으로 span이 된 것처럼 inline으로 설정됨
+- row는 span처럼 가로로 나열, column은 div처럼 세로로 나열
+
+![image](https://user-images.githubusercontent.com/86189596/152828934-823ef965-3f51-4435-a04a-3b84b95f966b.png)
+
+<br />
+
+#### flex-wrap
+
+- 아이템이 컨테이너를 벗어나는 경우 해당 영역 내에 배치되도록 설정
+- 이를 통해 컨테이너 영역 밖으로 item이 넘어가지 않도록 함
+- default는 nowrap이며 item의 내용이 item보다 커지면 container 밖으로 빠져나감
+
+![image](https://user-images.githubusercontent.com/86189596/152829640-42a1208d-2f35-49f4-a36b-efcdca274cdc.png)
+
+<br />
+
+#### flex-flow
+
+- flex-direction과 flex-wrap을 합친 것(shorthand)
+- `flex-flow: column wrap;` 처럼 한 번에 설정할 수 있음.
+
+<br />
+
+### 공간 분할
+
+#### justify-content (main axis)
+
+- Main axis를 기준으로 공간을 배분
+- flex-...
+  - container를 기준으로 생각하기
+  - flex-start: 시작점으로 밀착
+  - flex-end: 끝점으로 밀착
+  - center: 중간으로 집결
+- space-...
+  - 여백을 기준으로 생각하기
+  - space-between: 0:1:1:0 // 양 끝에는 여백 없이 밀착, 사이는 균일하게
+  - space-around: 1:2:2:1
+    - item당 여백이 around로 둘러싼다고 생각
+    - item과 item 사이 여백은 반띵해서 나눠갖는다고 생각
+  - space-evenly: 1:1:1:1 // 여백의 크기가 균일
+
+![image](https://user-images.githubusercontent.com/86189596/152830364-4cb61378-5fe8-4b57-8957-86b5ad0133aa.png)
+
+<br />
+
+#### align-content (cross axis)
+
+- Cross axis를 기준으로 공간을 배분
+- 일반적으로는 진행방향의 수직, 즉 세로의 정렬을 조절할 때 사용
+- column이라면 가로를 조절할 때 사용하므로 혼동에 주의하기
+- justify-content와 속성과 조작은 같다. 축만 다름!
+
+![image](https://user-images.githubusercontent.com/86189596/152831045-813f0ba2-d5ad-4e7b-8b9b-e9fbc746ca7b.png)
+
+<br />
+
+### 정렬
+
+#### align-items (cross axis)
+
+- 모든 아이템을 Cross axis 기준으로 정렬
+
+![image](https://user-images.githubusercontent.com/86189596/152831630-dac7155f-23c1-4371-9094-65a8611e0088.png)
+
+- stretch(default): 컨테이너를 꽉 채움
+- baseline: 텍스트 baseline에 기준선을 맞춤
+
+<br />
+
+#### align-self (⭐특정 item에 적용)
+
+- 개별 item을 Cross axis 기준으로 정렬
+- 지금까지는 부모 container에만 적용했는데, 이 속성은 조작되는 item에 직접 적용하는 방식
+- 특별 취급을 해주는 것!
+
+![image](https://user-images.githubusercontent.com/86189596/152831842-9d85770a-9a95-44e0-b774-df4ea92be221.png)
+
+<br />
+
+### 기타 조작
+
+#### 순서 정하기: order
+
+- container 내의 item들의 순서를 조작할 때 사용
+- default는 0. 그래서 order-0 해도 변화 없음(#3)
+- 숫자가 커질수록 나중에 위치
+
+![image](https://user-images.githubusercontent.com/86189596/152833883-3564cc4c-77dd-4c9d-a24e-0962b522d3ae.png)
+
+```html
+<!-- # 1 -->
+<div class="flex_container flex_direction_row">
+  <div class="flex_item">1</div>
+  <div class="flex_item">2</div>
+  <div class="flex_item">3</div>
+</div>
+
+<!-- # 2 -->
+<div class="flex_container flex_direction_row">
+  <div class="flex_item">1</div>
+  <div class="flex_item order-1">2</div>
+  <div class="flex_item">3</div>
+</div>
+
+<!-- # 3 -->
+<div class="flex_container flex_direction_row">
+  <div class="flex_item">1</div>
+  <div class="flex_item order-0">2</div>
+  <div class="flex_item">3</div>
+</div>
+
+<!-- # 4 -->
+<div class="flex_container flex_direction_row">
+  <div class="flex_item order-2">1</div>
+  <div class="flex_item order-1">2</div>
+  <div class="flex_item">3</div>
+</div>
+```
+
+<br />
+
+#### 병합: flex-grow
+
+- item을 균일하게 배치하는 것이 아니라 달리할 때 사용
+- 남은 영역 없이 container를 꽉 채워서 분배
+
+![image](https://user-images.githubusercontent.com/86189596/152832441-0847ab3d-1332-47ba-8923-c4d0cef7f439.png)

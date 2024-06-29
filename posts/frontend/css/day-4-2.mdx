@@ -1,0 +1,140 @@
+---
+title: "[CSS] CSS선택자"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-05T23:20
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## CSS선택자란?
+
+- 디자인 작업을 진행할 영역을 선택하는 요소  
+  즉, **디자인을 적용할 HTML 영역**
+- type, id, class로 구분
+
+### 가. type 선택자
+
+- `<h1>`, `<p>`, `<a>`, `<span>`과 같은 HTML 태그를 기준으로 디자인 적용
+
+```html
+* html 문서
+<body>
+  <h1>type 선택자</h1>
+</body>
+```
+
+```css
+* css 문서 h1 {
+  color: red;
+}
+```
+
+<br />
+
+### 나. id 선택자
+
+- HTML 태그에 '이름'을 지어 선택하는 방식
+- 원하는 태그에 id 속성을 추가하고 속성값에 자신이 원하는 이름을 적음
+
+```html
+* html 문서 * bg는 임의의 id 이름
+
+<body>
+  <h2 id="bg">id 선택자</h2>
+</body>
+```
+
+```css
+* css 문서 #bg {
+  background-color: yellow;
+}
+```
+
+- 샵(#) 기호를 사용하여 id 속성값, 즉 bg를 선택한 다음(#bg) 디자인 작업
+
+<br />
+
+### 다. class 선택자
+
+- 태그에 별명을 지어 선택하는 방식
+- id 선택자처럼 원하는 태그에 class 속성을 추가하고, 속성값에 원하는 별명 작성
+- class 속성값의 앞에 .(마침표) 기호를 사용
+
+```html
+* html 문서 * size는 임의의 별명
+
+<body>
+  <h3 class="size">class 선택자</h3>
+</body>
+```
+
+```css
+* css문서 .size {
+  font-size: 50px;
+}
+```
+
+<br />
+
+---
+
+## id 속성과 class 속성의 차이점
+
+- id 속성은 **이름**, class 속성은 **별명**
+- 이름은 하나만, 별명은 여러 개!
+
+### \* class 속성인 경우
+
+```html
+* html 문서 * size와 color는 임의의 별명
+
+<body>
+  <h3 class="size color">class 선택자</h3>
+</body>
+```
+
+```css
+* css문서 .size {
+  font-size: 50px;
+}
+
+.color {
+  color: blue;
+}
+```
+
+### \* id 속성인 경우
+
+- 한 개 밖에 안 됨
+
+<br />
+
+---
+
+## id 속성과 class 속성 사용 경우
+
+- id 속성 : 안방, 거실, 주방 등 큰 공간의 개념  
+  한 HTML 문서당 한 개만 가능
+
+  ```html
+  <header id="intro">
+    ,
+    <footer id="intro">불가능</footer>
+  </header>
+  ```
+
+  <br />
+
+- class 속성 : 큰 공간 안에 작은 구역을 만들 때 사용

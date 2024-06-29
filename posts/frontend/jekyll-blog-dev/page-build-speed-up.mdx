@@ -1,0 +1,141 @@
+---
+title: "[BlogDev] page build 속도 개선 작업"
+excerpt: "page build 속도를 올려보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-03-27T18:25
+last_modified_at: 2022-03-27T18:25
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 설계 이유
+
+![image](https://user-images.githubusercontent.com/86189596/159757437-2ed7cb22-f942-4815-8f0c-63aa34ab3e0b.png)
+![image](https://user-images.githubusercontent.com/86189596/159757468-06ebcf21-039b-4d2c-af0f-61d07cfdd8b1.png)
+
+<br />
+
+## jekyll과 gem file
+
+인터넷을 엄청나게 찾아봤는데 테마 없이 jekyll 자체로 CI/CD를 하는 경우 watch 모드나 post를 하나씩만 업데이트 하는 등의 gem 명령어로 렌더링 시간을 줄이는 듯 보였다. 나 역시 _config 파일의 설정을 조작해보고 이런저런 부분들을 다 시도해보았으나 제대로 동작하지 않았다.
+
+내 실력의 부족일 수도 있으니, 찾아보았던 자료는 최하단의 참고자료에 링크를 추가해놓고 나중에 더 참고하도록 하겠다. 당장은 이 방법으로 해결할 수 없을 것 같다.
+
+<br />
+
+## 사이드바 포스트 카운트
+
+나는 현재 각 post들의 tag와 category명을 일일히 확인해 해당하는 tag 또는 category라면 count해주어 카테고리명 옆에 표시하는 로직을 작성해 사용하고 있다. 그런데 포스트의 개수가 800여 개에 달하는데, 이렇게 count를 해주는 것이 매 detail마다 있으니 O(NM)의 시간이 들게 된다. 
+
+최근 PS를 계속하게 되면서 포스트의 개수가 갑자기 늘어난 것, 그래서 계속 build time out 에러가 발생하는 것이라고 추측했다. 실제로 한 번 push를 하면 rendering이 될 때까지 12분가량 걸리는 수준까지 이르게 됐다.
+
+그래서 불필요한 부분의 카운트 로직을 제거하는 방식으로 급한 불을 꺼야겠다.
+
+<br />
+
+### TIL
+
+![image](https://user-images.githubusercontent.com/86189596/159734919-59ec16c4-53b2-4a5b-aca8-8abf2db3f1fd.png)
+
+현재 월별 포스트 개수를 세고 있는 TIL 카테고리이다. 가장 먼저 카운트를 제거해야 할 1순위 대상이라고 판단했다. 월별로 있는 모든 카운트를 지워주었다.
+
+![image](https://user-images.githubusercontent.com/86189596/159758802-676490fb-db27-48d2-bd73-fc52c641e472.png)
+
+<br />
+
+### 소분류 카테고리 카운트
+
+![image](https://user-images.githubusercontent.com/86189596/160271976-12a3987a-7fc4-48d3-be68-db03cb4ad283.png)
+
+detail이 닫혀있을 때 내부에 얼마나 포스트가 있는지를 표시하는 것은 자연스럽지만, detail이 열리게 되면 기존 소제목이 거의 보이지 않게 처리되다 보니 소분류 카테고리를 모아둔 곳에도 카운트를 넣었다.
+
+극소분류 카테고리의 카운트를 지우기 이전에 소분류 카테고리(inner_detail)의 카운트를 지우는 게 좋겠다고 생각했다. 
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/160272669-9c141f2b-e638-48e5-a0d9-91f2384091a4.png)
+
+수정한 파일당 하나씩 있었으니 한 눈에 보기에도 어마어마한 양이다. 22개정도 되나보다. 모두 지워주었다. 설정할 때 고생을 꽤나 했는데 눈물을 앞을 가리지만 어쩔 수 없다. 
+
+<br />
+
+> 결과
+
+build 시간이 7분대로 줄었다! TIL 카운트를 줄였을 때보다 더 효과적인 이유는 모르겠지만, 일단은 엄청 줄었다!!
+
+<br />
+
+## 미사용 카테고리 및 페이지 제거
+
+![image](https://user-images.githubusercontent.com/86189596/160271976-12a3987a-7fc4-48d3-be68-db03cb4ad283.png)
+
+위에서 썼지만 다시 쓰는 사진이다. 나는 추후에 공부하고 싶은 내용들을 카테고리를 구성할 때 더미 포스트를 만들어 카테고리에 모두 추가해놓았다. 1개씩 있는 파일이 그런 부분이다. 해당 태그나 카테고리를 가진 포스트가 하나라도 있어야 카테고리에 구성이 되기 때문에 만든 더미 파일들이다.
+
+그런데, 당장 사용하지 않을 이 카테고리들의 include나 category page도 for문을 돌리며 해당 tag나 category를 가지고 있는지 조회하기 때문에 시간을 먹을 것이다. 그래서 이 부분도 과감히 제거해주려고 한다.
+
+<br />
+
+![image](https://user-images.githubusercontent.com/86189596/160274561-cd20f868-fac6-4f2d-a500-087e08231c15.png)
+
+만들 때 정말 부푼 꿈을 꾸고, 고생을 하며 만들었던 카테고리들이라 더 아까운 것 같다. 하지만 우리에겐 Github이 있어서 나중에 필요하면 커밋을 참고해서 다시 가져와도 되고, 무엇보다 이렇게 칼춤을 추기 전에 Repository 전체를 로컬에 백업해두었기 때문에 나중에 다시 채워넣을 수 있을 것이라 생각한다😊
+
+<br />
+
+> 결과
+
+6분대로 빌드 시간이 줄었다. 확실히 효과를 보았다!
+
+<br />
+
+## 향후 방향
+
+앞으로 FE 포함 여러 공부를 해나가면서 공부 기록 포스트들이 계속 쌓이게 될텐데 포스트 자체의 수가 늘어나는 것도 그렇지만 포스트를 카테고리화하여 사이드바에 넣기 위한 여러 for문들이 발생할 것이다. 지금은 필요가 없어서 없앴지만, 나중에는 정말로 필요하게 될테니 말이다. 나는 여러 방향에서 선택을 해야할 것이다. 그래서 생각해보았다. 이 빌드 시간 문제를 어떻게 해결할 수 있을지.
+
+<br />
+
+> 가. PS 포스트의 분리
+
+지금도 그렇지만 앞으로도 코딩테스트를 준비하는 과정에서 백준이나 프로그래머스의 문제들을 풀고 이를 정리하고 기록하게 될 것이다. 그런데 이 포스트가 나름 상당하다. 현재만 해도 백준과 SWEA를 합쳐 거진 300개의 포스트나 되고, 앞으로 더더욱 늘어날 것이다.
+
+그래서 velog나 tistory 또는 다른 github 계정의 page를 만들어 PS 기록만 따로 관리하는 방식을 사용해보는 건 어떤가 싶다. 
+
+<br />
+
+> 나. 카테고리 소분류, 극소분류 카운트를 모두 제거
+
+현재는 이미 닫힌 상태에서 보고 들어오는 카운트와 중복되는 내부 inner_detail의 카운트를 제거하였지만, 사실 카운트의 상당수를 차지하는 것은 극소분류 카테고리의 카운트이다. 극소분류가 늘어날수록 빌드 시간은 더 걸릴 것이다. 그래서 이를 완전히 포기하면 조금 더 연명할 수 있게 된다.
+
+하지만 이건 좀 아쉬운 것 같다. 
+
+<br />
+
+> 다. 내 블로그 플랫폼을 만든다.
+
+나중에는 내 스스로 블로그 플랫폼을 만들어서 자동 CI/CD와 레이아웃, 스타일링까지 모두 관리해보고 싶다는 마음을 가지고 있다. 만약 깃헙 페이지 블로그가 내가 블로그를 만들 실력이 될 때까지 버텨준다면 내가 만든 블로그에 포스팅한다면 빌드 문제는 해결될 수 있다.
+
+<br />
+
+현재는 **가.** 안부터 **다.** 안까지 생각을 해보았는데, 이 중에서는 최선은 다. 안이고, 가. 안과 나. 안을 선택해야 한다면, 가. 안을 선택하지 않을까 싶다.
+
+<br />
+
+## 참고 자료
+
+- [marcusoft.net - Speed up Jekyll site regeneration](http://www.marcusoft.net/2015/11/speed-up-jekyll-site-regeneration.html)
+
+- [[A to Z] Github Blog Jekyll minimal mistakes](https://eona1301.github.io/a_to_z/GithubBlog/#width-%EC%A1%B0%EC%A0%88%ED%95%98%EA%B8%B0)
+
+- [IT Technical Training-Jekyll 기반의 GitHub Page 생성(9) - Jekyll site regeneration 속도 향상시키기](https://moon9342.github.io/jekyll-regenerate-speed-up)

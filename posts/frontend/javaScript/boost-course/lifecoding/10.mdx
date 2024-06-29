@@ -1,0 +1,168 @@
+---
+title: "[JS] 6.1. 객체 기본과 반복 출력"
+
+categories:
+  - JS boostcourse
+
+tags:
+  - [FE Language, JS, JS boostcourse]
+
+date: 2022-02-12T21:48
+last_modified_at: 2022-02-12T21:48
+
+author_profile: true
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 참고 자료
+
+[boostcourse 생활코딩: 자바스크립트의 시작](https://www.boostcourse.org/cs124/joinLectures/52258)
+
+<br />
+
+## 객체
+
+- 서로 연관된 변수와 함수를 grouping하고 이름을 붙인 것
+- 이름이 있는 정보를 이름과 함께 정리정돈할 때 사용
+
+<br />
+
+### 객체의 정의
+
+lieteral인 중괄호 {} 내부에 key: value 형태로 정의
+
+```js
+// 객체 정의
+var memberObject = {
+  manager: "egoing",
+  developer: "graphittie",
+  designer: "leezhce",
+};
+```
+
+<br />
+
+### 객체 내부 데이터 추가 및 업데이트
+
+내부 데이터에 대해 오타가 나서 수정해야 한다. 자체 수정 없이 이를 업데이트 해보자.
+
+```js
+// 객체 내부 데이터 업데이트
+// 객체.key = val
+memberObject.designer = "leezche";
+console.log("memberObject.designer", memberObject.designer);
+
+// 객체[key] = val
+memberObject["designer"] = "leezche";
+console.log('memberObject["designer"]', memberObject["designer"]);
+```
+
+객체 외에서 내부 데이터를 업데이트하는 방식은 위처럼 2가지가 있다.
+
+위의 방식으로 없는 데이터를 추가할 수도 있다.
+
+<br />
+
+### 객체 내부 데이터 삭제
+
+```js
+// 객체 내부 데이터 삭제
+delete memberObject.manager;
+console.log("after delete memberObject.manager", memberObject.manager);
+
+// 결과 : after delete memberObject.manager undefined
+```
+
+`delete 객체.key` 를 사용해 제거하며, 결과로는 `undefined` 라고 나온다.
+
+<br />
+
+## Loop
+
+### while문
+
+```js
+// 배열 정의
+var memberArray = ["egoing", "graphittie", "leezche"];
+
+//  반복문
+var i = 0;
+while (i < memberArray.length) {
+  console.log(memberArray[i]);
+  i++;
+}
+```
+
+그리고 결과이다.
+
+```
+egoing
+graphittie
+leezche
+```
+
+memberArray라는 배열 변수를 각각의 인덱스로 value를 뽑아내어 출력하였다.
+
+<br />
+
+### loop 꿀팁 : console.group
+
+```js
+// 배열 정의
+var memberArray = ["egoing", "graphittie", "leezche"];
+console.group("array loop");
+
+//  반복문
+var i = 0;
+while (i < memberArray.length) {
+  console.log(memberArray[i]);
+  i++;
+}
+console.groupEnd("array loop");
+```
+
+위처럼 `console.group('title');`과 `console.groupEnd('title')`로 나누면 아래처럼 출력된다.
+
+```
+array loop
+  egoing
+  graphittie
+  leezche
+```
+
+즉, group 사이에 있는 동작에 의해 출력된 것은 저렇게 들여쓰기를 이용해 구분하는 것이다.
+
+<br />
+
+### 객체 반복
+
+```js
+// 객체 정의
+var memberObject = {
+  manager: "egoing",
+  developer: "graphittie",
+  designer: "leezche",
+};
+
+// 객체 출력 반복
+console.group("object loop");
+for (var name in memberObject) {
+  console.log(name, memberObject[name]);
+}
+console.groupEnd("object loop");
+```
+
+그리고 결과이다.
+
+```
+object loop
+  manager egoing
+  developer graphittie
+  designer leezche
+```
+
+- key로 사용된 name이 먼저 출력되고, value인 이름들이 출력되었다.
+- object loop group으로 감싸주어 indentation 처리되었다.

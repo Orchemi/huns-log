@@ -1,0 +1,127 @@
+---
+title: "[BlogDev] Notice"
+excerpt: "블로그 게시글 작성 중 본문과 차별화하여 강조해야 할 내용에 쓰는 Notice에 대해 알아보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, Markdown]
+
+date: 2021-12-18
+last_modified_at: 2021-12-18
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 도입
+
+본 게시물은 [공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)님의 게시물을 통해 배우고 따라하는 과정입니다. 이 글을 누군가 보고 있다면, 그리고 보다 전문적이고 자세한 설명을 바라신다면 위 링크의 블로그를 확인해보시길.
+
+<br />
+
+## NOTICE
+
+- 주의사항이나 공지 등을 강조할 때 사용한다.
+
+<br />
+
+## 사용법
+
+### 1. `{: .notice}`
+
+- 문단의 바로 다음 줄에 `{: .notice}`를 붙여준다.
+- 'notice'의 뒤에는 Minimal-Mistakes에서 지정한 notice의 종류 이름을 뒤에 붙여줄 수 있다.
+- `nocice` + `--종류이름`
+
+<br />
+
+```markdown
+⚠ <u>주의사항</u> 이것은 주의사항입니다.
+{: .notice--primary}
+```
+
+결과
+
+⚠ <u>주의사항</u> 이것은 주의사항입니다.
+{: .notice--primary}
+
+<br />
+
+### 2. `<div>` 태그와 `markdown="1"`
+
+- `<div class>` HTML 태그를 이용하며, notice 클래스의 이름을 불러온다.
+- `markdown="1"` 속성은 HTML 코드를 Markdown 으로 인식하게 하기 위한 속성이다.
+
+````
+<div class="notice--primary" markdown="1">
+해당 HTML 속에 코드를 넣을 수도 있다. 이렇게 말이다.
+  ```python
+  print("hello world!")
+  ```
+
+- FE 공부를 더 열심히 하자.
+- SSAFY 붙었으면 좋겠다.
+
+</div>
+````
+
+결과
+
+<div class="notice--primary" markdown="1">
+해당 HTML 속에 코드를 넣을 수도 있다. 이렇게 말이다.
+  ```python
+  print("hello world!")
+  ```
+
+- FE 공부를 더 열심히 하자.
+- SSAFY 붙었으면 좋겠다.
+
+</div>
+
+<br />
+
+### 3. Liquid 언어 사용
+
+`capture` 태그를 이용하여 변수에 텍스트 문단(문자열) 값을 저장한 뒤, 이를 HTML `<div class>` 태그에 저장해 호출하여 사용한다.
+
+```
+{% raw %}{% capture notice-2 %}{% endraw %}  <!--notice-2 라는 변수에 다음 텍스트 문단을 문자열로 저장한다.-->
+#### New Site Features
+
+* You can now have cover images on blog pages
+* Drafts will now auto-save while writing
+{% raw %}{% endcapture %}{% endraw %}  <!--캡처 끝. 여기까지의 텍스트 문단을 변수에 저장-->
+
+<div class="notice">
+  {% raw %}{{ notice-2 | markdownify }}{% endraw %} <!--div 태그 사이에 notice-2 객체를 출력하되 markdownify 한다. 즉 마크다운 화-->
+</div>
+```
+
+결과
+
+{%- capture notice-2 -%} <!--notice-2 라는 변수에 다음 텍스트 문단을 문자열로 저장한다.-->
+
+#### New Site Features
+
+- You can now have cover images on blog pages
+- Drafts will now auto-save while writing
+  {% endcapture %} <!--캡처 끝! 여기까지의 텍스트를 변수에 저장-->
+
+<div class="notice">
+  {{ notice-2 | markdownify }} <!--div 태그 사이에 notice-2 객체를 출력하되 markdownify 한다. 즉 마크다운 화-->
+</div>
+
+<br />
+
+## References
+
+- [공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)
+- [Minimal Mistakes - Notice](https://mmistakes.github.io/minimal-mistakes/post%20formats/post-notice/)

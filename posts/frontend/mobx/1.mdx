@@ -1,0 +1,179 @@
+---
+title: "[MobX] 1. MobX란?"
+
+categories:
+  - MobX
+
+tags:
+  - [SPA, MobX]
+
+date: 2023-01-06T21:33
+last_modified_at: 2023-01-06T21:33
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 가. Mobx의 소개와 특징
+
+- 상태 관리 라이브러리
+- 단방향 데이터 흐름
+- 데코레이터(@) 지원
+- 객체 지향 느낌이 강하다 ← Redux와 구분되는 특징
+
+<br />
+
+## 나. MobX의 구성
+
+### 1) 상태(state)
+
+- app을 구동하는 데이터
+- 값을 보유하고 있는 스프레드시트 셀
+- 변경하려는 모든 속성을 MobX가 추적할 수 있도록 `observable`로 표시
+- 객체의 속성을 스프레드시트 셀로 바꾸는 것과 같다.
+
+```jsx
+import { makeObservable, observable, action } from "mobx"
+
+class Todo {
+    id = Math.random()
+    title = ""
+    finished = false
+
+    constructor(title) {
+        makeObservable(this, {
+            title: observable,
+            finished: observable,
+            toggle: action
+        })
+        this.title = title
+    }
+
+    toggle() {
+        this.finished = !this.finished
+    }
+}
+```
+
+<br />
+
+### 2) 동작(action)
+
+> 바뀌어야하는 것들(title, finished)은 **observable**로 표시하는 걸 알겠다. 그런데 toggle의 **action**은 뭐지?
+
+- 사용자 이벤트, 백엔드 데이터 푸시, 예약된 이벤트 등과 같이 ***state*를 변경하는 코드 조각**
+- 스프레드시트 셀에 새 값을 입력하는 **사용자**와 같다.
+- 즉, **toggle은 observable로 표시된 finished를 변경하는 코드이므로 action으로 표시**
+- 다시 말해, action은 **state를 변경하는 메서드**
+
+<br />
+
+> action을 사용하면 뭐가 좋나요?
+
+- 코드를 구조화하는 데에 도움
+- 의도하지 않은 state 변경 방지
+
+<br />
+
+### 3) 파생(derivation)
+
+- 상태(state) 변화에 자동으로 응답
+- 구분
+  - `computed` : 현재의 observable state에서 순수 함수를 사용하여 파생될 수 있는 값
+  - `reaction` : state가 변경될 때 자동으로 발생해야 하는 부수효과
+
+<br />
+
+> (official) state 변화로부터 값을 파생하는 경우 되도록 reaction보다는 computed를 활용하는 것이 좋다.
+
+(사견) React에 대입하면 `reaction`은 `useEffect`, `computed`는 `useMemo`와 비슷한 것 같다. 말 그대로 state가 변경될 때 어떤 동작을 시키는 useEffect처럼 react가 작용하고, 단순히 값을 재계산해 캐싱하는 useMemo처럼 computed가 작용하는 것처럼 보인다.
+
+<br />
+
+## 다. Reactive Programming
+
+> computed와 reaction을 코드로 살펴보자.
+
+<br />
+
+### 1) computed
+
+```jsx
+import { makeObservable, observable, computed } from "mobx"
+
+class TodoList {
+    todos = []
+    get unfinishedTodoCount() {
+        return this.todos.filter(todo => !todo.finished).length
+    }
+    constructor(todos) {
+        makeObservable(this, {
+            todos: observable,
+            unfinishedTodoCount: computed
+        })
+        this.todos = todos
+    }
+}
+```
+
+- JS의 getter 함수인 `get` 을 사용하여 속성을 정의하고, `makeObservable`을 사용해 `computed`로 표시한다.
+- makeObservable 내부에 `observable`로 처리한 `todos`의 변경사항이 있는 경우, `computed`로 처리한 `unfinishedTodoCount`가 다시 계산이 되는 구조이다.
+- makeObservbale 내부에서 `unfinishedTodoCount`는 값으로 취급되지만, 이는 **class 내부에서 method를 통해 다른 속성으로부터 값을 계산하는 함수이자, 반환값**이다.
+
+<br />
+
+### 2) side effect
+
+- state의 변화는 값이나 UI의 변화로 이어진다. 다시 말해 state의 변화의 부수 효과(side effect)를 활용할 수 있어야 하는 것이다.
+- 이 중의 하나는 **computed**, 또 다른 변화는 **reaction**이다.
+- reaction은 변화에 반응하는 `반응형 프로그래밍`, 그리고 그에 따른 추가 동작을 하는 `명령형 프로그래밍`을 연결하는 요소이다.
+
+<br />
+
+### 3) reactive component
+
+```jsx
+import * as React from "react"
+import { render } from "react-dom"
+import { observer } from "mobx-react-lite"
+
+const TodoListView = observer(({ todoList }) => (
+    <div>
+        <ul>
+            {todoList.todos.map(todo => (
+                <TodoView todo={todo} key={todo.id} />
+            ))}
+        </ul>
+        Tasks left: {todoList.unfinishedTodoCount}
+    </div>
+))
+
+const TodoView = observer(({ todo }) => (
+    <li>
+        <input type="checkbox" checked={todo.finished} onClick={() => todo.toggle()} />
+        {todo.title}
+    </li>
+))
+
+const store = new TodoList([new Todo("Get Coffee"), new Todo("Write simpler code")])
+render(<TodoListView todoList={store} />, document.getElementById("root"))
+```
+
+- `observer`는 리액트 컴포넌트를 data의 derivation으로 변환한다.
+- 필요할 때마다 컴포넌트가 다시 렌더링, 이외에는 렌더링되지 않는다.
+- 위의 예로, `TodoListView` 컴포넌트는 `unfinishedTodoCount`가 변경된 경우에만 rerendering한다.
+
+- 추가로, 위의 예에서 `TodoListView` 는 `HOC`이다.
+- HOC(Higher-Order Components; 고차 컴포넌트)는 컴포넌트를 argument로 받아 또다른 컴포넌트를 반환한다.
+- 위의 예에서는 각 Todo의 템플릿 컴포넌트를 인자로 받아 더 큰 규모의 컴포넌트를 만드는 데에 사용하였다.
+
+<br />
+
+![image](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/10726b52-85f3-4f31-b41b-386e63c0676a/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20230106%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230106T123204Z&X-Amz-Expires=86400&X-Amz-Signature=ac3871d44a3c95fea9c69010472e7f88097598334b3207ab172a4284ab195c3c&X-Amz-SignedHeaders=host&response-content-disposition=filename%3D%22Untitled.png%22&x-id=GetObject)
+
+- 데이터는 단방향 흐름을 사용한다.
+- 즉, action이 state를 변경하는 단방향 흐름을 만들고, 이에 영향을 받는 모든 view를 업데이트한다.

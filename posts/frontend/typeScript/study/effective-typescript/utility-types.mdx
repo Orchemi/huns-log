@@ -1,0 +1,463 @@
+---
+title: "[TS] 유틸리티 타입(Utility Types)"
+
+categories:
+  - Effective TS
+
+tags:
+  - [FE Language, TS, Effective TS]
+
+author_profile: true
+
+date: 2023-11-02T14:00
+last_modified_at: 2023-11-02T14:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Utility Types
+
+> Utility Types이란?
+
+존재하는 Type들을 기반으로 타입 변환을 보다 쉽게 하기 위해 변형해서 사용하는 타입
+
+<br />
+
+## 초급
+
+### Awaited<Type>
+
+> released: 4.5
+
+- `async-await` 또는 `.then()` 등에서 발생하는 Promise 타입을 ‘unwrap’할 때 사용
+
+```tsx
+type A = Awaited<Promise<string>>;   
+// type A = string
+ 
+type B = Awaited<Promise<Promise<number>>>;
+// type B = number
+ 
+type C = Awaited<boolean | Promise<number>>; 
+// type C = number | boolean
+```
+
+<br />
+
+### Record<Keys, Type>
+
+> released: 2.1
+
+- 프로퍼티 키가 Keys이고 프로퍼티 값이 Type인 객체 유형을 생성
+- 이 유틸리티는 타입의 프로퍼티를 다른 타입에 매핑하는 데 사용
+
+```tsx
+interface CatInfo {
+  age: number;
+  breed: string;
+}
+ 
+type CatName = "miffy" | "boris" | "mordred";
+ 
+const cats: Record<CatName, CatInfo> = {
+  miffy: { age: 10, breed: "Persian" },
+  boris: { age: 5, breed: "Maine Coon" },
+  mordred: { age: 16, breed: "British Shorthair" },
+};
+```
+
+<br />
+
+### Pick<Type, Keys>
+
+> released: 2.1
+
+- 타입에서 특정 속성(들)을 ‘pick’해서 부분적으로 사용할 때 사용
+- 단일 속성을 뽑을 때에는 string literal, 여러 속성들을 뽑을 때에는 union을 사용
+
+```tsx
+// 대상 타입
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+
+// Todo 타입에서 title, completed 속성만 뽑아 구성한 유틸리티 타입
+type TodoPreview = Pick<Todo, "title" | "completed">;
+ 
+const todo: TodoPreview = {
+  title: "Clean room",
+  completed: false,
+};
+```
+
+<br />
+
+### Extract<Type, Union>
+
+> released: 2.8
+
+- `Type`으로부터 `Union`에 해당하는 union을 뽑아낼 때 사용
+- `Pick`이 interface 버전이라면, `Extract`는 유니온 버전
+
+```tsx
+type T0 = Extract<"a" | "b" | "c", "a" | "f">;  
+// type T0 = "a"
+
+type T1 = Extract<string | number | (() => void), Function>;  
+// type T1 = () => void
+
+type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "square"; x: number }
+  | { kind: "triangle"; x: number; y: number }; 
+
+type T2 = Extract<Shape, { kind: "circle" }>  
+// type T2 = {
+//     kind: "circle";
+//     radius: number;
+// }
+```
+
+<br />
+
+### Omit<Type, Keys>
+
+> released: 2.1
+
+- 타입에서 특정 속성(들)을 제거한 나머지를 사용할 때 사용
+- 즉, Pick과 반대되는 유틸리티 타입
+
+```tsx
+// 속성 제거 대상 타입
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+  createdAt: number;
+}
+
+// Todo 타입에서 description 속성을 제거한 유틸리티 타입
+type TodoPreview = Omit<Todo, "description">;
+ 
+const todo: TodoPreview = {
+  title: "Clean room",
+  completed: false,
+  createdAt: 1615544252770,
+};
+
+// Todo 타입에서 completed, createdAt 속성을 제거한 유틸리티 타입
+type TodoInfo = Omit<Todo, "completed" | "createdAt">;
+ 
+const todoInfo: TodoInfo = {
+  title: "Pick up kids",
+  description: "Kindergarten closes at 5pm",
+};
+```
+
+<br />
+
+### Exclude<UnionType, ExcludeMembers>
+
+> released: 2.8
+
+- `UnionType`으로부터 `ExcludeMembers`를 제외한 나머지
+- `Omit`이 interface 버전이라면, `Exclude`는 union 버전
+
+```tsx
+type T0 = Exclude<"a" | "b" | "c", "a">;
+// type TO = "b" | "c"
+
+type T1 = Exclude<"a" | "b" | "c", "a" | "b">;
+// type T1 = "c"
+
+type T2 = Exclude<string | number | (() => void), Function>;
+// type T2 = string | number
+
+type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "square"; x: number }
+  | { kind: "triangle"; x: number; y: number };
+
+type T3 = Exclude<Shape, { kind: "circle" }>
+// type T3 = { kind: "square"; x: number; } | 
+//           { kind: "triangle"; x: number; y: number; }
+```
+
+<br />
+
+### Partial<Type>
+
+> released: 2.1
+
+- 특정 타입의 일부 속성들을 optional하게 사용할 때 사용
+- 주어진 타입의 모든 부분집합을 대표
+
+```tsx
+interface Todo {
+  title: string;
+  description: string;
+}
+
+// fieldsToUpdate 인자는 Todo 타입 속성 중 일부를 가진 객체라면 모두 만족
+function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+  return { ...todo, ...fieldsToUpdate };
+}
+ 
+const todo1 = {
+  title: "organize desk",
+  description: "clear clutter",
+};
+ 
+const todo2 = updateTodo(todo1, {
+  description: "throw out trash",
+});
+```
+
+<br />
+
+## 중급
+
+### Required<Type>
+
+> released: 2.8
+
+- 특정 타입의 optional한 속성들이 모두 반드시 있는 타입
+- 즉, Partial의 성질과는 반대의 기능
+
+```tsx
+interface Props {
+  a?: number;
+  b?: string;
+}
+ 
+const obj: Props = { a: 5 };
+ 
+const obj2: Required<Props> = { a: 5 };
+// 🚫 Property 'b' is missing in type '{ a: number; }' but required in type 'Required<Props>'.
+```
+
+<br />
+
+### Readonly<Type>
+
+> released: 2.1
+
+- 이 유틸리티 타입으로 정의된 경우 재할당(reassign)될 수 없음을 의미
+
+```tsx
+interface Todo {
+  title: string;
+}
+ 
+const todo: Readonly<Todo> = {
+  title: "Delete inactive users",
+};
+ 
+todo.title = "Hello";
+// 🚫 Cannot assign to 'title' because it is a read-only property.
+```
+
+<br />
+
+- 이 유틸리티는 런타임에 실패하는 할당 표현식을 표현하는 데 유용
+    - (예: frozen object의 프로퍼티를 재할당하려고 할 때)
+
+```tsx
+function freeze<Type>(obj: Type): Readonly<Type>;
+```
+
+<br />
+
+### NonNullable<Type>
+
+> released: 2.8
+
+- 타입으로부터 `null`과 `undefined`를 제외한 나머지를 나타낼 때 사용
+
+```tsx
+type T0 = NonNullable<string | number | undefined>;   
+// type T0 = string | number
+
+type T1 = NonNullable<string[] | null | undefined>;     
+// type T1 = string[]
+```
+
+<br />
+
+### Parameters<Type>
+
+> released: 3.1
+> 
+- 함수 타입의 parameter의 타입을
+
+```tsx
+declare function f1(arg: { a: number; b: string }): void;
+ 
+type T0 = Parameters<() => string>;
+// type T0 = []
+
+type T1 = Parameters<(s: string) => void>;
+// type T1 = [s: string]
+
+type T2 = Parameters<<T>(arg: T) => T>;
+// type T2 = [arg: unknown]
+
+type T3 = Parameters<typeof f1>;
+// type T3 = [arg: {
+//     a: number;
+//     b: string;
+// }]
+
+type T4 = Parameters<any>;
+// type T4 = unknown[]
+
+type T5 = Parameters<never>;
+// type T5 = never
+
+type T6 = Parameters<string>;
+// 🚫 Type 'string' does not satisfy the constraint '(...args: any) => any'.
+// 🚫 Parameters<Type>의 Type은 함수형이어야 함
+// type T6 = never
+
+type T7 = Parameters<Function>;
+// 🚫 Type 'Function' does not satisfy the constraint '(...args: any) => any'.
+//    Type 'Function' provides no match for the signature '(...args: any): any'.
+// 🚫 Function 타입은 parameters에 대한 signature가 없어 불가능
+// type T7 = never
+```
+
+<br />
+
+### ReturnType<Type>
+
+> released: 2.8
+
+- 함수 타입의 return값에 대한 타입을 설정할 때 사용
+
+```tsx
+declare function f1(): { a: number; b: string };
+ 
+type T0 = ReturnType<() => string>;
+// type T0 = string
+
+type T1 = ReturnType<(s: string) => void>;  
+// type T1 = void
+
+type T2 = ReturnType<<T>() => T>;  
+// type T2 = unknown
+
+type T3 = ReturnType<<T extends U, U extends number[]>() => T>;     
+// type T3 = number[]
+
+type T4 = ReturnType<typeof f1>;  
+// type T4 = {
+//     a: number;
+//     b: string;
+// }
+
+type T5 = ReturnType<any>;     
+// type T5 = any
+
+type T6 = ReturnType<never>;     
+// type T6 = never
+
+type T7 = ReturnType<string>;
+// 🚫 Type 'string' does not satisfy the constraint '(...args: any) => any'.
+// type T7 = any
+
+type T8 = ReturnType<Function>;
+// 🚫 Type 'Function' does not satisfy the constraint '(...args: any) => any'.
+//    Type 'Function' provides no match for the signature '(...args: any): any'.     
+// type T8 = any
+```
+
+<br />
+
+## 고급
+
+### InstanceType<Type>
+
+> released: 2.8
+
+- 타입의 생성자 함수의 인스턴스 타입으로 구성된 타입을 생성할 때 사용
+
+```tsx
+class C {
+  x = 0;
+  y = 0;
+}
+ 
+type T0 = InstanceType<typeof C>;
+// typeof C: C class의 constructor function
+// type T0 = C
+
+type T1 = InstanceType<any>;     
+// type T1 = any
+
+type T2 = InstanceType<never>;     
+// type T2 = never
+
+type T3 = InstanceType<string>;
+// 🚫 Type 'string' does not satisfy the constraint 'abstract new (...args: any) => any'.
+// type T3 = any
+
+type T4 = InstanceType<Function>;
+// 🚫 Type 'Function' does not satisfy the constraint 'abstract new (...args: any) => any'.
+//    Type 'Function' provides no match for the signature 'new (...args: any): any'.
+// type T4 = any
+```
+
+<br />
+
+### ThisParameterType<Type>
+
+> released: 3.3
+
+- 함수 타입의 `this` parameter의 타입을 추출
+- 함수 타입에 `this` parameter가 없는 경우 unknown
+
+```tsx
+function toHex(this: Number) {
+  return this.toString(16);
+}
+
+console.log(toHex.apply(1234)); // "4d2"
+ 
+function numberToString(n: ThisParameterType<typeof toHex>) {
+  return toHex.apply(n);
+}
+
+console.log(numberToString(1234)); // "4d2"
+```
+
+<br />
+
+### OmitThisParameter<Type>
+
+> released: 3.3
+
+- Type에서 `this` parameter를 제거할 때 사용
+- Type에 명시적으로 `this` parameter가 없다면, 유틸리티 타입은 Type과 동일
+- 그렇지 않으면, Type에서 `this` parameter가 없는 새 함수 타입이 생성
+- generic은 지워지고, 마지막 overload signature만 새 함수 유형으로 전파
+
+```tsx
+function toHex(this: Number) {
+  return this.toString(16);
+}
+ 
+const fiveToHex: OmitThisParameter<typeof toHex> = toHex.bind(5);
+ 
+console.log(fiveToHex()); // 5
+```
+
+<br />
+
+## References
+
+- [TS핸드북 - utility-types](https://www.typescriptlang.org/docs/handbook/utility-types.html)

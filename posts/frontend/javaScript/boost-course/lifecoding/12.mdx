@@ -1,0 +1,152 @@
+---
+title: "[JS] 6.3. 생성자(constructor)"
+
+categories:
+  - JS boostcourse
+
+tags:
+  - [FE Language, JS, JS boostcourse]
+
+date: 2022-02-12T23:20
+last_modified_at: 2022-02-12T23:20
+
+author_profile: true
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 참고 자료
+
+[boostcourse 생활코딩: 자바스크립트의 시작](https://www.boostcourse.org/cs124/joinLectures/52258)
+
+<br />
+
+## constructor
+
+### 객체 공장의 필요성
+
+- 지금까지는 객체를 하나하나 만들었다.
+- 객체의 데이터 종류가 바뀌면 관련된 객체를 모두 바꿔줘야 하는 수고로움 발생
+- 객체를 찍어내는 양산 체계가 필요
+- 이를 **생성자(constructor)**라고 한다.
+
+<br />
+
+### 생성자(constructor)
+
+함수 앞에 new를 붙여 생겨난 것을 변수에 할당한다.
+
+```js
+var d1 = new Date("2019-5-10");
+console.log(d1.getFullYear()); // 2019
+console.log(d1.getMonth()); // 4 : 월을 물으면 하나 빼서 나옴
+```
+
+<br />
+
+- 위에서는 Date라는, 내부 구조를 알 수 없는 함수를 사용하였다.
+- 우리가 알 수 있도록 함수를 생성해보겠다.
+
+```js
+// constructor 함수 생성
+function Person() {
+  (this.name = "lee"),
+    (this.first = 10),
+    (this.second = 10),
+    (this.third = 10),
+    (this.sum = function () {
+      return this.first + this.second + this.third;
+    });
+}
+
+console.log("Person()", Person());
+console.log("new Person()", new Person());
+```
+
+결과
+
+```
+Person() undefined
+new Person() Person {
+  name: 'lee',
+  first: 10,
+  second: 10,
+  third: 10,
+  sum: [Function (anonymous)]
+}
+```
+
+- 함수를 그냥 호출하면 그냥 함수이고, return 값이 없으므로 undefined 출력
+- `new` 를 붙이면 `Person()`은 단순한 함수가 아닌 객체를 생성하는 생성자가 되어 객체 생성 후 출력
+
+<br />
+
+## constructor의 활용
+
+### constructor의 기초
+
+```js
+// constructor 함수 Person() 생성
+function Person() {
+  (this.name = "kim"),
+    (this.first = 30),
+    (this.second = 20),
+    (this.third = 10),
+    (this.sum = function () {
+      return this.first + this.second + this.third;
+    });
+}
+
+var kim = new Person();
+var lee = new Person();
+console.log("kim.sum()", kim.sum());
+console.log("lee.sum()", lee.sum());
+```
+
+- Person()이라는 함수를 만들고, 내부의 값들을 이용하는 메서드도 지정해준다.
+- 이후 new을 이용해 객체로 만든 것을 kim과 lee에 각각 할당한다.
+- sum() 메서드의 결과를 출력해보자.
+
+<br />
+
+결과
+
+```
+kim.sum() 60
+lee.sum() 60
+```
+
+그런데 kim과 lee는 다른 객체인데 내부에 name, first, second, third가 hard하게 지정되어 있어서 다른 객체의 메서드를 쓰더라도 같은 결과가 나온다. 객체로서의 의미가 없다. 어떻게 해결해야 할까.
+
+<br />
+
+### parameter의 적용
+
+```js
+// constructor 함수 + parameter
+function Person(name, first, second, third) {
+  (this.name = name),
+    (this.first = first),
+    (this.second = second),
+    (this.third = third),
+    (this.sum = function () {
+      return this.first + this.second + this.third;
+    });
+}
+
+var kim = new Person("kim", 30, 20, 10);
+var lee = new Person("lee", 10, 10, 10);
+console.log("kim.sum()", kim.sum());
+console.log("lee.sum()", lee.sum());
+```
+
+결과
+
+```
+kim.sum() 60
+lee.sum() 30
+```
+
+constructor에 argument로 전달한 name, first, second, third가 parameter로 constructor function 내부에 전달되어 sum() 메서드를 실행했을 때, parameter의 인자들을 활용해 메서드를 실행했다. 이렇게 된다면 처음에 생성자를 통해 생성할 때 argument를 달리 하면, 객체마다 다른 값들을 가지기 때문에 독립적인 객체로 사용할 수 있게 된다.

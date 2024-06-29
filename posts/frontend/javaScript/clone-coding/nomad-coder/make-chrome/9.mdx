@@ -1,0 +1,211 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 9. JS로 HTML에 element 생성"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-06T16:00
+last_modified_at: 2022-03-06T16:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## JS로 HTML에 element 넣기
+
+> 목표 : 배경화면으로 사용할 사진을 HTML에 넣어보자.
+
+> 문제 상황 : 그동안 이미 HTML 코드에 있는 element의 selector를 조회하여 추가/삭제만 해주었다.
+
+> 해결 방법 : HTML element 요소를 JS로 만들어 HTML에 넣어주자.
+
+<br />
+
+### createElement()
+
+- 없던 Element를 만드는 코드
+
+```js
+const bgImage = document.createElement("img");
+bgImage.src = `img/${chosenImage}`;
+```
+
+- img 태그 element을 만들고, 이를 bgImage로 저장
+- bgImage는 하나의 object로 작용한다.
+- `src` property에 이미지 경로를 넣어준다.
+
+<br />
+
+> 문제점 : JS로 Element를 만들어 주었을 뿐, 아직 DOM Tree에는 들어가지 않았다.
+
+때문에 HTML 코드에도 반영이 되지 않고, 화면에도 보이지 않음이 당연하다.
+
+<br />
+
+### appendChild() / prepend()
+
+- DOM 트리에 element를 삽입하는 방식이다.
+- `부모element.appendChild(자식element)` 방식으로 사용한다.
+
+```js
+document.body.appendChild(bgImage);
+```
+
+- document의 body에 `bgImage`를 넣는 코드
+- appendChild()는 맨 마지막에 element를 위치시킨다.
+- prepend()는 맨 앞에 element를 위치시킨다.
+
+```js
+document.body.appendChild(bgImage);
+```
+
+<br />
+
+### 사전 작업
+
+- bgImage.src에 넣는 chosenImage가 어디서 나왔을까.
+- 가장 처음 정의하지만, 중요하지 않아서 이제야 소개하는 코드
+
+```js
+const images = [
+  "0.jpg",
+  "1.jpg",
+  "2.jpg",
+  "3.jpg",
+  "4.jpg",
+  "5.jpg",
+];
+
+const chosenImage = images[Math.floor(Math.random() * images.length)];
+```
+
+- 명언 quote.js 처럼 Math.random()을 이용해 array 에서 임의의 사진 파일명을 하나 추출
+
+<br />
+
+## 활용 실습
+
+### 목표 : To do list를 추가하는 코드 작성
+
+<br />
+
+### 가. HTML에 todo-form , todo-list 틀 제작
+
+```html
+<!-- index.html -->
+
+<form id="todo-form">
+  <input type="text" placeholder="Write a To Do and Press Enter" required>
+</form>
+<ul id="todo-list">
+</ul>
+```
+
+- form#todo-form : to do list를 입력할 때 사용
+- ul#todo-list : 입력한 to do list를 넣는 공간
+
+<br />
+
+
+### 나. JS 상수 지정
+
+```js
+// js/todo.js
+
+const toDoForm = document.getElementById("todo-form"); // form 
+const toDoInput = toDoForm.querySelector("input");
+const toDoList = document.getElementById("todo-list");
+
+...
+```
+
+- HTML 코드 태그에 지정한 id를 이용해 상수 지정
+- toDoForm 과 toDoList는 각각 id를 이용
+- toDoInput은 toDoForm 내의 input 태그 element이므로 querySelector 이용
+
+<br />
+
+### 다. Form submit에 대응하는 함수 제작
+
+```js
+// js/todo.js
+
+function handleToDoSubmit(event) {
+  event.preventDefault();            // 기본동작 제거
+  const newTodo = toDoInput.value;   // 입력값을 newTodo에 저장
+  toDoInput.value = "";              // 입력공간 값 제거
+  paintToDo(newTodo);                // 입력값을 처리
+}
+
+toDoForm.addEventListener("submit", handleToDoSubmit)
+```
+
+- `toDoForm`에 submit event가 발생하면 `handleToDosubmit` 함수 호출
+- 기본 동작인 페이지 새로고침 제거
+- 입력값(toDoInput.value)를 `newTodo`에 저장하고 기존 입력 공간 값 제거
+- 입력값을 처리하는 함수 `paintToDo()` 호출해서 입력값 처리
+
+<br />
+
+### 라. 입력값 처리 함수 제작 ⭐
+
+⭐ createElement(), appendChild() 꼭 이해하기
+
+```js
+// js/todo.js
+
+function paintToDo(newTodo) {
+  const li =  document.createElement("li");     // document에 li 만들기
+  const span = document.createElement("span");  // document에 span 만들기       
+  li.appendChild(span);                         // li에 span을 넣기
+  span.innerText = newTodo;                     // span에 newTodo text 넣기
+  toDoList.appendChild(li);                     // toDoList ul에 li 넣기
+}
+```
+
+- JS로 li와 span을 만들고, `li.appendChild(span)`로 `li`에 `span` 삽입
+- span에 `newTodo`를 Text로 입력
+- `ul#toDoList`에 `li` 삽입
+
+<br />
+
+### 전체 JS 코드
+
+```js
+// js/todo.js
+
+const toDoForm = document.getElementById("todo-form"); // form 
+const toDoInput = toDoForm.querySelector("input");
+const toDoList = document.getElementById("todo-list");
+
+function paintToDo(newTodo) {
+  const li =  document.createElement("li");     // document에 li 만들기
+  const span = document.createElement("span");  // document에 span 만들기       
+  li.appendChild(span);                         // li에 span을 넣기
+  span.innerText = newTodo;                     // span에 newTodo text 넣기
+  toDoList.appendChild(li);                     // toDoList ul에 li 넣기
+}
+
+function handleToDoSubmit(event) {
+  event.preventDefault();            // 기본동작 제거
+  const newTodo = toDoInput.value;   // 입력값을 newTodo에 저장
+  toDoInput.value = "";              // 입력공간 값 제거
+  paintToDo(newTodo);                // 입력값을 처리
+}
+
+toDoForm.addEventListener("submit", handleToDoSubmit)
+```
+
+<br />
+
+### 문제점
+
+1. 추가한 list를 제거할 수 없다.
+2. 페이지를 새로고침하면 list가 사라진다.

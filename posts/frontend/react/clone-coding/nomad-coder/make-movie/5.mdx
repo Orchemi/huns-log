@@ -1,0 +1,387 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 4. Props"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-03-27T02:25
+last_modified_at: 2022-03-27T02:25
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Props
+
+- 부모 컴포넌트로부터 자식 컴포넌트에 데이터를 보내는 방법
+
+<br />
+
+### Props의 목적
+
+> 왜 써야하는데요?
+
+- 버튼 컴포넌트의 스타일을 인라인스타일로 지정해보자.
+
+```js
+function SaveBtn() {
+  return (
+    <button
+      style={% raw %}{{{% endraw %}
+        backgroundColor: "tomato",
+        color: "white",
+        padding: "10px 20px",
+        border: 0,
+        borderRadius: 10,
+      {% raw %}}}{% endraw %}
+    >
+      Save Changes
+    </button>
+  );
+}
+```
+
+- style은 여러 요소들을 조작해야하므로 코드 양이 많다.
+- 다른 버튼을 또 만들려면 같은 스타일이어도 또 코드를 반복해야한다.
+- 코드의 양이 많아지고 유지보수가 불편해진다.
+- 이를 **Props**를 이용해 부모 컴포넌트로부터 Configuration(설정)을 받아온다면 편하게 처리할 수 있다.
+
+<br />
+
+### Props의 활용
+
+```jsx
+function Btn(props) {
+  return (
+    <button
+      style={% raw %}{{{% endraw %}
+        backgroundColor: "tomato",
+        color: "white",
+        padding: "10px 20px",
+        border: 0,
+        borderRadius: 10,
+      {% raw %}}}{% endraw %}
+    >
+      {props.banana}
+    </button>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Btn banana="Save changes" />
+      <Btn banana="Continue" />
+    </div>
+  );
+}
+```
+
+- 어떠한 단어로 지정해도 된다는 점을 강조하기 위해 property 이름을 'banana'로 지정
+- 컴포넌트의 **첫번째이자 유일한 argument는 props**이다.
+- 이 props는 부모 컴포넌트에서 호출될 때 태그 내에 정의된 property대로 적용
+- 실제로는 함수 argument에 object 형식으로 전달하는 것과 같다.
+- property명은 key, property value는 value로 key:value 형식으로 props object에 저장 후 전달
+
+<br />
+
+### props shortcut
+
+> props.~~~ 방식으로 작성하는 게 너무 긴 거 같은데요?
+
+- 위와 같은 이유로 실제로는 props 자체만으로 많이 쓰지 않는다.
+- **object 내의 key를 바로 가져오는 shortcut 방식**으로 주로 사용
+
+```jsx
+function Btn({ banana }) {
+  return (
+    <button
+      style={% raw %}{{{% endraw %}
+        backgroundColor: "tomato",
+        color: "white",
+        padding: "10px 20px",
+        border: 0,
+        borderRadius: 10,
+      {% raw %}}}{% endraw %}
+    >
+      {banana}
+    </button>
+  );
+}
+```
+
+- props는 object이기 때문에 argument 자리에 위와 같이 사용 가능
+- **props** object의 **banana** key를 바로 사용하는 것
+- React가 아닌 **JS ES6의 문법**
+
+<br />
+
+> 여러 개의 key를 사용하고 싶은데요?
+
+아래와 같이 사용하면 된다.
+
+```jsx
+function Btn({ banana, big }) {
+  return (
+    <button
+      style={% raw %}{{{% endraw %}
+        backgroundColor: "tomato",
+        color: "white",
+        padding: "10px 20px",
+        border: 0,
+        borderRadius: 10,
+        fontSize: big ? 18 : 16,
+      {% raw %}}}{% endraw %}
+    >
+      {banana}
+    </button>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Btn banana="Save changes" big={true} />
+      <Btn banana="Continue" big={false} />
+    </div>
+  );
+}
+```
+
+<br />
+
+### Props의 Default 설정
+
+```jsx
+function Btn({ text, fontSize = 16 }) {
+  return (
+    <button
+    .
+    .
+```
+
+- 위와 같이 argument에 값을 default로 지정 가능
+- props가 별도로 지정되지 않으면 default 값 적용
+- React가 아닌 **JavaScript 문법**
+
+<br />
+
+## Props와 Function
+
+- Props에 함수를 전달할 수도 있다.
+
+```jsx
+function App() {
+  const [value, setValue] = React.useState("Save Changes");
+  const changeValue = () => setValue("Revert Changes");
+  return (
+    <div>
+      <Btn text={value} changeValue={changeValue} />
+      <Btn text="Continue" />
+    </div>
+  );
+}
+```
+
+- changeValue라는 key와 changeValue라는 함수가 value로 이어졌다.
+- 이 역시 마찬가지로 props object에 전달된다.
+
+<br />
+
+### 주의사항
+
+>  **컴포넌트의 EventListenr가 아닌 prop으로 전달**된다.
+
+- EventListenr in **HTML tag** : **EventListener**
+- EventListenr in **Custom Component** : **prop**
+
+- Component 내부의 button tag에 prop의 function을 EventListener로 넣어주어야 한다!!
+
+<br />
+
+### React Memo
+
+> 그렇게까지 중요한 개념은 아니다. 다만 이런 feature가 React에 있음을 이해하자.
+
+> Btn 컴포넌트에 다음과 같이 console에 출력하는 코드를 넣어보자.
+
+```jsx
+function Btn({ text, changeValue }) {
+      console.log(text, "was rendered");
+      .
+      .
+      .
+```
+
+이후 Save Change 버튼을 클릭하면 아래와 같이 console에 표시된다.
+
+![image](https://user-images.githubusercontent.com/86189596/160247900-74faeb9b-3a36-4811-a8a1-9c1dfdc09df2.png)
+
+<br />
+
+> Save Change는 Revert Changes로 바뀌니까 그렇다 치는데, Continue는 왜 또 생성되죠?
+
+- 그렇다. Continue 버튼까지 rerender되는 것은 낭비이다.
+- 부모 컴포넌트에 state에 변화가 있다면 부모 컴포넌트 전체가 rerender되기 때문에 느려질 수 있다.
+- 이 컴포넌트가 다시 그려지는 것을 원치 않는다고 React에 알려야 한다.
+- 이 경우 **기억(memorize)하라**는 의미의 **React Memo**가 사용된다.
+
+<br />
+
+```jsx
+const MemorizedBtn = React.memo(Btn);
+function App() {
+  const [value, setValue] = React.useState("Save Changes");
+  const changeValue = () => setValue("Revert Changes");
+  return (
+    <div>
+      <MemorizedBtn text={value} changeValue={changeValue} />
+      <MemorizedBtn text="Continue" />
+    </div>
+  );
+}
+```
+
+- **Btn 컴포넌트를 memo**한 **MemorizedBtn 컴포넌트**를 const로 정의하였다.
+- 기존 Btn 컴포넌트를 render하던 것을 MemorizedBtn 컴포넌트를 render하도록 해보자.
+
+![image](https://user-images.githubusercontent.com/86189596/160248309-d3c02330-cae5-4f27-a638-457cf00586a8.png)
+
+- console 결과 Continue 버튼이 rerender되지 않았다.
+- 해당 컴포넌트가 변경된다면 **해당 컴포넌트만 rerender되게 하는 기능**
+
+<br />
+
+## Prop Types
+
+### Prop Type이 필요한 이유
+
+> 우리는 Btn에 한 가지 더 configuration이 가능하다.
+
+```jsx
+// 정상
+<Btn text="Save Changes" fontSize={18} />
+
+// 실수
+<Btn text={18} fontSize="Save Changes" />
+```
+
+- props를 잘못 지정하여 우리가 원하는 컴포넌트를 받을 수는 없는 경우이다.
+- 하지만 syntax적으로는 문제가 없기 때문에 console에서 에러 메시지를 받을 수 없다.
+- React가 우리에게 "이것이 잘못되었다" 라는 메시지를 보내주면 좋겠다.
+- **Prop Type**을 통해 이를 해결할 수 있다.
+
+<br />
+
+### Prop Type의 사용
+
+> Prop Type : **어떤 type의 prop을 받고 있는지 체크**해준다.
+
+<br />
+
+> CDN 링크
+
+```html
+<script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
+```
+
+<br />
+
+> 사용법
+
+```jsx
+Btn.propTypes = {
+  text: PropTypes.string,
+  fontSize: PropTypes.number,
+};
+```
+
+- text는 string 형식, fontSize는 number 형식이기를 원한다.
+- 만약에 이에 해당하지 않는 형식이 prop으로 지정되면 에러가 발생한다.
+
+<br />
+
+> 결과
+
+![image](https://user-images.githubusercontent.com/86189596/160249827-7465d221-a498-44e1-b93b-e5945448e9ad.png)
+
+<br />
+
+### 주의사항 및 참고자료
+
+> 주의사항
+
+- react CDN이 <https://unpkg.com/react@17.0.2/umd/react.production.min.js> 인 경우 에러 메시지가 미발생
+- <https://unpkg.com/react@17.0.2/umd/react.development.js>, development용 CDN으로 바꿔주면 에러 메시지를 확인 가능
+- **React Memo**와 함께 사용하면 미반응
+
+<br />
+
+> 참고자료
+
+[ReactJS 공식문서 - Typechecking with Proptypes](https://reactjs.org/docs/typechecking-with-proptypes.html)
+
+<br />
+
+## 전체코드
+
+```jsx
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.development.js "></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.17.8/babel.min.js"></script>
+  <script type="text/babel">
+    function Btn({ text, fontSize = 16 }) {
+      console.log(text, "was rendered");
+      return (
+        <button
+          style={% raw %}{{{% endraw %}
+            backgroundColor: "tomato",
+            color: "white",
+            padding: "10px 20px",
+            border: 0,
+            borderRadius: 10,
+            fontSize, // fontSize: fontSize 처럼 속성명과 속성값이 같은 경우 하나만 사용 가능
+          {% raw %}}}{% endraw %}
+        >
+          {text}
+        </button>
+      );
+    }
+    Btn.propTypes = {
+      text: PropTypes.string,
+      fontSize: PropTypes.number,
+    };
+    function App() {
+      const [value, setValue] = React.useState("Save Changes");
+      const changeValue = () => setValue("Revert Changes");
+      return (
+        <div>
+          <Btn text="Save Changes" fontSize={18} />
+          <Btn text={18} fontSize="Save Changes" />
+        </div>
+      );
+    }
+    const root = document.getElementById("root");
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
+```

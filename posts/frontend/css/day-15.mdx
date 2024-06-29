@@ -1,0 +1,73 @@
+---
+title: "[CSS] button 태그의 사용"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-08T23:23
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+<h2 style="margin-top:50px">
+    button 태그의 활용
+</h2>
+
+<p>DAY 15에서는 버튼 태그를 활용한다. 아래 코드를 살펴보자.</p>
+
+```html
+* html 문서
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>button_실습</title>
+    <link href="css/style.css" />
+  </head>
+  <body>
+    <!-- forest1 -->
+    <div id="color2">
+      <div class="horse"></div>
+      <div class="color2Wrap">
+        <!-- 버튼 3개를 담는 서랍장 -->
+        <div class="btn-wrap">
+          <button class="red"></button>
+          <button class="yellow"></button>
+          <button class="blue"></button>
+        </div>
+
+        <!-- 커멘트를 넣는 태그와 내용 -->
+        <p class="color2Comment">
+          아이가 원하는 색상을 직접 만들며 색감을 스스로 발달시킵니다. <br />
+          색이 잘 섞이므로 누구나 쉽게 다양한 색을 만들 수 있습니다.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+```css
+* css 문서 #color2. color2Wrap .btn-wrap {
+  margin-bottom: 20px;
+}
+
+/* <button>의 공간을 만든다. */
+/* <button>은 기본값이 display: inline-block */
+#color2 .color2Wrap .btn-wrap .red,
+#color2 .color2Wrap .btn-wrap .yellow,
+#color2 .color2Wrap .btn-wrap .blue {
+  width: 59px;
+  height: 82px;
+}
+```

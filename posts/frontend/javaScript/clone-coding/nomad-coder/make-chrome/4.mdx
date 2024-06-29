@@ -1,0 +1,235 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 4. Event"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-02T23:40
+last_modified_at: 2022-03-02T23:40
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Event
+
+### Event란?
+
+브라우저 상에서 사용자의 동작
+
+<br />
+
+> Event의 종류
+
+- element를 클릭하거나 마우스를 올려놓기
+- 입력을 마치거나 enter 키를 누르기
+- wifi와 연결되거나 해제되는 경우
+
+<br />
+
+## Event Listen
+
+자바스크립트를 통해 Event를 Listen하여 처리해보자.
+
+```js
+// hello 클래스의 h1 태그를 title로 지정
+const title = document.querySelector(".hello h1");
+
+// "title was clicked"를 console에 출력하는 함수
+function handleTitleClick() {
+  console.log("title was clicked!");
+}
+
+// title을 click하면 함수 실행
+title.addEventListener("click", handleTitleClick);
+```
+
+- `element.addEventListener("event", function)`의 구조로 사용
+- 일반적으로는 function()으로 함수 실행
+- addEventListener는 어떠한 event가 발생했을 때 지정한 함수 실행
+
+<u>주의📢</u> addEventListener 인자의 함수에는 괄호()를 붙이지 않는다!
+{: .notice--primary}
+
+<br />
+
+### Event Listen의 변형
+
+element가 기본적으로 가지는 property에 대하여 지정하며 event listen도 할 수 있다.
+
+```js
+function handleTitleClick() {
+  console.log("title was clicked!");
+}
+
+title.addEventListener("click", handleTitleClick);
+
+// property를 이용하기
+title.onclick = handleTitleClick;
+```
+
+- 정의 이전에는 null값을 가지는 프로퍼티이다.
+- 나중에 `.removeEventListener()`를 통해 제거할 수 있어 `.addEventListener()`가 유용
+
+<br />
+
+### window event listener
+
+document의 event listener 보다 더 다양한 작업을 할 수 있다.
+
+<br />
+
+> resize
+
+- 화면을 확대/축소 하는 경우
+- 브라우저 창을 늘리고 줄이는 경우
+
+<br />
+
+> copy/paste
+
+- 복사 / 붙여넣기 할 때
+
+<br />
+
+> offline / online
+
+- 인터넷 연결이 끊어졌거나 연결되었을 때
+
+<br />
+
+## CSS in JS
+
+### color
+
+파란색으로 초기화된 h1 태그에 `.active` 클래스를 부여해서 토마토색으로 덮어씌우고 싶다.
+
+```css
+/* style.css */
+
+h1 {
+  color: blue;
+}
+
+.active {
+  color: tomato;
+}
+```
+
+<br />
+
+```js
+// app.js
+
+function handleTitleClick() {
+  h1.className = "active";
+}
+
+h1.addEventListener("click", handleTitleClick); // 이후 생략
+```
+
+즉, JS가 CSS 파일을 직접 조작하는 것이 아니라, **HTML 태그의 클래스나 요소를 추가/삭제하는 방식으로 style에 관여**
+
+<br />
+
+### CSS와 if-else 문
+
+> 다시 클릭하면 `active` 클래스를 없애고 싶은데 어떻게 하나요?
+
+```js
+// app.js
+
+function handleTitleClick() {
+  if (h1.className === "active") {
+    h1.className = "";
+  } else {
+    h1.className = "active";
+  }
+}
+```
+
+- className은 getter(READ)이자 setter(UPDATE)이므로 className을 비워서 active 클래스 제거
+
+<br />
+
+### raw value의 변수화
+
+> h1.className = "active" 가 중복되네요?
+
+- 수정 시 누락 및 오타로 에러가 발생할 수 있다.
+- raw value(작성자가 약속한 값)를 변수에 저장하여 변수 인용!!
+
+<br />
+
+```js
+// app.js
+
+function handleTitleClick() {
+  const clickedClass = "clicked";
+  if (h1.className === clickedClass) {
+    h1.className = "";
+  } else {
+    h1.className = clickedClass;
+  }
+}
+```
+
+- 값을 변수에 저장하면 변수명의 입력에 오타가 있어도 오류메시지로 확인할 수 있다.
+- raw value가 바뀌더라도 매번 바꿔주거나 오타가 날 위험을 피할 수 있다.
+
+<br />
+
+### classList
+
+> h1 태그가 처음부터 class를 가지고 있다면요?
+
+- h1.className = ??? 의 방식은 기존 class를 모두 밀어버리고 새로 등록하는 것
+- 때문에 기존 class가 있다면 이를 모두 잃을 수 있는 위험한 방법
+
+<br />
+
+> classList
+
+- class들의 목록으로 작업할 수 있게끔 허용
+- className은 아예 replace해버리는데... classList는 다르게 처리 가능
+
+```js
+function handleTitleClick() {
+  const clickedClass = "clicked";
+  if (h1.classList.contains(clickedClass)) {
+    h1.classList.remove(clickedClass);
+  } else {
+    h1.classList.add(clickedClass);
+  }
+}
+```
+
+- List 내에 `clickedClass` 변수값의 클래스를 가지고 있다면(contains: boolean))
+- clickedClass를 classList에서 제거(remove)
+- 없다면 classList에 추가(add)
+
+<br />
+
+### toggle
+
+> 아 좀 귀찮은데요?
+
+<br />
+
+`toggle`을 사용해보자.
+
+```js
+function handleTitleClick() {
+  h1.classList.toggle("clicked");
+}
+```
+
+- toggle은 h1의 classList에 `clicked` class가 이미 있는지 확인
+- 있다면 remove, 없다면 add

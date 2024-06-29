@@ -1,0 +1,448 @@
+---
+title: "[functional JS ES6+] 비동기/동시성 프로그래밍 1 : callback과 Promise, Monad와 then"
+
+categories:
+  - Functional JS
+
+tags:
+  - [FE Language, JS, Functional JS]
+
+author_profile: true
+
+date: 2022-06-07T02:00
+last_modified_at: 2022-06-07T02:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+> 본 포스트는 인프런의 **함수형 프로그래밍과 JavaScript ES6+** 강의([링크](https://www.inflearn.com/course/functional-es6))를 듣고 정리한 내용입니다.
+
+<br />
+
+## callback과 Promise
+
+### callback
+
+> add10 함수를 의도적으로 100ms 이후에 실행하도록 해보자
+
+```js
+function add10(a, callback) {
+  setTimeout(() => callback(a + 10), 100);
+}
+
+add10(5, res => {
+  log(res); // 15
+});
+
+add10(5, res => {
+  add10(res, res => {
+    add10(res, res => {
+      log(res); // 35
+    });
+  });
+});
+```
+
+- 전달된 a에 10을 더해 callback 함수에 전달
+- 이것을 100ms 지연한 뒤 실행
+- 아래에서 callback 함수는 인자를 단순히 출력하는 함수
+- 합성하려면 내부적으로 계속 깊이가 깊어짐. **callback 지옥 주의**
+
+<br />
+
+### Promise 사용
+
+> 같은 일을 Promise를 사용해 실행해보자
+
+```js
+function add20(a) {
+  return new Promise(resolve => setTimeout(() => resolve(a + 20), 100));
+}
+
+add20(5)
+  .then(log); // 25
+
+add20(5)
+  .then(add20)
+  .then(add20)
+  .then(log); // 65
+```
+
+- **Promise를 만들어서 return** return 한다는 점이 중요!
+- .then을 계속 이어붙여도 깊이가 깊어지지 않음 → 가독성, 유지보수에 유리
+
+<br />
+
+### callback과 Promise의 중요한 차이점 ⭐
+
+> Promise
+
+- Promise는 **비동기 상황을 일급 값으로 취급**
+- Promise라는 class를 통해서 만들어진 **인스턴스를 반환**
+- 이 인스턴스는 대기/성공/실패를 다루는 **일급 값(Promise 객체)**으로 구성
+- 반환값이 일급
+  - 변수에 할당 가능
+  - 함수에 인자로 전달 가능
+  - 연속적인 작업으로 처리 가능(.then)
+
+<br />
+
+> callback
+
+- 반면 **callback은 단순히 코드로만 구성**
+- 코드 진행에 대한 상황 파악이 불가능
+
+<br />
+
+## 일급 활용
+
+```js
+const go1 = (a, f) => f(a);
+const add5 = a => a + 5;
+
+log(go1(10, add5)); // 15
+```
+
+<br />
+
+> add5 함수가 정상적으로 작동하기 위한 조건
+
+- go1의 f 함수인자가 **동기적으로 동작**하는 함수
+- a 값 역시 동기적으로 값을 알 수 있는 값
+- 즉, Promise가 아닌 값일 때 함수에 값 적용
+
+<br />
+
+> 만약 go1 함수의 a 인자가 비동기적으로 평가되는 경우
+
+```js
+// 100ms 뒤에 받아둔 인자를 그대로 반환하는 함수
+const delay100 = a => new Promise(resolve => setTimeout(( => resolve(a), 100)))
+
+
+log(go1(delay100(10), add5)); // [object Prmoise]5
+```
+
+- 원하는 값 도출 불가능
+
+<br />
+
+> 이런 상황을 해결하기 위해서는?
+
+go1 함수가 일급이라는 점을 활용해 해결해보자.
+
+```js
+// 기존 go1 함수
+const go1 = (a, f) => f(a);
+
+// 일급 활용 go1 함수
+const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+```
+
+- a가 Promise라면 a 값이 값으로 평가된 이후에 f 함수 실행
+- a가 Promise가 아니라면 f 함수 바로 실행
+
+<br />
+
+## 함수 합성 관점에서의 Promise
+
+### 모나드(Monad)
+
+- 함수 합성을 안전하게 하기 위한 도구
+- 비동기 상황에서 사용하는 모나드 : Promise
+- JS에서 직접적으로 설명하거나 거론하지는 않지만, 함수 합성에서의 응용을 위해서 어느 정도 필요
+
+<br />
+
+```js
+const g = a => a + 1;
+const f = a => a * a;
+
+log(f(g(1))); // 4
+log(f(g())); // NaN
+```
+
+- 인자가 있는 경우, g함수에 전달되어 값을 반환하고, 다시 f함수에 전달되어 log 함수에 유의미한 인자로 작용
+- 인자가 비어있는 경우, f 함수를 거쳐 나온 값이 비정상적일지라도 log 함수를 통해 출력되어 문제 발생
+- 즉, 안전하게 합성되지 않았다, 또는 반드시 안전한 인자(함수합성이 동작할 수 있는 인자)만 전달되어야 하는 함수 합성
+
+<br />
+
+> Monad식 사고 : 어떤 type의 인자가 들어오든지, 또는 들어오지 않더라도 안전하게 함수 합성을 할 수 있는 방법은 없을까?
+
+```js
+log(f(g(1)));
+log(f(g()));
+
+log([1].map(g).map(f)); // [4]
+[1].map(g).map(f).forEach(r => log(r)); // 4
+[].map(g).map(f).forEach(r => log(r)); // _
+```
+
+- monad의 인자는 **array에 넣으며 시작**
+- map 함수를 통해서 함수 합성
+
+- 만약 인자가 없어서 배열이 비어있다면, 아무 일도 일어나지 않는다.
+- .map(f), .forEach(r => log(r)) 자체가 실행되지 않는다.
+- 오류를 출력하지 않는 안전한 함수 합성
+
+<br />
+
+### Monad와 Promise
+
+```js
+// resolve를 통해 Promise라는 값을 만드는 것
+Promise.resolve(1).then(g).then(f).then(r => log(r));
+
+// 이는 위의 Monad에서 처음 배열을 만드는 것과 같다.
+Array.of(1).map(g).map(f).forEach(r => log(r)); // 4
+```
+
+- 기존 array에서는 **map chain**으로 함수를 합성
+- 비동기 상황에서 Promise는 **then chain**으로 함수를 합성
+
+- 단, **기존 monad가 map chain으로 인자의 유무 여부에 관계 없이 안전한 함수 합성을 하려는 목적**이라면,
+- **Promise는 비동기 상황(대기 상황)에서의 안전한 함수 합성을 보장하려는 목적** ⭐
+- Promise에 인자가 없는 경우에 대한 안전한 합성을 보장하지는 않는다.
+
+<br />
+
+## Kleisli Composition
+
+> **오류가 있을 수 있는 함수 합성**에서의 안정성을 보장하는 하나의 규칙
+
+Promise는 Kleisli Composition을 지원하는 도구
+
+<br />
+
+> 오류가 발생하는 상황
+
+1. 외부적 요인 : 들어오는 인자 자체가 잘못된 경우
+2. 내부적 요인 : 인자는 정상이어도 어떠한 환경적이거나 로직적인 부분에 의해
+
+```js
+// 수학적 관점
+f(g(x)) = f(g(x))
+
+// 실무적 환경
+f(g(x)) != f(g(x))
+
+// 이유는 g 함수가 바라보고 있는 어떤 값이 비교하는 시점에서 달라지거나 없어졌을 수 있기 때문
+```
+
+<br />
+
+> 예시
+
+```js
+const users = [
+  { id: 1, name: 'aa' },
+  { id: 2, name: 'bb' },
+  { id: 3, name: 'cc' }
+];
+
+// user의 id를 통해 user를 찾는 함수
+const getUserById = id =>
+  find(u => u.id == id, users);
+
+// 함수 합성
+const f = ({name}) => name;
+const g = getUserById;
+const fg = id => f(g(id));
+
+
+// 이상적인 경우
+log(fg(2)); // bb
+log(fg(2) == fg(2)); // true
+
+
+// 오류 발생 예시 : users에 데이터가 없어지는 경우 
+const r1 = fg(2);
+users.pop();
+users.pop();
+const r2 = fg(2);
+log(r1 == r2); // TypeError
+```
+
+이런 합성 과정에서 에러가 발생하지 않도록 하는 것이 **Kleisli Composition**
+
+<br />
+
+> Kleisli Composition 적용
+
+```js
+const getUserById = id =>
+  find(u => u.id == id, users) || Promise.reject('없어요');
+
+const f = ({name}) => name;
+const g = getUserById;
+const fg = id => Promise.resolve(id).then(g).then(f).catch(a => a);
+
+fg(2).then(log); // bb
+users.pop();
+users.pop();
+g(1) // {id: 1, name: "aa"}
+g(2) // Promise {<rejected>: "없어요"}
+fg(2).then(log); // Promise {<rejected>: "없어요"}
+```
+
+- getUserById 함수에서 find 함수의 결과가 없을 때 오류가 아닌 reject 결과를 반환
+- g(2)에서 rejected 된 경우 이후 then(f)를 실행하지 않는다.
+- 이때 단순히 console에 오류로 찍히는 것이 아닌, 반환하기 위해서는 **catch 문**을 사용
+- fg 함수 전체의 반환값이 rejected Promise인 a가 반환
+- .then(log)만 실행되어 a가 출력
+
+<br />
+
+## go, pipe, reduce에서 비동기 제어
+
+### go
+
+```js
+const go = (...args) => reduce((a, f) => f(a), args);
+const reduce = curry((f, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  } else {
+    iter = iter[Symbol.iterator]();
+  }
+  let cur;
+  while (!(cur = iter.next()).done) {
+    const a = cur.value;
+    acc = f(acc, a);
+  }
+  return acc;
+});
+
+go(1,
+  a => a + 10,
+  a => Promise.resolve(a + 100),
+  a => a + 1000,
+  log);
+```
+
+- go 함수는 reduce 함수에 의해 정의된다.
+- reduce 함수는 acc에 매 인자 a를 함수 f를 통해 누적하여 처리한다.
+
+- 이때 go 함수 내부에서 함수의 반환값이 Promise라면, 어느 시점에서는 reduce 함수의 while문에서 acc가 Promise가 되게 된다.
+- Promise를 f 함수의 인자로 사용해야 하고, 이는 기다렸다가 값으로 평가되면 f 함수를 돌리게 되는 것
+- 때문에 이에 대한 로직으로 reduce의 while문을 다시 작성해주어야 한다.
+
+<br />
+
+> Sol A(비권장) : acc의 Promise 인스턴스 여부를 확인하여 다르게 처리
+
+```js
+const reduce = curry((f, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  } else {
+    iter = iter[Symbol.iterator]();
+  }
+  let cur;
+  while (!(cur = iter.next()).done) {
+    const a = cur.value;
+    // acc = f(acc, a);
+    acc = acc instanceof Promise ? acc.then(acc => f(acc, a)) : f(acc, a); 🔆
+  }
+  return acc;
+});
+```
+
+- 이는 마냥 좋은 코드는 아니다.
+- go 함수에서 중간에 Promise를 사용한다면, 이후 함수에도 계속 Promise chain에다 함수를 합성
+- 연속적으로 비동기가 발생
+
+- 만약 개발자가 이후 함수는 동기적으로 하나의 call stack에서 실행되기를 바랐다면, 처리가 불가능
+- 또한 불필요한 load가 많아져 성능 저하 야기
+
+<br />
+
+> Sol B(권장) : 재귀적 해결
+
+```js
+const reduce = curry((f, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  } else {
+    iter = iter[Symbol.iterator]();
+  }
+  return function recur(acc) {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      acc = f(acc, a);
+      if (acc instanceof Promise) return acc.then(recur);
+    }
+    return acc;
+  } (acc);
+});
+```
+
+- return에 유명함수를 작성해 while문을 이동
+- 유명함수 : 함수를 값으로 다루면서 이름을 짓는 것
+- recur 함수는 acc를 인자로 받아 Promise라면 비동기적으로 처리하고, 아니라면 바로 return
+- 동기적으로 동작하는 함수는 하나의 call stack에서 작동하므로 성능 저하 회피 가능
+
+<br />
+
+> Sol B+ : 첫 값이 Promise인 경우도 해결
+
+처음 실행될 때 acc가 Promise라면 Promise가 풀린, 즉 평가된 값으로 들어가야 함
+
+```js
+const go1 = (a, f) =>  a instanceof Promise ? a.then(f) : f(a);
+
+const reduce = curry((f, acc, iter) => {
+  ...
+  return go1(acc, function recur(acc) {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      acc = f(acc, a);
+      if (acc instanceof Promise) return acc.then(recur);
+    }
+    return acc;
+  });
+});
+```
+
+- a 인자가 Promise면 기다려서 값을 받아 f 함수에 처리한 값, 아니라면 바로 처리한 값을 반환하는 go1 함수
+- 이를 reduce의 return 유명함수에 씌워주어 처음으로 전달되는 acc에 대한 동기/비동기 처리
+
+<br />
+
+> Sol B++ : go 함수 합성 과정에서 rejected 되는 경우
+
+```js
+go(Promise.resoleve(1),
+  a => a + 10,
+  a => Promise.reject('error'),
+  a => a + 1000,
+  a => a + 10000,
+  log).catch(a => console.log(a));
+```
+
+- reject 반환 이후 코드는 실행되지 않는다.
+- go 함수 외부에서 catch문을 작성해 return 값이 rejected Promise인 경우 console에 이를 출력하도록 작성
+- Promise를 값으로 다루며 안전한 비동기 함수 합성 처리 가능
+
+<br />
+
+## Promise.then의 중요한 규칙
+
+> then 메서드를 통해 결과를 도출했을 때의 값이 반드시 Promise인 것은 아니다!
+
+```js
+Promise.resolve(Promise.resolve(Promise.resolve(1))).then(log);
+```
+
+- Promise chain이 연속적으로 중첩되어 있는 경우에도, 외부의 단 한 번의 then으로 안에 있는 결과를 볼 수 있다.
+- 어디든지 내가 원하는 지점에서 해당하는 결과를 받아볼 수가 있다는 것
+- JS에서 언어-개발자-개발자 간의 소통하는 데에 있어서 중요한 법칙

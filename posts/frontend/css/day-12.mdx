@@ -1,0 +1,202 @@
+---
+title: "[CSS] 키즈가오 프로젝트"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-08T23:21
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+<h2 style="margin-top:50px">
+    들어가기
+</h2>
+
+<p>본 책의 저자는 '키즈가오' 라는 기업의 실제 웹 사이트 개발을 진행하면서
+지금까지 배운 HTML/CSS 기능들에 대해 실습해볼 수 있는 기회를 제공한다.
+이론적인 부분을 실제 제작 과정에 적용하며 어떤 속성들이 많이 쓰이는지,
+추가적으로 배울 수 있는 기능들이 있는지 알아보고, 배웠던 내용들을 복기해보고자
+하였다.</p>
+
+<p>Github Page를 customizing 할 때 참고를 많이 할 수 있을 것이라
+판단하여 웹 사이트 제작 과정을 살펴보기로 하였다.</p>
+
+<p>이미지 작업이 많은 웹 사이트 특성상 전반적으로 이미지의 배치나 애니메이션 효과
+등을 많이 고려했음을 알 수 있었다. 때문에 DAY12부터 DAY16까지 책을 읽듯
+읽어보고 도움이 될만한 기능들을 위주로 실습하고 기록하겠다.</p>
+
+<h2 style="margin-top:50px">
+    html/CSS 기본 설정 코드
+</h2>
+
+```html
+* html 문서
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="웹 사이트 소개" />
+    <meta
+      name="keywords"
+      content="웹 사이트 관련 키워드 1, 2, 3"
+      <meta
+      name="author"
+      content="제작자명"
+    />
+
+    <title>제목</title>
+
+    <!-- 현재 style.css 파일의 경로 입력 -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body></body>
+</html>
+```
+
+```css
+* css 문서
+
+/* html, body 태그 안의 margin/padding 속성 초기화 */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 브라우저 x축을 벗어나는 모든 요소를 감추기 위해 적용 */
+body {
+  overflow-x: hidden;
+}
+
+/* h1~h6, p 태그의 margin/padding 속성 초기화 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+/* button 태그의 CSS 속성 초기화 */
+button {
+  border: none;
+  background-color: transparent;
+}
+```
+
+<h3 style="margin-top:30px">
+    # overflow-x 속성
+</h3>
+
+- overflow-x: hidden;
+- 콘텐츠를 브라우저 창 밖에 배치하면 브라우저 가로 스크롤 발생
+- 가로 스크롤이 나타나지 않게 하고 브라우저 영역을 벗어난 콘텐츠를 감추는 역할
+
+<h3 style="margin-top:30px">
+    # button 태그
+</h3>
+
+- `<button>`는 버튼을 만들 때 사용하는 HTML5 신조어
+- 기본 속성값은 검은색 태두리와 회색 배경
+- border: none; 속성은 테두리를 없애는 것
+- background-color: transparent; 속성은 배경색을 투명하게 하는 것
+
+<h2 style="margin-top:50px">
+    이미지 파일 가져오기
+</h2>
+
+```css
+* css 문서 #intro {
+  background-image: url(../img폴더명1/img폴더명1-1/img.png);
+}
+```
+
+<h3 style="margin-top:30px">
+    # 기존 폴더에서 나가기
+</h3>
+
+- css 폴더에서 style.css 파일을 불러왔기 때문에 **/../** 을 이용해
+  상위 폴더로 이동한다.
+
+<h2 style="margin-top:50px">
+    하위 class의 하위 class의 css
+</h2>
+
+만약 html 문서가 아래와 같다고 가정하자.
+
+```html
+* html 문서
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    ...
+  </head>
+  <body>
+    <header id="intro">
+      <!-- 로고와 동물 이미지를 담은 서랍장 -->
+      <!-- Intro Wrap -->
+      <div class="introWrap">
+        <div class="logo"></div>
+        <div class="lion"></div>
+        <div class="bear"></div>
+      </div>
+
+      <!-- 구름과 잠자리 이미지를 담은 서랍장 -->
+      <!-- Cloud Wrap -->
+      <div class="cloudWrap">
+        <div class="leftCloud"></div>
+        <div class="rightCloud"></div>
+        <div class="dragonfly"></div>
+      </div>
+    </header>
+  </body>
+</html>
+```
+
+<p>이때 css의 하위 class의 속성값을 적용하려면 다음과 같이 나타낸다.</p>
+
+```css
+* css 문서 #intro {
+  width: 100%;
+  height: 1600px;
+  background-image: url(../img폴더명1/img폴더명1-1/img.png);
+}
+
+#intro .introWrap {
+  /* 마침표(.) 앞에서 한 칸 띄어쓰기에 주의 */
+  position: relative; /* introWrap 서랍장을 2, 3차원으로 변경 */
+  width: 760px;
+  height: 516px;
+  background-color: yellow;
+}
+
+#intro .introWrap .logo {
+  position: absolute;
+  width: 760px;
+  height: 516px;
+  background-image: url(../img/intro/logo.png);
+  z-index: 100;
+}
+
+#intro .introWrap .lion {
+  position: absolute;
+  width: 161px;
+  height: 161px;
+  background-image: url(../img/intro/lion.png);
+  margin: 80px 0 0 30px;
+}
+```

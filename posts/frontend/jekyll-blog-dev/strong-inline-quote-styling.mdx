@@ -1,0 +1,165 @@
+---
+title: "[BlogDev] 강조 태그 및 inline code 스타일링"
+excerpt: "강조 태그와 inline code 스타일을 바꿔보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-03-19T21:50
+last_modified_at: 2022-03-19T21:50
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 설계 이유
+
+![image](https://user-images.githubusercontent.com/86189596/159121665-eac6254a-30ca-4027-95be-dc6d3e791c3d.png)
+
+항상 느껴오던 것이 있다. 강조하면 이게 강조를 한건지 안한건지 싶은 애매함... 단순히 글자의 굵기만 조정하기 때문에 티가 그리 나지 않는 것이다. 위의 화면처럼 말이다.
+
+그래서 그동안은 inline quote를 사용해 강조하고는 했는데, 이 방법도 block이 생기고 font-size가 작아지다보니 긴 글을 강조할 때 부적합하다고 생각했다.
+
+이 문제를 해결하고자 한다.
+
+<br />
+
+
+## 강조 태그?
+
+
+markdown에서 강조태그를 사용할 때 다음과 같은 문법으로 작성한다.
+
+```
+일반 문장 중에 **강조해야할 문장** 을 이렇게 말이다.
+```
+
+<br />
+
+그런데 이 markdown 파일이 jekyll 엔진을 거쳐 html로 렌더링되면 다음과 같이 된다.
+
+```html
+<p>
+  "일반 문장 중에"
+  <strong>강조해야할 문장</strong>
+  "을 이렇게 말이다."
+</p>
+```
+
+즉, 강조 태그는 **strong 태그**이고, 이를 디자인하기 위해서는 이와 관련된 scss 파일을 수정하거나 추가해야 할 것이다.
+
+<br />
+
+### 📃_base.scss
+
+정확한 경로는 📂_sass 📂minimal-mistakes 📃_base.scss이다.
+
+이 파일은 component, utility, layout에 앞서 가장 먼저 import되는 core scss 파일이다. 쉽게 말하면 다양한 scss 파일에 가장 기본이 되는, 즉 최상위 파일이며, 하위 파일에서 다시 덮어씌워질 수 있는 가능성을 가진다.
+
+하지만 strong 태그를 건드는 하위 scss 파일은 없을 것이라고 판단하였다.
+
+<br />
+
+### 코드
+
+나는 굵기는 기존대로 두고, color만 내 메인 강조색으로 바꾸고 싶었다. 그래서 다음과 같은 코드를 삽입했다.
+
+```scss
+strong {
+  color: $primary-color;
+  font-weight: 500;
+}
+```
+
+<br />
+
+### 결과
+
+![image](https://user-images.githubusercontent.com/86189596/159122052-e46035cf-646c-42ff-bd6d-6ca9b13c02e0.png)
+
+원하는대로 잘 개선된 것 같다.
+
+<br />
+
+## inline code?
+
+사실 이 포스트를 작성할 때까지만해도 강조 태그만 손 보려고 했는데, 인라인 코드를 강조용으로 조금씩 사용하면서 느꼈던 불편을 아예 개선해보려고 내용을 추가한다.
+
+<br />
+
+### 설계 이유
+
+![image](https://user-images.githubusercontent.com/86189596/159122207-57fc6e53-5df3-4411-8195-c0e426094d6f.png)
+
+기존에는 강조 태그 대신 저렇게 inline code를 씌워서 짧은 단어를 강조하곤 했다. 그런데 묘하게 font-size가 작아지는 게 찝찝했다. 기능적으로 문제가 있지는 않아서 그냥 두었지만 이제는 건드릴 필요가 있겠다.
+
+<br />
+
+### 📃_base.scss
+
+위에서 언급했지만 다시 말하자면 경로는 📂_sass 📂minimal-mistakes 📃_base.scss이다.
+
+```scss
+p > code,
+a > code,
+li > code,
+figcaption > code,
+td > code {
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  font-size: 0.8em;
+  background: $code-background-color;
+  border-radius: $border-radius;
+
+  &:before,
+  &:after {
+    letter-spacing: -0.2em;
+    content: "\00a0"; /* non-breaking space*/
+  }
+}
+```
+
+inline code는 저 code라는 태그에서 디자인을 관리한다. 현재 font-size가 0.8em으로 설정되어있기 때문에 이 부분을 수정해주면 된다. 
+
+특별히 설정을 하지 않으면 1em으로 다른 글과 같은 사이즈를 가지게 되므로 나는 이 font-size를 별도로 설정한 코드를 삭제하기만 할 것이다.
+
+<br />
+
+### Block Quote와의 독립성
+
+> 어, code면 block quote와도 연관이 있는 것이 아닌가요? block quote 글자 크기 커지는 건 싫은데!
+
+나도 싫다. 그래서 block quote에 대한 부분도 찾아보고 작성하는 것이니 걱정하지 않아도 좋다. block quote는 📃_syntax.scss의 다음 코드에서 관장한다.
+
+<br />
+
+```scss
+div.highlighter-rouge,
+figure.highlight {
+  position: relative;
+  margin-bottom: 1em;
+  background: #353e42;//$base00;
+  color: $base05;
+  font-family: $monospace;
+  font-size: $type-size-6;
+  line-height: 1.8;
+  border-radius: $border-radius;
+
+  > pre,
+  pre.highlight {
+    margin: 0;
+    padding: 1em;
+  }
+}
+```
+
+background color도 이 곳에서 조작할 수 있다. font-size는 `$type-size-6`으로 0.75em의 크기를 가진다. 독립적이므로 block quote의 font-size는 안전하다.

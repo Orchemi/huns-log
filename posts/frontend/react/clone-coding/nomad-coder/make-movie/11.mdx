@@ -1,0 +1,198 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 10. React Router"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-04-08T02:50
+last_modified_at: 2022-04-08T02:50
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## React Router의 개념과 준비
+
+> 목적 : 영화 id를 이용해 상세 페이지로 이동
+
+> 방법 : React에서 Page를 전환하기 위해서는 **Router**가 필요
+
+<br />
+
+> 사전준비 : 영화 상세 페이지 API
+
+- <https://yts.mx/api/v2/movie_details.json?movie_id=34015>
+- id가 34015인 영화의 상세 정보를 더 확인할 수 있는 API
+
+<br />
+
+### route란?
+
+- **Route** : 전환되는 각각의 페이지(스크린)들
+- Router
+  - **사용자가 입력한 주소를 감지**하는 역할
+  - **Hash**Router ↔ **Browser**Router로 구분
+  - HashRouter : **해시 주소** 감지(#)
+  - BrowserRouter : **HTML5를 지원하는 브라우저의 주소** 감지
+
+- 계획
+  - Home route : 모든 영화의 요약 정보
+  - Detail route : 특정 영화의 상세 정보
+
+<br />
+
+### react-router-dom 설치
+
+- **react-router-dom** : react routing에 필요한 여러 component들의 집합
+- 최신버전이 아닌 react-router-dom 5.3.0 버전을 설치
+
+```bash
+$ npm i react-router-dom@5.3.0
+```
+
+<br />
+
+### 기본 route 생성
+
+> routes 폴더 생성
+
+- cra 폴더의 src 폴더 내에 **routes** 폴더 생성
+- Home route(Home.js)를 routes 폴더 내에 생성
+- 경로 : 📂BASE_DIR 📂src 📂routes 📃Home.js
+
+<br />
+
+> Home route
+
+- 지금까지 App.js에서 작성한 모든 코드들은 Home에 대한 코드
+- render하는 App에 대한 기본 형태만 유지하고, 나머지는 Home.js로 이동
+- import되어 사용되는 component들의 경로를 정확히 확인
+- **export default Home;을 꼭 작성**하는 것에 주의
+
+<br />
+
+> Detail route
+
+화면 전환될 영화 상세 페이지의 스켈레톤 페이지를 만든다.
+
+```js
+function Detail() {
+  return <h1>Detail</h1>;
+}
+
+export default Detail;
+```
+
+<br />
+
+## React Router의 사용
+
+### import Components
+
+```js
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+```
+
+- 위의 코드를 입력해 선택적으로 component를 import
+- Link도 사용하는데, 당장 사용하지 않으니 생략
+- Link에 대해서는 후술하겠다
+
+<br />
+
+### 문법
+
+> Component별 의미
+
+- Route : 내부에 rendering될 Component를 담고, URL path를 지정
+- Switch : Route들 간의 rendering을 교환 → **한 번에 하나의 route만 render**
+- Router : Switch를 담음
+
+<br />
+
+> Route path
+
+- route마다 사용할 URL의 breadcrumb를 지정
+- 사용할 URL을 path의 값으로 작성
+- 참고자료 : [reactrouter 공식문서 - Add Some Routes](https://reactrouter.com/docs/en/v6/getting-started/tutorial#add-some-routes)
+
+```js
+// movie Detail Route를 보여주는 path
+<Route path="/movie"> 
+
+// Home Route를 보여주는 path
+<Route path="/">
+```
+
+<br />
+
+> 종합 코드
+
+```js
+function App() {
+  return (
+    <Router>
+      {/* Switch : Route(URL)를 찾는 역할 */}
+      <Switch>
+        {/* Detail Route 컴포넌트 URL 의미 */}
+        <Route path="/movie">
+          <Detail />
+        </Route>
+
+        {/* Home Route 컴포넌트 URL 의미 */}
+        <Route path="/">
+          {/* Home Route 컴포넌트 render */}
+          <Home />
+        </Route>
+      </Switch>
+    </Router>
+  );
+}
+```
+
+<br />
+
+### 페이지 전환 : Link Component
+
+> 그냥 a:link에 href로 '/movie'를 두면 안 되는 건가요?
+
+- HTML처럼 a:link를 사용하는 경우, **페이지가 재실행**
+- React는 SPA이므로 **이를 방지**하려고 하는 것이 철학
+- 이를 위해 존재하는 Component가 있다. **Link**!
+
+<br />
+
+### Link
+
+- 새로고침 없이도 유저를 다른 페이지로 이동시켜주는 Component
+
+> import 
+
+```js
+import { Link } from "react-router-dom";
+```
+
+Link를 사용하고자 하는 route js파일에 import
+
+<br />
+
+> Link to
+
+```js
+// 기존 코드
+<h2>{title}</h2>
+
+// 경로 설정한 코드
+<h2>
+  <Link to="/movie">{title}</Link>
+</h2>
+```
+
+- App.js의 Route Component에서 지정한 path를 입력
+- 참고자료 : [reactrouter 공식문서 - Add Some Links](https://reactrouter.com/docs/en/v6/getting-started/tutorial#add-some-links)

@@ -1,0 +1,253 @@
+---
+title: "[JS CS] 함수"
+
+categories:
+  - JS CS
+
+tags:
+  - [FE Language, JS, JS CS]
+
+author_profile: true
+
+date: 2022-04-26T12:00
+last_modified_at: 2022-04-26T12:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 함수
+
+- 참조 타입 중 하나로써 function 타입에 속함
+- JavaScript에서 함수를 정의하는 방법
+  - 함수 선언식 (function declaration)
+  - 함수 표현식 (function expression)
+
+- JavaScript의 함수는 **일급 객체(First class citizen)**에 해당
+
+<br />
+
+> 일급 객체 : 다음의 조건을 만족하는 객체
+
+- 변수에 할당
+- 함수의 매개변수로 전달
+- 함수의 반환 값으로 사용
+
+<br />
+
+### 함수 선언식
+
+```js
+function name(args) {
+  // do something
+}
+```
+
+- function statement, declaration
+- 함수의 이름과 함께 정의
+- 함수의 이름(name), 매개변수(args), 몸통(중괄호 내부)으로 구성
+
+<br />
+
+### 함수 표현식
+
+```js
+const name = function (args) {
+  //do something
+}
+```
+
+```js
+const add = function (num1, num2) {
+  return num1 + num2
+}
+
+add(1, 2)
+```
+
+- function expression
+- 함수를 표현식 내에서 정의
+- 표현식 : 어떤 하나의 값으로 결정되는 코드 단위(a = b)
+- 함수의 이름을 생략하고 ****익명함수로 정의 가능**, 일반적으로 안 쓴다.
+- **함수를 객체로 생각**하여 변수에 저장
+
+<br />
+
+### 함수의 특성
+
+#### 기본인자(default arguments)
+
+- 인자 작성 시 '=' 문자 뒤 기본 인자 선언 가능
+
+```js
+const greeting = function (name = 'Anonymous') {
+  return `Hi ${name}`
+}
+
+greeting() // Hi Anonymous
+```
+
+<br />
+
+#### 매개변수와 인자의 개수 불일치 허용
+
+> 매개변수보다 인자의 개수가 많은 경우
+
+- 앞에서부터 인자를 취하고 남은 인자는 버림
+
+```js
+const noArgs = function () {
+  return 0
+}
+
+noArgs(1, 2, 3) // 0
+
+
+const twoArgs = function (arg1, arg2) {
+  return [arg1, arg2]
+}
+
+twoArgs(1, 2, 3) // [1,2]
+```
+
+<br />
+
+> 매개변수보다 인자의 개수가 적은 경우
+
+- 부족한 인자에 대한 공간이 **undefined**로 처리
+
+```js
+const threeArgs = function (arg1, arg2, arg3) {
+  return [arg1, arg2, arg3]
+}
+
+threeArgs()       // [undefined, undefined, undefined]
+threeArgs(1)      // [1, undefined, undefined]
+threeArgs(1, 2)   // [1, 2, undefined]
+```
+
+<br />
+
+#### Rest operator
+
+- **rest operator(...)**를 사용하면 함수가 정해지지 않은 수의 매개변수를 배열로 받음
+- python의 *args 와 유사
+- 만약 rest operator로 처리한 매개변수에 **인자가 넘어오지 않을 경우, 빈 배열로 처리**
+
+```js
+const restOpr = function (arg1, arg2, ...restArgs) {
+  return [arg1, arg2, restArgs]
+}
+
+restArgs(1, 2, 3, 4, 5)  // [1, 2, [3, 4, 5]]
+restArgs(1, 2)           // [1, 2, []]
+```
+
+<br />
+
+#### Spread operator
+
+- **spread operator(...)**를 사용하면 배열 인자를 전개하여 전달 가능
+
+```js
+const spreadOpr = function (arg1, arg2, arg3) {
+  return arg1 + arg2 + arg3
+}
+
+const numbers = [1, 2, 3]
+spreadOpr(...numbers) // 6
+```
+
+python의 packing, unpacking과 비슷한 개념
+
+<br />
+
+## 함수 선언식 vs 함수 표현식
+
+> 공통점
+
+- 데이터 타입은 **function**으로 동일
+- 함수 구성 요소(이름, 매개변수, 몸통)
+
+<br />
+
+> 차이점
+
+- 함수 선언식 : 익명함수 불가능, 호이스팅 발생
+- 함수 표현식 : 익명함수 가능, 호이스팅 발생 X
+
+<br />
+
+### 호이스팅
+
+> 함수 선언식 : 호이스팅 발생!!
+
+```js
+add(2, 7)  // 9
+
+function add (num1, num2) {
+  return num1 + num2
+}
+```
+
+- var로 정의한 변수처럼 hoisting 발생
+- 함수 호출 이후에 선언해도 동작
+
+<br />
+
+> 함수 표현식 : 호이스팅 발생 X
+
+```js
+sub(2, 7)  // ReferenceError
+
+const sub = function (num1, num2) {
+  return num1 + num2
+}
+```
+
+- 함수 정의 전에 호출 시 에러 발생
+- ****변수로 평가되어 변수의 scope 규칙을 따름**
+
+<br />
+
+> 함수표현식을 var로 작성한다면?
+
+변수가 선언 전 undefined로 초기화되어 다른 에러가 발생
+
+```js
+console.log(sub) // undefined
+sub(7, 2) // Uncaught TypeError
+
+var sub = function (num1, num2) {
+  return num1 - num2
+}
+```
+
+<br />
+
+## Arrow Function
+
+- function 키워드 생략 가능
+- **매개변수가 하나 뿐이라면, '()'도 생략 가능**
+- **몸통이 표현식 하나라면, '{}'과 return도 생략 가능**
+- 기존 function 키워드 사용 방식과의 차이점은 this 키워드에 대한 이해가 필요하므로 후술
+
+<br />
+
+```js
+const arrow1 = function (name) {
+  return `hello, ${name}`
+}
+
+// 1. function 키워드 삭제
+const arrow2 = (name) => {return `hello, ${name}`}
+
+// 2. 매개변수 1개 -> () 생략
+const arrow3 = name => {return `hello, ${name}`}
+
+// 3. 함수 body가 return 포함 1개 -> {}, return 생략
+const arrow4 = name => `hello, ${name}`
+```

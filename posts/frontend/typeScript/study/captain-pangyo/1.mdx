@@ -1,0 +1,170 @@
+---
+title: "[TS] 타입스크립트의 시작"
+
+categories:
+  - TS Basic
+
+tags:
+  - [FE Language, TS, TS Basic]
+
+author_profile: true
+
+date: 2022-06-12T05:00
+last_modified_at: 2022-06-12T05:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+> 본 포스트는 인프런의 **타입스크립트 입문-기초부터 실전까지** 강의([링크](https://www.inflearn.com/course/%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%9E%85%EB%AC%B8/dashboard))를 듣고 정리한 내용입니다.
+
+<br />
+
+## type의 정의
+
+### JS Doc으로 속성 정의
+
+```js
+// user data
+var user = {};
+
+/**
+ * @typeof {object} Address
+ * @property {string} street
+ * @property {string} city
+ */
+
+/**
+ * @typedef {object} User
+ * @property {string} name
+ * @property {string} email
+ * @property {Address} address
+ */
+
+/**
+ * @returns {Promise<User>}
+ */
+```
+
+- 위처럼 user에 대해서 type과 property를 정의한다면, `user.` 뒤에 자동완성으로 속성의 type 확인 가능
+- fetchUser 함수의 반환값이 `Promise<User>`
+
+![image](https://user-images.githubusercontent.com/86189596/173201725-79eda754-6854-4348-b122-0de48b257f30.png)
+
+![image](https://user-images.githubusercontent.com/86189596/173201694-397e1dc5-5005-41cd-b3f0-040bec8b67af.png)
+
+<br />
+
+### TS를 통한 type 지정
+
+```js
+function sum(a, b) {
+  return a + b;
+}
+
+sum(10, "20"); // 1020
+```
+
+- 문자열과 숫자를 더하면 암묵적 형변환에 의해 문자열로 모두 처리해 연결
+
+<br />
+
+```ts
+function sum(a: number, b: number): number {
+  return a + b;
+}
+```
+
+- 위처럼 인자와 반환값에 type을 명시하며 함수 선언
+- 반환값의 type을 명시하지 않는다면 **타입스크립트의 추론**에 의해 type까지 유추
+
+![image](https://user-images.githubusercontent.com/86189596/173201908-ded5c0e8-8239-4213-b0d8-bd483d38876d.png)
+
+<br />
+
+> TS에서는 해당 type이 제공하는 api나 메서드 등을 바로 활용 가능
+
+- TS에서 변수의 type이 명시되면 api나 메서드를 바로 사용 가능
+- VSC의 [Intellisense](https://code.visualstudio.com/docs/editor/intellisense)(자동완성) 사용 가능
+
+<br />
+
+### JS Doc으로 인자의 type 정의
+
+> JS로 TS를 따라잡아보자
+
+```js
+// @ts-check
+
+/**
+ * @param {number} a 첫번째 숫자
+ * @param {number} b 두번째 숫자
+ */
+
+function sum(a, b) {
+  return a + b;
+}
+```
+
+- 인자의 type과 용도를 지정
+- 반환값의 type 유추 제공
+
+![image](https://user-images.githubusercontent.com/86189596/173202282-cc3d7d32-f50d-4dc6-8d51-4635a0ae30db.png)
+
+- `// @ts-check`: 잘못된 type의 인자를 넣은 경우 오류 발생
+
+<br />
+
+## 본격적인 TS의 시작
+
+### TS 프로젝트 시작하는 법
+
+- TS는 JS로 바꿔주어야 한다.
+- 이를 **compile**이라고 한다.
+
+<br />
+
+> Step 1. npm TS 설치
+
+- project 폴더 경로로 terminal 실행
+- 아래 명령어로 TS 설치
+
+```bash
+$ npm i typescript -g
+```
+
+<br />
+
+> Step 2. tsc 명령어로 compile
+
+```bash
+$ tsc [filename.ts]
+```
+
+- compile하고자 하는 파일명 앞에 **tsc**(ts change) 명령어를 붙인다.
+- filename.js 파일이 ts 파일 위치에 생성
+
+<br />
+
+### TS 설정 파일
+
+> TS compile에 대해 더욱 정교한 옵션을 설정해보자
+
+- 프로젝트 폴더 내에 **tsconfig.json** 이라는 이름의 json 파일을 생성한다.
+- 아래 내용을 넣는다.
+
+```json
+{
+  "compilerOptions": {
+    "allowJs": true, // 이 프로젝트 JS를 허락한다는 의미
+    "checkJs": true, // @ts-check와 같은 역할
+    "noImplicitAny": true // 모든 타입에 대해서 못해도 Any의 type 지정
+  }
+}
+```
+
+- TS에서 타입 명시가 없으면 암묵적으로 **any** 타입 지정
+- **noImplicitAny**는 암묵적 타입 지정 없이 모두 type 지정이 필요
+- [tsconfig reference](https://www.typescriptlang.org/tsconfig) 참고

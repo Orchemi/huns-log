@@ -1,0 +1,196 @@
+---
+title: "[CSS] CSS3에 등장한 신조어 'animation'"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-07T23:25
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+<h2 style="margin-top:50px">
+    animation- 속성
+</h2>
+
+- GIF나 플래시처럼 웹 사이트에 애니메이션 효과 적용시 사용
+- 크기, 위치, 회전, 배경색 등 CSS 언어가 제공하는 대부분의 속성에
+  시간과 방향을 지정하여 애니메이션 효과 생성
+
+<br />
+
+---
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>animation 속성</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <div id="animation"></div>
+  </body>
+</html>
+```
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  background-color: yellow;
+
+  animation-name: changeWidth;
+  animation-duration: 3s;
+  animation-iteration-count: 6;
+  animation-timing-function: ease;
+  animation-direction: alternate;
+  animation-delay: 2s;
+}
+
+/* @keyframes 옆에는 animation-name 속성의 속성값 입력 */
+@keyframes changeWidth {
+  from {
+    width: 300px;
+  }
+  to {
+    width: 600px;
+  }
+}
+```
+
+<h2 style="margin-top:50px">
+    가. animation-name
+</h2>
+
+- 적용할 애니메이션 이름 지정
+
+<h2 style="margin-top:50px">
+    나. animation-duration
+</h2>
+
+- 애니메이션이 from~to로 동작하는 데 걸리는 시간
+
+<h2 style="margin-top:50px">
+    다. animation-iteration-count
+</h2>
+
+- 애니메이션 재생 횟수
+- 제한 없이 무한으로 적용하고 싶다면 <strong>infinite 속성값</strong> 적용
+
+<h2 style="margin-top:50px">
+    라. animation-timing-function
+</h2>
+
+- 속도를 어떻게 가속시키고 감속시킬지 설정
+- transition-timing-function 과 같다.
+
+<h2 style="margin-top:50px">
+    마. animation-direction
+</h2>
+
+애니메이션의 진행 방향
+
+> - normal : from -> to
+> - reverse : to -> from
+> - alternate : from -> to -> from
+> - alternate-reverse : to -> from -> to
+
+<h2 style="margin-top:50px">
+    바. animation-delay
+</h2>
+
+- 애니메이션이 동작하는 시간을 지연시킬 때 사용
+- 기본값은 0s
+
+<h2 style="margin-top:50px">
+    사. @keyframes 속성
+</h2>
+
+- 애니메이션이 효과를 지정하는 공간
+- from { }와 to { } 키워드는 애니메이션의 시작과 끝 지점
+- 0% 와 100%를 입력할 수도 있음
+
+```css
+@keyframes changeWidth {
+  0% {
+    width: 300px;
+  }
+  100% {
+    width: 600px;
+  }
+}
+```
+
+- 효과를 세밀하게 조정하고 싶다면 0%와 100% 사이에 숫자를 추가
+
+```css
+@keyframes changeWidth {
+  0% {
+    width: 300px;
+  }
+  50% {
+    background-color: red;
+  }
+  100% {
+    width: 600px;
+  }
+}
+```
+
+- 즉, 애니메이션이 진행되는 50% 지점에서 배경색이 노란색에서 빨간색으로 변화
+
+<h2 style="margin-top:50px">
+    + 한 줄로 할 때에는?
+</h2>
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  background-color: yellow;
+
+  animation-name: changeWidth;
+  animation-duration: 3s;
+  animation-iteration-count: 6;
+  animation-timing-function: ease;
+  animation-direction: alternate;
+  animation-delay: 2s;
+}
+
+/* @keyframes 옆에는 animation-name 속성의 속성값 입력 */
+@keyframes changeWidth {
+  from {
+    width: 300px;
+  }
+  to {
+    width: 600px;
+  }
+}
+```
+
+위의 animation 표현은 아래 표현처럼 한 줄로 표현할 수 있다.
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  background-color: yellow;
+
+  animation: changeWidth 3s 6 ease alternate 2s;
+}
+```
+
+먼저 나오는 숫자(3s)는 duration, 나중에 나오는 숫자(2s)는 delay를 의미

@@ -1,0 +1,165 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 5. Input과 Event"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-05T23:00
+last_modified_at: 2022-03-05T23:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Input Value
+
+### HTML element 선택 및 저장
+
+```html
+<div id="login-form">
+  <input type="text" placeholder="What is your name" />
+  <button name="">Log In</button>
+</div>
+```
+
+login-form이라는 id의 div 태그 내에 input과 putton 태그를 넣었다. 이를 JS에서 찾아보자.
+
+<br />
+
+```js
+// 1번째 방법
+const loginForm = document.querySelector("#login-form");
+const loginInput = loginForm.querySelector("input");
+const loginButton = loginForm.querySelector("button");
+```
+
+#login-form 자체를 아이디로 찾아 loginForm이라는 상수로 저장한 뒤, 이 상수에서 input과 button css selector로 각각 queryselector로 찾는다.
+
+<br />
+
+```js
+// 2번째 방법
+const loginInput = document.querySelector("#login-form input");
+const loginButton = document.querySelector("#login-form button");
+```
+
+하위 태그를 검색하는 css 문법을 사용하여 각각 바로 상수에 저장한다.
+
+<br />
+
+### 버튼 클릭 후 데이터 정보 저장
+
+```js
+function handleBtnClick() {
+  alert(loginInput.value); // input에 value property가 input 값
+}
+
+loginButton.addEventListener("click", handleBtnClick);
+```
+
+- 앞서 `loginButton`으로 저장한 버튼을 클릭했을 때 `handleBtnClick()` 함수 실행되도록 한다.
+- `loginInput`에 들어있는, 즉 input 박스에 입력한 값을 화면에 alert한다.
+
+<br />
+
+### input 태그 내의 요소
+
+- placeholder : 입력 텍스트가 입력되기 전에 예시로 보여주는 단어. 값이 없음.
+- value : 입력 텍스트가 입력되기 이전에 default로 선입력되어 있는 단어. 값이 있음.
+
+<br />
+
+## input의 유효성 검사 & form
+
+input data의 유효성을 검사해보자.
+
+- input text가 비어있지 않도록
+- 15자 이상 넘어가지 않도록
+
+<br />
+
+### JS 사용
+
+```js
+function handleBtnClick() {
+  const username = loginInput.value;
+  if (username === "") {
+    alert("Please write your name");
+  } else if (username.length > 15) {
+    alert("Your name is too long");
+  }
+}
+
+loginButton.addEventListener("click", handleBtnClick);
+```
+
+<br />
+
+### HTML Input 태그 옵션 사용
+
+위와 같은 코드를 사용하지 않고, HTML을 이용하여 브라우저가 이를 검사하도록 할 수도 있다.
+
+```html
+<form id="login-form">
+  <input required maxlength="15" type="text" placeholder="What is your name" />
+  <button name="">Log In</button>
+</form>
+```
+
+<u>주의📢</u> input의 옵션을 사용하기 위해서는 form 태그를 반드시 사용해야 한다!!
+
+- required : 필수로 값이 입력되도록 한다.
+- maxlength : 최대길이를 지정한다.
+
+값을 입력하지 않는 경우 아래의 경고 메시지를 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/86189596/156889066-c33e0553-6366-4a86-9849-7ca030ef8759.png)
+
+최대길이를 지정한 경우 최대길이 이상으로 텍스트 자체를 입력할 수 없도록 된다.
+
+<br />
+
+### form의 특징 추가
+
+- form 태그 내의 `button 태그`나 type="submit"인 `input 태그`를 사용하면 input 태그 내의 값이 submit된다.
+- form 안의 input에 값을 입력하고 enter로 눌렀을 때 추가로 input이 없다면 data를 submit(제출)하게 된다.
+
+> form이 submit될 때마다 새로고침이 되기 때문에 궁극적으로 원하는 방향은 아니다.
+
+<br />
+
+### Submit을 처리하는 Form
+
+```js
+function onLoginSubmit(event) {
+  event.preventDefault();
+  console.log(event);
+}
+
+loginForm.addEventListener("submit", onLoginSubmit);
+```
+
+> event
+
+- 모든 EventListener function의 첫 번째 argument는 항상 벌어진 Event에 대한 정보
+- 다른 argument명으로 바꿔도 되지만, `event`로 사용하는 것이 관행
+
+![image](https://user-images.githubusercontent.com/86189596/156890474-c78a1e4d-cdf0-4ad5-b646-3197d9801aa2.png)
+
+- event object의 모습
+
+<br />
+
+> preventDefault()
+
+- 어떤 event의 기본 행동이라도 발생되지 않도록 막는 것
+- 기본 행동 : 어떤 function에 대해 브라우저가 기본적으로 수행하는 동작
+  - ex) form을 submit하면 페이지 새로고침
+  - ex) link를 클릭하면 다른 페이지로 이동

@@ -1,0 +1,279 @@
+---
+title: "[Vue] Vue.js 기초"
+
+categories:
+  - Vue
+
+tags:
+  - [SPA, Vue]
+
+date: 2022-05-04T12:00
+last_modified_at: 2022-05-04T12:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Vue.js
+
+- 현대적인 tool과 다양한 라이브러리를 통해 SPA를 완벽하게 지원
+- **Evan You**에 의해 발표 (2014)
+
+<br />
+
+### Vue.js의 사용 이유
+
+- 현대 웹 페이지는 페이지 규모가 계속 커지고 있음
+- 사용하는 데이터 UP, 사용자와의 상호작용 UP
+- Vanilla JS만으로는 관리가 어려움
+
+<br />
+
+### Vanilla JS와의 비교
+
+- ex. 한 유저가 작성한 게시글이 DOM 상에 100개 존재
+
+<br />
+
+> Vanilla JS
+
+- 이 유저가 닉네임을 변경 → DB의 Update와 별도로 DOM 상의 100개의 작성자 이름이 모두 수정되어야 함
+- 모든 요소를 선택 후 이벤트 등록, 값 변경
+
+<br />
+
+> Vue.js
+
+- **DOM과 Data가 연결**
+- Data를 변경하면 이에 연결된 DOM은 알아서 변경
+- 우리가 신경 써야할 것은 오직 **Data에 대한 관리** → **Developer Exp 향상**
+
+<br />
+
+## MVVM 패턴
+
+- 애플리케이션 로직을 UI로부터 분리하기 위해 설계된 디자인 패턴
+- Model / View / View Model 로 구성
+
+<br />
+
+> Model
+
+- Vue에서 Model : **JS Object**
+- {key: value}
+- Vue Instance 내부에서 **data**라는 이름으로 존재
+- 이 data가 바뀌면 View(DOM)가 반응
+
+<br />
+
+> View
+
+- Vue에서 View : **DOM(HTML)**
+- Data의 변화에 따라서 바뀌는 대상
+
+<br />
+
+> ViewModel
+
+- Vue에서 ViewModel : **모든 Vue Instance**
+- View와 Model 사이에서 Data와 DOM에 관련된 모든 일 처리
+- ViewModel을 활용해 **Data를 어떻게 처리해서 보여줄 것인지(DOM)를 고민**
+
+<br />
+
+## Vue.js 기초 코드
+
+### Django와의 코드 작성 순서 비교
+
+> Django
+
+- 데이터의 흐름
+- url → views → template
+
+<br />
+
+> Vue.js
+
+- Data가 변화하면 DOM이 변경
+  - Data 로직 작성
+  - DOM 작성
+
+<br />
+
+### 가. 선언적 렌더링
+
+```js
+{%- raw -%}
+<h2>선언적 렌더링</h2>
+<div id="app1">
+  
+</div>
+
+...
+
+const app1 = new Vue({
+  el: '#app1',
+  data: {
+    message: 'Welcome Vue!'
+  }
+})
+{% endraw -%}
+```
+
+<br />
+
+### 나. Element 속성 바인딩
+
+```js
+{%- raw -%}
+<h2>Element 속성 바인딩</h2>
+<div id="app2">
+  <span v-bind:title="message">
+    내 위에 잠시 마우스를 올리면 동적으로 바인딩된 title을 볼 수 있음!
+  </span>
+</div>
+
+...
+
+const app2 = new Vue({
+  el: '#app2',
+  data: {
+    message: `이 메시지는 ${new Date()}에서 로드됨!`
+  }
+})
+{% endraw -%}
+```
+
+<br />
+
+### 다. 조건문
+
+```js
+{%- raw -%}
+<h2>조건</h2>
+<div id="app3">
+  <p v-if="seen">보인다</p>
+</div>
+
+...
+
+const app3 = new Vue({
+  el: '#app3',
+  data: {
+    seen: true
+  }
+})
+{% endraw -%}
+```
+
+- **v-if**와 boolean type을 매칭한다.
+
+<br />
+
+### 라. 반복문
+
+```js
+{%- raw -%}
+<h2>반복</h2>
+<div id="app4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+...
+
+const app4 = new Vue({
+  el: '#app4',
+  data: {
+    todos: [
+      { text: 'js 복습' },
+      { text: 'vue 배우기' },
+      { text: '멋진 거 만들기' }
+    ]
+  }
+})
+{% endraw -%}
+```
+
+- v-for 뒤에 **for...in** 방식으로 object들을 꺼냄.
+- 객체 순회이므로 **for ... of 가 아님에 주의**!!
+
+<br />
+
+### 마. 사용자 입력 핸들링
+
+```js
+{%- raw -%}
+<h2>사용자 입력 핸들링</h2>
+<div id="app5">
+  <input v-model="message" type="text">
+  <p>{{ message }}</p>
+  <button v-on:click=reversedMessage>로꾸꺼</button>
+</div>
+
+...
+
+const app5 = new Vue({
+  el: '#app5',
+  data: {
+    message: '안녕하세요'
+  },
+  methods: {
+    reversedMessage: function() {
+      this.message = this.message.split('').reverse().join('')
+    }
+  }
+})
+{% endraw -%}
+```
+
+- **v-on** 을 이용해 on??? Event에 대한 콜백함수 호출
+- ex. onClick event에 funcA 콜백함수 호출 → **v-on:click="funcA"**
+
+<br />
+
+## Lifecycle Hooks
+
+- **created** hook은 vue instance가 생성된 후에 호출
+- created를 사용해 Application의 초기 데이터를 API 요청을 통해 불러올 수 있음
+
+```html
+<body>
+  <div id="app">
+    <div><button @click="getImg">GetDog</button></div>
+    <img v-if="imgSrc" :src="imgSrc" alt="sample img">
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const API_URL = 'https://dog.ceo/api/breeds/image/random'
+    const app = new Vue({
+      el: '#app',
+      data: {
+        imgSrc: '',
+      },
+      methods: {
+        getImg: function () {
+          axios.get(API_URL)
+            .then(response => {
+              this.imgSrc = response.data.message
+            })
+        }
+      },
+      created: function () {
+        // console.log('Created! but not beforeMount')
+        this.getImg()
+      }
+    })
+  </script>
+</body>
+```

@@ -1,0 +1,199 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 11. HTML element Save & Load: localStorage & stringify & parse"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-10T23:40
+last_modified_at: 2022-03-10T23:40
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## HTML element 저장
+
+> 문제 상황 : 브라우저를 새로고침할 때마다 to do list가 초기화된다.
+
+> 해결 : localStorage에 저장!!
+
+<br />
+
+### 저장용 array 제작
+
+```js
+const toDos = [];
+
+function handleToDoSubmit(event) {
+  ...
+  saveToDos();                       // Submit되면 ToDos를 저장하는 saveToDos 함수 호출
+}
+
+function saveToDos() {
+  localStorage.setItem("todos", toDos);    // localStorage에 todos라는 이름으로 toDos array 저장
+}
+```
+
+<br />
+
+### localStorage와 array
+
+> 문제 상황 : localStorage에는 array 형태로는 저장할 수 없고 text만 저장할 수 있다.
+
+> 해결 : 아예 처음부터 string으로 변형해서 집어넣자!
+
+> 추후 계획 : 나중에 string을 JSON으로 바꿔 재가공한다!
+
+<br />
+
+### JSON.stringify(obj, arr...)
+
+- JS object나 array 또는 어떤 JS 코드든 string으로 만들어준다.
+- JSON.stringify(??)의 ?? 내에 원하는 어떠한 코드든 넣어준다.
+
+```js
+JSON.stringify([1,2,3,4])
+
+// '[1,2,3,4]'
+```
+
+- array나 object를 stringify 괄호 내에 넣으면 그 자체를 string으로 저장한다.
+- 정확히는 localStorage에 저장할 수 있는 JSON 형태로 저장하는 것이다.
+
+<br />
+
+```js
+function saveToDos() {
+  localStorage.setItem("todos", JSON.stringify(toDos));    // localStorage에 todos라는 이름으로 toDos array 저장
+}
+```
+
+<br />
+
+### 전후 결과
+
+> stringify 이전
+
+![image](https://user-images.githubusercontent.com/86189596/157685649-4741577f-9df0-4ba4-ab2a-e5a3fca9b119.png)
+
+<br />
+
+> stringify 이후
+
+![image](https://user-images.githubusercontent.com/86189596/157685777-eeffdccc-fffe-44ad-8674-d71bb55f1039.png)
+
+- localStorage.getIem('todos')로 조회를 해보면 둘 다 string으로 출력된다.
+- toDos를 stringify를 한 쪽이 array 자체의 form을 더 유지하고 있음을 알 수 있다.
+- 이는 JSON 형태로, 이후에 parse를 거쳐 다시 JS 객체/배열로 데이터를 처리할 수 있는 형태이다.
+- 하위에 배열처럼 보이는 것은 브라우저 자체적으로 JSON을 parsing해서 보여주는 기능 때문이고 localStorage 자체에는 JSON(string) 형태로 저장됨에 주의한다.
+
+<br />
+
+## HTML element 로드
+
+> 문제 상황 : localStorage에 stringify해서 넣어 사용할 수 없다.
+
+> 해결 : JSON.parse()로 JSON으로 되살려보자.
+
+<br />
+
+### JSON.parse(str)
+
+```js
+localStorage.getItem('todos')
+// '["a","b","c"]'
+
+JSON.parse(localStorage.getItem('todos'))
+// (3) ['a', 'b', 'c']
+```
+
+string화 되어있던 array나 object를 읽을 수 있는 배열이나 객체의 형태로 재현
+
+<br />
+
+### forEach()
+
+- array의 각 item에 대해 function을 실행할 수 있게 한다.
+- `array.forEach(function)` 형태로 사용
+
+<br />
+
+### arrow function
+
+- 익명함수
+- forEach 등의 함수에서 function 자리에 쓸 수 있는 이름 없는 함수
+
+```js
+array.forEach((element) => {
+  console.log(`Hello, ${element}`!)
+})
+```
+
+<br />
+
+## 전체 코드
+
+```js
+const toDoForm = document.getElementById("todo-form");
+const toDoInput = toDoForm.querySelector("input");
+const toDoList = document.getElementById("todo-list");
+
+const TODOS_KEY = "todos"
+let toDos = [];             // 초기에는 빈 array, 그리고 바꿀 수 있도록 let 설정
+
+function saveToDos() {
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));    // localStorage에 todos라는 이름으로 toDos array 저장
+}
+
+function deleteToDo(event) {
+  const li = event.target.parentElement;             // 삭제해야 하는 li를 parentElement를 이용해 조회/저장
+  li.remove();                                       // parentElement 제거 
+}
+
+function paintToDo(newTodo) {
+  // li와 span 정의
+  const li =  document.createElement("li");          // document에 li 만들기
+  const span = document.createElement("span");       // document에 span 만들기       
+  span.innerText = newTodo;                          // span에 newTodo text 넣기
+
+  // button 정의
+  const button = document.createElement("button");   // document에 button 만들기
+  button.innerText = "❌";                          // button에 'X' 표시 text 넣기
+  button.addEventListener("click", deleteToDo);      // button클릭 시 deleteToDo 함수 실행
+
+  // span, button을 li에, li를 toDoList에 넣기
+  li.appendChild(span);                              // li에 span을 넣기
+  li.appendChild(button);                            // li에 button 넣기
+  toDoList.appendChild(li);                          // toDoList ul에 li 넣기
+}
+
+function handleToDoSubmit(event) {
+  event.preventDefault();            // 기본동작 제거
+  const newTodo = toDoInput.value;   // 입력값을 newTodo에 저장
+  toDoInput.value = "";              // 입력공간 값 제거
+  toDos.push(newTodo);               // toDos array에 newTodo 추가
+  paintToDo(newTodo);                // 입력값을 처리
+  saveToDos();                       // Submit되면 ToDos를 저장하는 saveToDos 함수 호출
+}
+
+toDoForm.addEventListener("submit", handleToDoSubmit);
+
+function sayHello(item){                             // JS는 자동으로 item이라는 parameter 추가
+  console.log('this is the turn of', item);
+}
+
+const savedToDos = localStorage.getItem(TODOS_KEY);  // localStorage의 toDos를 가져와 savedToDos에 저장
+
+if (savedToDos) {                                    // savedToDos에 item이 있다면
+  const parsedToDos = JSON.parse(savedToDos);        // parse한 것을 parsedToDos에 저장하고
+  toDos = parsedToDos;                               // toDos에 parsedToDos를 저장
+  parsedToDos.forEach(paintToDo);                    // 이 각각의 item에 paintToDo 함수 적용
+}
+```

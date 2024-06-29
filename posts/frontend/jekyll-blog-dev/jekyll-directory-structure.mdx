@@ -1,0 +1,94 @@
+---
+title: "[BlogDev] Minial-Mistakes 테마의 디렉토리 구조"
+excerpt: "md파일에 마크다운 문법을 이용하여 Github Page에 반영하는 방법을 알아보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2021-12-12
+last_modified_at: 2021-12-12
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 도입
+
+본 게시물은 [공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)님의 게시물을 통해 배우고 따라하는 과정입니다. 이 글을 누군가 보고 있다면, 그리고 보다 전문적이고 자세한 설명을 바라신다면 위 링크의 블로그를 확인해보시길.
+
+<br />
+
+## Minimal-Mistakes 테마의 디렉토리 구조
+
+```
+minimal-mistakes
+├── 📁_data                      # data files for customizing the theme
+├── 📁_includes
+├── 📁_layouts
+├── 📁_sass                      # SCSS partials
+├── 📁assets
+├── 📝_config.yml                # site configuration
+├── 📝Gemfile                    # gem file dependencies
+├── 📝index.html                 # paginated home page showing recent posts
+└── 📝package.json               # NPM build scripts
+```
+
+<br />
+
+## \_include 폴더
+
+많이 `재사용` 되는 html 파일들을 모아 둔 폴더이다. 때문에 댓글, 카테고리, 태그, 비디오, head, footer, toc 등등 블로그에서 자주 쓰이거나 항상 보이는 공통된 컴포넌트들을 담은 코드들만 모아둔 폴더인것 같다.
+필요에 따라 `Liquid 언어`의 태그로 포스트나 레이아웃에 \_includes 폴더 내의 코드를 쉽게 삽입하여 재사용할 수 있다. 예를들어 { % include file.ext % } 를 쓰면 이 부분에 \_includes 폴더에 있는 file.ext 파일의 코드가 삽입되는 식이다.
+
+<br />
+
+#### analytics-providers
+
+어떤 `analytics 플랫폼`을 사용할 것인지를 결정
+
+```
+├── 📁analytics-providers
+|  ├── 📝google.html          # Google Standard Analytics를 사용할 때
+|  ├── 📝google-gtag.html     # Google Analytics Global Site Tag를 사용할 때
+|  ├── 📝google-universal.html # Google Universal Analytics를 사용할 때
+|  └── 📝custom.html           # 그 밖에 다른 analytics를 사용할 때
+```
+
+<br />
+
+**사용 방법**
+
+```
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "UA-1234567-8"
+    anonymize_ip: false # default
+```
+
+provider에 사용할 analytics에 맞는 html 파일 이름을 문자열로 적어준다. 구글 analytics 말고 다른 analytics를 사용하려면 `provider: custom`을 한 후 custom.html에 그 analytics의 embed code를 추가해 준다.
+
+<br />
+
+#### comments-providers
+
+어떤 **댓글 플랫폼\*\***을 사용할 것인지. ex) disqus, facebook, ...  
+마찬가지로 custom.html은 `_includes/comments-providers`에 없는 댓글 플랫폼을 사용하려 할 때 여기에 embeded code를 추가해주자.
+[플랫폼별로 사용법](https://mmistakes.github.io/minimal-mistakes/docs/configuration/#comments)
+
+<br />
+
+## footer, head
+
+## References
+
+- [공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)
