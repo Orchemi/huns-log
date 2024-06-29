@@ -82,7 +82,7 @@ sidebar_main: true
 ```
 
 <u>주의📣</u> 이후에 📃archive-single2.html 페이지를 새로 만들어 커스터마이징하므로 `{% raw %}{% include archive-single2.html type=page.entries_layout %}{% endraw %}` 로 적는 것을 권장한다.
-{: .notice--primary}
+`{: .notice--primary}`
 
 나는 Python 같은 경우에는 Capitalize해서 앞에만 대문자, TIL 같은 경우는 Upper해서 모두 대문자 등 카테고리마다 이를 다르게 설정하였다. 일부러 그런 건 아니다. 이 부분에 유의해서 `{% raw %}{% assign posts = site.categories.Python %}{% endraw %}` 부분을 작성해야 한다.
 
