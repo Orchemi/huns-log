@@ -4,5 +4,6 @@
   @include responsive-sidebar;
   @include mix.flex(column);
   height: calc(100vh - $global-header-height);
-  background-color: rgb(255, 220, 220);
+  border-right: 1px solid $color-gray-300;
+  transition: width 0.3s ease-in-out;
 }

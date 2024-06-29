@@ -67,10 +67,13 @@
   }
 
   .time-item {
+    &::before {
+      display: none;
+    }
+
     @include mix.flex(column, center, center);
     gap: 8px;
     min-width: 60px;
-    list-style: none;
     font-size: 12px;
     color: $color-gray-600;
 

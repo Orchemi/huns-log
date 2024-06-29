@@ -30,12 +30,21 @@ function PostMain({ post }: Props) {
   const {
     title,
     excerpt,
+    categories: _categories,
     tags: _tags,
     readingMinutes,
     date,
     last_modified_at: lastModifiedAt,
-    categories,
   } = post;
+
+  const isEdited = date !== lastModifiedAt;
+
+  const getCategories = (): string[] => {
+    if (!_categories) return [''];
+    if (typeof _categories === 'string') return [_categories];
+    return _categories;
+  };
+  const categories = getCategories();
 
   const getTags = (): string[] => {
     if (!_tags) return [];
@@ -44,37 +53,47 @@ function PostMain({ post }: Props) {
     // @ts-expect-error : 'atom' is a string[]
     return _tags[0] as string[];
   };
+  const tags = getTags();
 
   return (
     <div>
       <h1 className={cx('title')}>{title}</h1>
       {excerpt && <p className={cx('description')}>{excerpt}</p>}
       <div className={cx('tag-group')}>
-        <Link
-          className={cx('item', 'category')}
-          href={`/blog/category/${categories}`}
-        >
-          <ArchiveIcon />
-          {categories}
-        </Link>
-        {getTags().map((tag, i) => (
-          <Link key={i} className={cx('item', 'tag')} href={`/blog/tag/${tag}`}>
+        {categories.map((category) => (
+          <Link
+            key={category}
+            className={cx('item', 'category')}
+            href={`/blog/category/${category}`}
+          >
+            <ArchiveIcon />
+            {category}
+          </Link>
+        ))}
+        {tags.map((tag) => (
+          <Link
+            key={tag}
+            className={cx('item', 'tag')}
+            href={`/blog/tag/${tag}`}
+          >
             #{tag}
           </Link>
         ))}
       </div>
       <ul className={cx('time-group')}>
         <li className={cx('time-item')}>
-          <StopwatchIcon className={cx('icon')} />
-          평균 {readingMinutes}분 소요
-        </li>
-        <li className={cx('time-item')}>
           <CalendarIcon className={cx('icon')} />
           {formatDate(date, { decimal: true })} 작성
         </li>
+        {isEdited && (
+          <li className={cx('time-item')}>
+            <Pencil1Icon className={cx('icon')} />
+            {formatDate(lastModifiedAt, { decimal: true })} 수정
+          </li>
+        )}
         <li className={cx('time-item')}>
-          <Pencil1Icon className={cx('icon')} />
-          {formatDate(lastModifiedAt, { decimal: true })} 수정
+          <StopwatchIcon className={cx('icon')} />
+          평균 {readingMinutes}분 소요
         </li>
       </ul>
       <Divider space={'40px'} />

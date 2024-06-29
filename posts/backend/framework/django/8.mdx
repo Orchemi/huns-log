@@ -1,0 +1,143 @@
+---
+title: "[Django] Model"
+
+categories:
+  - Django
+
+tags:
+  - [BE Framework, Django]
+
+date: 2022-03-08T11:00
+last_modified_at: 2022-03-08T11:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Model
+
+- 구조화된, **통합된 데이터**에 대한 정보
+- 사용자가 저장하는 데이터들의 필수적인 필드와 동작 포함
+- **저장된 DB 구조(layout)**
+- django에서 데이터에 접속하고 관리하는 공간
+- 일반적으로 각각의 model은 하나의 DB 테이블에 mapping
+
+<br />
+
+## DB
+
+- 체계화된, 통일된 형태의 데이터의 모임
+- 패턴에 따라 데이터 조작이 간편
+
+<br />
+
+### Query
+
+- 데이터 조회를 위한 명령어
+- 조건에 맞는 데이터를 추출하거나 조작하는 명령어
+- "Query를 날린다." === "DB를 조작한다."
+
+<br />
+
+### DB의 구조
+
+> 스키마(Schema)
+
+- DB에서 자료의 구조, 표현방법, 관계, 제약조건 등을 정의한 구조(structure)
+- 전반적인 명세
+
+| column | datatype |
+| :----: | :------: |
+|  id    |   INT    |
+|  age   |   INT    |
+|  phone |   TEXT   |
+|  email |   TEXT   |
+
+<br />
+
+> 테이블(Table)
+
+- 열(column) : 필드(field) or 속성, 동일한 데이터 형식(INTEGER, TEXT, NULL...)
+- 행(row) : 레코드(record) or 튜플
+- 테이블에 저장되는 값들이 데이터
+- SQL DB에서는 테이블을 **관계** 라고도 한다.
+
+<br />
+
+> 기본키(PK; Primary Key)
+
+- 각 행(레코드)의 고유한 값
+- **반드시 설정**해야 한다.
+- DB관리 및 관계 설정 시 주요하게 활용
+
+<br />
+
+## ORM
+
+- Object Relational Mapping
+- **OOP 언어를 사용**하여 호환되지 않는 유형의 시스템간 데이터 변환
+- OOP에서 RDMS 연동 시, DB와 OOP 언어 간의 호환되지 않는 데이터 변환
+- Django는 내장 Django ORM 사용
+
+> **RDMS**의 데이터와 **Python(django)**의 데이터가 서로 바뀔 수 있게 해주는 수단
+
+> DB를 객체(object)로 조작하기 위해 ORM 사용!!
+
+<br />
+
+### 장단점
+
+> 장점
+
+- SQL을 몰라도 DB 조작 가능
+- SQL의 절차적 접근이 아닌 **객체 지향적 접근** 가능 
+- 잘 아는 언어의 사용 → 웹 개발속도 UP → **높은 생산성**!
+
+
+<br />
+
+> 단점
+
+- ORM 만으로 완전한 서비스를 구현하기 어려운 경우가 있다.
+
+<br />
+
+## models.py 작성
+
+```python
+# articles/models.py
+
+class Article(models.Model):
+    title = models.CharField(max_length=10)  # CharField : 길이가 짧은 것에 사용
+    content = models.TextField()             # TextField : 길이가 긴 것에 사용
+```
+
+- 각각의 app의 models.py에 **DB 스키마에 대응하는 클래스**를 정의
+
+- DB 컬럼과 어떠한 타입으로 정의할 것인지에 대해 django.db라는 모듈의 models를 상속
+- 즉, **각 모델은 django.db.models.Model 클래스의 서브 클래스**로 표현
+
+- title과 content는 모델의 필드
+- 각 필드는 클래스 속성으로 지정, 각 속성은 각 DB의 열에 mapping
+
+<br />
+
+### CharField
+
+- CharField(max_length=None, **options)
+- 길이의 제한이 있는 **짧은 문자열**
+- **max_length는 필수!**
+- 필드의 최대 길이(문자), DB 레벨과 Django의 유효성 검사(값 검증)에서 활용
+
+<br />
+
+### TextField
+
+- TextField(**options)
+- **긴 문자열**에서 사용
+- max_length 옵션 작성은 가능, But 자동 양식 필드인 textarea 위젯에 반영은 되지만, 모델과 DB 수준에는 적용 X
+- max_length 사용은 CharField에서만!

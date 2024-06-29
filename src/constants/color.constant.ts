@@ -23,8 +23,12 @@ export const COLORS = {
   red50: '#FFF5F5',
   red100: '#FFE3E3',
   red200: '#FFC9C9',
+  red300: '#FFA8A8',
+  red400: '#FF8787',
   red500: '#FF6B6B',
   red600: '#FA5252',
+  red700: '#F03E3E',
+  red800: '#E03131',
   red900: '#C92A2A',
 
   // violet
