@@ -7,9 +7,9 @@ const nextConfig = withContentlayer({
   output: 'export',
   sassOptions: {
     prependData: `@use "@/styles/_mixins.scss" as mix;
-                    @use "@/styles/_variables.scss" as var;
-                    @import "@/styles/_colors.scss";
-                    `,
+                  @use "@/styles/_variables.scss" as var;
+                  @import "@/styles/_colors.scss";
+                  `,
   },
 });
 
