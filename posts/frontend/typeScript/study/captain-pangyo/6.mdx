@@ -18,7 +18,7 @@ toc_icon: "bars"
 toc_sticky: true
 ---
 
-> 본 포스트는 인프런의 **타입스크립트 입문-기초부터 실전까지** 강의([링크](https://www.inflearn.com/course/%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%9E%85%EB%AC%B8/dashboard))를 듣고 정리한 내용입니다.
+> 본 포스트는 인프런의 **타입스크립트 입문-기초부터 실전까지** 강의(`[링크](https://www.inflearn.com/course/%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%9E%85%EB%AC%B8/dashboard)`)를 듣고 정리한 내용입니다.
 
 <br />
 
@@ -63,7 +63,7 @@ logText<string>('Hello');
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/173964717-a4c8de60-89e0-4b87-86ec-4c0109d70768.png)
+`![image](https://user-images.githubusercontent.com/86189596/173964717-a4c8de60-89e0-4b87-86ec-4c0109d70768.png)`
 
 - 함수 호출에서 type을 정의하면 해당하는 type의 전달과 출력이 type으로 지정
 
@@ -102,13 +102,13 @@ function logText(text: string | number) {
 
 > 문제점1. 지정된 여러 type이 공통으로 가지는 method에서만 preview 지원
 
-![image](https://user-images.githubusercontent.com/86189596/173974315-b5d3e702-f8a2-4973-9cb6-a3deecd59a2f.png)
+`![image](https://user-images.githubusercontent.com/86189596/173974315-b5d3e702-f8a2-4973-9cb6-a3deecd59a2f.png)`
 
 <br />
 
 > 문제점2. 한 가지 타입에서만 존재하는 메서드 사용 불가
 
-![image](https://user-images.githubusercontent.com/86189596/173974478-986beeef-1030-488e-9c90-277e99a356d1.png)
+`![image](https://user-images.githubusercontent.com/86189596/173974478-986beeef-1030-488e-9c90-277e99a356d1.png)`
 
 - 해당 함수의 결과값은 union type이므로 한 가지 type에서만 지원하는 메서드 사용 불가
 
@@ -132,7 +132,7 @@ num.toLocaleString()
 - generic을 통한 type 정의를 통해 return된 값을 변수로 지정
 - 이 변수는 각 type에서 지원하는 method 사용 가능
 
-![image](https://user-images.githubusercontent.com/86189596/174127271-80278ded-b588-43da-9279-1f610984da11.png)
+`![image](https://user-images.githubusercontent.com/86189596/174127271-80278ded-b588-43da-9279-1f610984da11.png)`
 
 <br />
 
@@ -164,7 +164,7 @@ logTextLength('hi');
 - 함수 내부에서 인자의 메서드 사용은 인자의 type마다 다르다.
 - generic에서 type은 호출 때 정의되므로, 함수 작성 시에는 오류 발생
 
-![image](https://user-images.githubusercontent.com/86189596/174138959-ca4af74a-ed1e-423a-a748-374fb2e61ac4.png)
+`![image](https://user-images.githubusercontent.com/86189596/174138959-ca4af74a-ed1e-423a-a748-374fb2e61ac4.png)`
 
 <br />
 
@@ -210,7 +210,7 @@ logTextLength(10);
 - 정의될 Type은 length 속성/메서드를 가진 LengthType의 상속을 받는 type이 된다.
 - T type은 LengthType에 추가로 정의
 
-![image](https://user-images.githubusercontent.com/86189596/174140574-08be9372-f30c-4fd0-9803-624eca70aeb1.png)
+`![image](https://user-images.githubusercontent.com/86189596/174140574-08be9372-f30c-4fd0-9803-624eca70aeb1.png)`
 
 <br />
 

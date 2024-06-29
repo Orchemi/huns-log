@@ -34,7 +34,7 @@ Column은 실제 컨텐츠를 포함하는 부분이고, Gutter는 column과 col
 
 ### 12 columns
 
-![image](https://user-images.githubusercontent.com/86189596/153032267-7ce4e727-c09b-4d88-951a-14eed89eedd5.png)
+`![image](https://user-images.githubusercontent.com/86189596/153032267-7ce4e727-c09b-4d88-951a-14eed89eedd5.png)`
 
 Grid는 12개 columns 방식과 16개 columns 방식이 있는데, 부트스트랩에서는 12 columns 방식을 사용한다. 그 이유는 12가 약수가 많아서 breakpoint에 따라 다양한 columns로 묶어서 나누어 구성할 수 있다는 장점 때문이다.
 
@@ -57,7 +57,7 @@ Extra extra large (xxl)
 
 그리고 이에 대한 자세한 정보는 아래와 같다.
 
-![image](https://user-images.githubusercontent.com/86189596/153033059-a089c426-42d7-4ff5-8506-5df5305f058b.png)
+`![image](https://user-images.githubusercontent.com/86189596/153033059-a089c426-42d7-4ff5-8506-5df5305f058b.png)`
 
 <br />
 
@@ -91,7 +91,7 @@ Grid는 container 내에서 시작된다. 이 container 내에서 row와 col 클
 
 위의 태그처럼 작성하면 아래와 같은 결과를 가질 수 있다.
 
-![image](https://user-images.githubusercontent.com/86189596/153033995-28936e16-67ec-402a-b0fe-ed241a950b27.png)
+`![image](https://user-images.githubusercontent.com/86189596/153033995-28936e16-67ec-402a-b0fe-ed241a950b27.png)`
 
 첫 번째 row는 내부에 2개의 col을 가지고 있어서 전체 너비의 절반씩을 차지하고, 두 번째 row는 내부에 3개의 col을 가지고 있어서 전체 너비의 1/3씩을 차지한다.
 
@@ -122,7 +122,7 @@ Grid는 container 내에서 시작된다. 이 container 내에서 row와 col 클
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/153034613-029fb096-f134-4df7-a3b6-54457b4b12db.png)
+`![image](https://user-images.githubusercontent.com/86189596/153034613-029fb096-f134-4df7-a3b6-54457b4b12db.png)`
 
 첫 번째 row의 두 번째 col은 12 중에 6, 즉 절반의 너비를 가지게 되었고, 나머지는 auto이기 때문에 같은 크기를 가져가게 되었다.
 
@@ -153,7 +153,7 @@ Grid는 container 내에서 시작된다. 이 container 내에서 row와 col 클
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/153036364-36cf55ad-a357-4929-b5fc-90b129f63f21.png)
+`![image](https://user-images.githubusercontent.com/86189596/153036364-36cf55ad-a357-4929-b5fc-90b129f63f21.png)`
 
 결과 화면이다. 위의 col 4개는 자동으로 columns를 나눠 갖지만, row의 모든 col이 12개의 col width를 가진다면 똑같이 container에는 꽉 찬 너비를 가지면서 비율이 달라지게 된다.
 
@@ -196,7 +196,7 @@ breakpoint infix를 col과 width 사이에 넣어 특정 breakpoint 이상이면
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/153037519-dea39b66-89d0-4f85-a396-2eab64aba0a4.png)
+`![image](https://user-images.githubusercontent.com/86189596/153037519-dea39b66-89d0-4f85-a396-2eab64aba0a4.png)`
 
 두 번째 row를 보면 각각 `col-6 col-md-4`가 부여되었다. 이는 즉, md(medium) 시점 이전에는 default `col-6`으로 최대 2개까지 배치되도록 하다가, md 시점을 지나면 `col-4`로 최대 3개까지 배치되도록 하겠다는 코드이다. 사진은 3개가 한 라인에 있으므로 `col-4`로 적용되는 medium px 보다 넓은 viewport에서의 모습이라고 보면 되겠다.
 
@@ -217,7 +217,7 @@ breakpoint infix를 col과 width 사이에 넣어 특정 breakpoint 이상이면
 </div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153038701-20de1272-8733-46a5-8dce-4ec5a72d9c54.png)
+`![image](https://user-images.githubusercontent.com/86189596/153038701-20de1272-8733-46a5-8dce-4ec5a72d9c54.png)`
 
 원래 같았으면, col이 2개씩 나오게 하고 싶었다면 col마다 `col-6`로 절반의 col width를 부여했어야 했다. 그런데 row 태그에서 `row-cols-2` 클래스를 부여해 '이 row에는 2개의 col만 항상 배치되게 한다' 라는 의도를 완성시켰다.
 
@@ -234,7 +234,7 @@ breakpoint infix를 col과 width 사이에 넣어 특정 breakpoint 이상이면
 </div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153039035-8539643e-7727-417e-93a1-f0bee16ac496.png)
+`![image](https://user-images.githubusercontent.com/86189596/153039035-8539643e-7727-417e-93a1-f0bee16ac496.png)`
 
 이는 꽤나 유용하다. col이 4개가 있는 상황에서 row에 `row-cols-3`을 부여하면 어찌됐든 이 row는 3개의 col을 한 라인에 가져야 하기 때문에 사진처럼 마지막 col은 다음 라인에 배치되게 된다.
 
@@ -251,7 +251,7 @@ breakpoint infix를 col과 width 사이에 넣어 특정 breakpoint 이상이면
 </div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153039417-d757ffe5-c4e3-4c46-92a5-b868539bc303.png)
+`![image](https://user-images.githubusercontent.com/86189596/153039417-d757ffe5-c4e3-4c46-92a5-b868539bc303.png)`
 
 "With .row-cols-auto you can give the columns their natural width." 즉, `row-cols-auto`를 사용하면 col들이 가지고 있는 각각의 content나 width만큼 col을 차지한다는 것이다. 예시 코드는 모두 Column으로 동일하기 때문에 같은 크기의 블럭으로 결과가 나온다.
 
@@ -274,7 +274,7 @@ content 크기만큼의 col width를 가진 inline적 요소라고 생각하면 
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/153039787-662dfa92-fde8-46df-894e-0575f6ea5422.png)
+`![image](https://user-images.githubusercontent.com/86189596/153039787-662dfa92-fde8-46df-894e-0575f6ea5422.png)`
 
 하지만 결과를 보면 예상과 다르다는 것을 알 수 있다. row에서는 `row-cols-4`에 걸맞게 모든 col width를 3씩 주면서 그려나가고 있다가 `col-6`을 만나며 12칸의 column을 모두 채우게 된 것이다. 그래서 다음 col을 밑의 줄로 내려주는 것이다.
 
@@ -324,7 +324,7 @@ row 안에 2개의 col을 가지는데, 1번 col은 단순한 col이고, 2번 co
 
 col 내부에서 row를 선언하며 다시 그 내부에 col들에 대한 속성들을 부여하면서 container 안의 container를 구현하였다. 결과를 확인해보자.
 
-![image](https://user-images.githubusercontent.com/86189596/153045009-aff8da32-c320-4aab-a3b7-8fc8decd923d.png)
+`![image](https://user-images.githubusercontent.com/86189596/153045009-aff8da32-c320-4aab-a3b7-8fc8decd923d.png)`
 
 <br />
 
@@ -348,18 +348,18 @@ col 내부에서 row를 선언하며 다시 그 내부에 col들에 대한 속�
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/153046481-18fa32ed-a580-4f46-a57c-81b4945457bd.png)
+`![image](https://user-images.githubusercontent.com/86189596/153046481-18fa32ed-a580-4f46-a57c-81b4945457bd.png)`
 
 md인 768px 이전의 모습이다. col들이 각각의 라인을 설정해 block처럼 존재한다. 그런데 md인 768px을 기점으로 3칸과 9칸의 col width를 가지며 1라인에 두 col이 존재하게 되었다.
 
-![image](https://user-images.githubusercontent.com/86189596/153046387-14e49c07-5977-41f6-8f34-907f8680b78e.png)
+`![image](https://user-images.githubusercontent.com/86189596/153046387-14e49c07-5977-41f6-8f34-907f8680b78e.png)`
 
 이 과정동안 두번째 col 내부의 2\*2 col들의 레이아웃은 변하지 않는다. 하지만 `row-cols-lg-4`에 의해 lg인 992px을 기점으로 1라인에 4칸의 col들이 들어가게 된다.
 
-![image](https://user-images.githubusercontent.com/86189596/153046293-fd43ccec-236f-4232-82c8-0dbe528a772b.png)
+`![image](https://user-images.githubusercontent.com/86189596/153046293-fd43ccec-236f-4232-82c8-0dbe528a772b.png)`
 
 <br />
 
 ## REFERENCE
 
-- [Bootstrap - Grid](https://getbootstrap.com/docs/5.1/layout/grid/)
+- `[Bootstrap - Grid](https://getbootstrap.com/docs/5.1/layout/grid/)`

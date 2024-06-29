@@ -36,22 +36,22 @@ yarn lint-staged
 
 <br />
 
-그런데 이 이슈는 나만 겪은 것이 아니었다. [husky github의 issue](https://github.com/typicode/husky/issues/1177)에서 비슷한 내용의 문제를 겪는 것을 발견할 수 있었다.
+그런데 이 이슈는 나만 겪은 것이 아니었다. `[husky github의 issue](https://github.com/typicode/husky/issues/1177)`에서 비슷한 내용의 문제를 겪는 것을 발견할 수 있었다.
 
 <br />
 
 
-![1](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/9f9ff807-a095-4105-b1a8-9ef929cdb59c)
+`![1](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/9f9ff807-a095-4105-b1a8-9ef929cdb59c)`
 
 <br />
 
 ## 해결 방안
 
-![2](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/eea55901-5da6-491f-b33e-3ee8bd5014bf)
+`![2](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/eea55901-5da6-491f-b33e-3ee8bd5014bf)`
 
 husky가 실행되지 않는 이유는 husky가 실행 권한이 없기 때문이라고 한다. 특히 **window에서 프로젝트를 세팅한 뒤, WSL(Mac OS)에서 프로젝트를 실행하는 경우 문제가 생겼다고 한다.** (나 역시 그랬다.)
 
-![3](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/61f9609c-1a57-40e6-932e-2ac915fca403)
+`![3](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/61f9609c-1a57-40e6-932e-2ac915fca403)`
 
 <br />
 
@@ -67,7 +67,7 @@ chmod ug+x .husky/*
 
 ## 개선 사항
 
-![4](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/a6f33f54-b0bf-49a5-9126-5c4fa0d81451)
+`![4](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/a6f33f54-b0bf-49a5-9126-5c4fa0d81451)`
 
 위의 명령어를 통해 권한을 부여하는 건 local 환경에만 적용된다. 하지만, 프로젝트를 공유하는 모든 사람들이 별도의 권한 설정 없이 사용하려면 package.json에 아래와 같이 설정해주면 된다.
 
@@ -82,7 +82,7 @@ chmod ug+x .husky/*
 
 ## 추가 사항
 
-![5](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/625aca5d-8c9d-4fb5-b762-9a58246ddbb0)
+`![5](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/625aca5d-8c9d-4fb5-b762-9a58246ddbb0)`
 
 > chmod가 작동하지만 정상적인 해결책이 아닙니다. 트릭입니다.
 우리는 모두 다른 OS에서 작업하고 있으며 도구는 각 OS에서 올바르게 작동해야 하며 도구 설정은 간단한 커밋/체크아웃을 통해 다른 OS에서도 이식 가능해야 합니다. 유일하게 허용되는 것은 자동으로 오류를 찾아서 수정하는 일종의 자동 사후 조정입니다(그리고 변경 사항을 커밋하도록 요청할 수도 있습니다)." - deepL 번역
@@ -91,7 +91,7 @@ chmod ug+x .husky/*
 
 <br />
 
-![6](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/b0f413bd-0d49-4550-a0d6-c60e03db6eca)
+`![6](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/b0f413bd-0d49-4550-a0d6-c60e03db6eca)`
 
 다만 mac과 window에서 모두 작동하는 사례가 있으니, 일단은 이렇게 해결하고 추후에 다시 확인해보기로 했다.
 
@@ -99,4 +99,4 @@ chmod ug+x .husky/*
 
 ## References
 
-[husky issue #1777: hook was ignored because it's not set as executable](https://github.com/typicode/husky/issues/1177)
+`[husky issue #1777: hook was ignored because it's not set as executable](https://github.com/typicode/husky/issues/1177)`

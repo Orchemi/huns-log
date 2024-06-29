@@ -18,7 +18,7 @@ toc_icon: "bars"
 toc_sticky: true
 ---
 
-> 본 포스트는 인프런의 **타입스크립트 입문-기초부터 실전까지** 강의([링크](https://www.inflearn.com/course/%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%9E%85%EB%AC%B8/dashboard))를 듣고 정리한 내용입니다.
+> 본 포스트는 인프런의 **타입스크립트 입문-기초부터 실전까지** 강의(`[링크](https://www.inflearn.com/course/%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%9E%85%EB%AC%B8/dashboard)`)를 듣고 정리한 내용입니다.
 
 <br />
 
@@ -100,7 +100,7 @@ const arr: (number | string | boolean)[] = [1, 2, 3, 'a', 'b', 'c', true];
 
 유니온 타입을 이용해 배열에 들어간 개체들의 타입을 추론해 union type으로 정의
 
-![image](https://user-images.githubusercontent.com/86189596/174268126-33d74c33-0a86-45fc-919e-3d08201a55fc.png)
+`![image](https://user-images.githubusercontent.com/86189596/174268126-33d74c33-0a86-45fc-919e-3d08201a55fc.png)`
 
 <br />
 
@@ -134,7 +134,7 @@ a = 'a';
 let b = a as string;
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/174269582-a2380a90-a911-4d46-aa50-5d22d5ef9b0b.png)
+`![image](https://user-images.githubusercontent.com/86189596/174269582-a2380a90-a911-4d46-aa50-5d22d5ef9b0b.png)`
 
 - "TS보다 개발자가 더 코드를 잘 알고 있다! 그러니 내가 지정한대로 해라!"
 - DOM API를 사용할 때 많이 사용
@@ -151,7 +151,7 @@ const app = document.querySelector('#app');
 - app의 type은 **HTMLDivElement**
 - 하지만 실무에서는 이렇게 깔끔하게 펼쳐지지 않는다.
 
-![image](https://user-images.githubusercontent.com/86189596/174270464-bda0056a-4f6c-4ba5-8574-fbba44033688.png)
+`![image](https://user-images.githubusercontent.com/86189596/174270464-bda0056a-4f6c-4ba5-8574-fbba44033688.png)`
 
 - HTMLDivElement일 수도 있지만 null 일 수도 있다는 의미!
 
@@ -193,7 +193,7 @@ function introduce(): Developer | Person {
 
 - 위의 두 interface로 정의된 introduce 함수의 반환값은 두 interface의 union type
 
-![image](https://user-images.githubusercontent.com/86189596/174271273-fedfe32f-3630-415d-b94e-706e3f6cac49.png)
+`![image](https://user-images.githubusercontent.com/86189596/174271273-fedfe32f-3630-415d-b94e-706e3f6cac49.png)`
 
 <br />
 

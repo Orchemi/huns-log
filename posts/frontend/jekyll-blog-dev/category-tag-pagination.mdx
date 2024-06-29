@@ -25,7 +25,7 @@ toc_sticky: true
 
 포스트 내부 페이지와 home 페이지, 사이드바 카테고리의 구성 및 디자인은 얼추 끝냈다. 하지만 카테고리별로 포스트를 모아둔 archive 페이지의 디자인은 마치지 못했다.
 
-![image](https://user-images.githubusercontent.com/86189596/151936977-badca239-6f7d-4035-a361-3ff267501be1.png)
+`![image](https://user-images.githubusercontent.com/86189596/151936977-badca239-6f7d-4035-a361-3ff267501be1.png)`
 
 정말 빼곡하고 가독성이 좋지 않은 archive 방식이다. 포스트의 수가 늘어나면 늘어날수록 그렇다. home.html과 달리 pagination, 즉 포스트의 수를 일정 간격으로 잘라서 페이지로 나뉘어 있지도 못한다. 이를 개선해보려고 한다.
 
@@ -77,7 +77,7 @@ Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에�
 
 기존에 paginator.html을 계속 include 해보려 했는데 공식 레퍼런스를 원문으로 자세히 읽어보니 이런 글이 있었다.
 
-![image](https://user-images.githubusercontent.com/86189596/151937289-0abc56fe-babc-4208-a87b-729f80cff7e7.png)
+`![image](https://user-images.githubusercontent.com/86189596/151937289-0abc56fe-babc-4208-a87b-729f80cff7e7.png)`
 
 "Pagination은 태그나 카테고리에는 안 돼요^^" 라는 내용이다. 즉, home.html에만 pagination이 적용되었던 이유는 home.html은 최근 게시물을 모두 보여주는 페이지이고, pagination은 site의 모든 post들을 조회하기 때문에 home.html에만 사용할 수 있는 것이었다.
 
@@ -91,7 +91,7 @@ Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에�
 
 그런데 안 좋은 소식이 또 있었다. StackOverFlow에 누군가 pagination이 되지 않는다며 자신의 \_config.yml 파일과 categoriy md 파일들을 올려놓은 것이다. 그리고 그에 대한 답변이다.
 
-![image](https://user-images.githubusercontent.com/86189596/151966258-a244d798-d0fc-49f4-a374-906135e6687d.png)
+`![image](https://user-images.githubusercontent.com/86189596/151966258-a244d798-d0fc-49f4-a374-906135e6687d.png)`
 
 "Paginate는 모든 포스트에 적용돼서 카테고리나 태그는 안 됨. Pageinate v2는 collection이라는 걸로 이걸 되게 하는데 Github Page에는 이 플러그인 못 돌림ㅎㅎ"
 
@@ -99,7 +99,7 @@ Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에�
 
 절망이 스친 뒤에 드는 생각이 있었다. 사실 StackOverFlow가 개발세계에서는 유명한 사이트이지만 개인의 의견이나 답변이고, 신뢰할 수 없는 답변이라고 생각하기도 했다.
 
-![image](https://user-images.githubusercontent.com/86189596/151969260-e490ba73-cf3f-45e2-b4cf-2fd417cd5dbd.png)
+`![image](https://user-images.githubusercontent.com/86189596/151969260-e490ba73-cf3f-45e2-b4cf-2fd417cd5dbd.png)`
 
 현실 부정이었다. Github Pages에서 지원하는 플러그인이나 기타 프로그램들의 version을 체크하는 페이지에 jekyll-paginate-v2 플러그인은 없었다. jekyll-paginate는 1.1.0 ver로 떡하니 있지만 말이다. 두 번을 넘게 전체 페이지를 올리고 내려보며 눈 씻고 찾아봐도 없었다.
 
@@ -117,7 +117,7 @@ Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에�
 
 ## 결과
 
-![image](https://user-images.githubusercontent.com/86189596/151967031-b547ad5f-6df6-4502-ab8e-4430451f94ba.png)
+`![image](https://user-images.githubusercontent.com/86189596/151967031-b547ad5f-6df6-4502-ab8e-4430451f94ba.png)`
 
 이렇게 하는 경우 포스트마다 차지하는 면적이나 포스트간 간격이 커져 세로축이 길어지는 단점이 있다. 그래서 되도록이면 paging을 하여 포스트들을 일정 단위로 나누고 싶었던 것이다.
 
@@ -139,18 +139,18 @@ Github의 영어 레퍼런스와 example, README를 모두 읽었다. Github에�
 
 ### 공식 레퍼런스
 
-- [Jekylllrb.com](https://jekyllrb.com/docs/pagination/)
-- [Github - jekyll-paginate-categories](https://github.com/jguyomard/jekyll-paginate-categories)
-- [Github - jekyll-paginate-v2](https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md)
-- [Github Pages - version](https://pages.github.com/versions/)
+- `[Jekylllrb.com](https://jekyllrb.com/docs/pagination/)`
+- `[Github - jekyll-paginate-categories](https://github.com/jguyomard/jekyll-paginate-categories)`
+- `[Github - jekyll-paginate-v2](https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md)`
+- `[Github Pages - version](https://pages.github.com/versions/)`
 
 <br />
 
 ### Blog
 
-- [Jekyll에서 카테고리 페이지 나누기](https://pengpengto.gitlab.io/blog/tech/2017/06/08/jekyll-category_pagination.html)
-- [Dev Ari - Github Page Jekyll에 카테고리 추가하기](https://blog.devari.kr/2019/jekyll/jekyll-category-setting)
-- [jekyll-paginate-v2 사용](https://calofmijuck.tistory.com/7)
-- [DeKu - pagination 플러그인 사용](https://dev-yakuza.posstree.com/ko/jekyll/pagination-plugin/)
-- [나의 Jekyll template 제작기](https://shlrur.github.io/develog/2018/12/10/jekyll-template-story-2/)
-- [StackOverFlow - How to paginate categories in Jekyll with Github Pages?](https://stackoverflow.com/questions/56065176/how-to-paginate-categories-in-jekyll-with-github-pages)
+- `[Jekyll에서 카테고리 페이지 나누기](https://pengpengto.gitlab.io/blog/tech/2017/06/08/jekyll-category_pagination.html)`
+- `[Dev Ari - Github Page Jekyll에 카테고리 추가하기](https://blog.devari.kr/2019/jekyll/jekyll-category-setting)`
+- `[jekyll-paginate-v2 사용](https://calofmijuck.tistory.com/7)`
+- `[DeKu - pagination 플러그인 사용](https://dev-yakuza.posstree.com/ko/jekyll/pagination-plugin/)`
+- `[나의 Jekyll template 제작기](https://shlrur.github.io/develog/2018/12/10/jekyll-template-story-2/)`
+- `[StackOverFlow - How to paginate categories in Jekyll with Github Pages?](https://stackoverflow.com/questions/56065176/how-to-paginate-categories-in-jekyll-with-github-pages)`

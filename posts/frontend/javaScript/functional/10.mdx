@@ -18,7 +18,7 @@ toc_icon: "bars"
 toc_sticky: true
 ---
 
-> 본 포스트는 인프런의 **함수형 프로그래밍과 JavaScript ES6+** 강의([링크](https://www.inflearn.com/course/functional-es6))를 듣고 정리한 내용입니다.
+> 본 포스트는 인프런의 **함수형 프로그래밍과 JavaScript ES6+** 강의(`[링크](https://www.inflearn.com/course/functional-es6)`)를 듣고 정리한 내용입니다.
 
 <br />
 
@@ -89,7 +89,7 @@ async function f3() {
   const temp = map(a => delayI(a * a), list);
   log(temp); // Promise {<pending>}(resolve 전)
   const res = await temp;
-  log(res); // [1, 4, 9, 16](resolve 후)
+  log(res); // `[1, 4, 9, 16](resolve 후)`
 }
 
 f3();

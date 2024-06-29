@@ -25,7 +25,7 @@ toc_sticky: true
 
 ...그래 때가 왔다. 2개월 전 극소분류 카테고리의 숫자를 세는 로직을 제거했음에도 불구하고 포스트의 수 자체가 많아지다보니 build 시간이 10분에 다다르기 시작했다. 나는 이전에도 생각했지만, 그 다음 제거 대상은 TIL임을 본능적으로 알 수 있었다.
 
-![image](https://user-images.githubusercontent.com/86189596/171345646-22f65a53-39a3-4251-a250-90ef73d1cc41.png)
+`![image](https://user-images.githubusercontent.com/86189596/171345646-22f65a53-39a3-4251-a250-90ef73d1cc41.png)`
 
 현재 311개의 TIL 포스트가 있다. 이를 블로그에서 제거할 필요가 있겠다.
 
@@ -58,7 +58,7 @@ TIL이라고 이름 붙였지만, 나는 이것이 개발일기와 같다고 생
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/171349743-cb4e280f-7863-48b5-b735-7dcb83a41e82.png)
+`![image](https://user-images.githubusercontent.com/86189596/171349743-cb4e280f-7863-48b5-b735-7dcb83a41e82.png)`
 
 연도별로 정리해나갈 수 있을 것 같다. README는 천천히 생각해서 만들어봐야겠다.
 
@@ -66,19 +66,19 @@ TIL이라고 이름 붙였지만, 나는 이것이 개발일기와 같다고 생
 
 ### 3. 블로그 카테고리와 월별 폴더 링크 연결 
 
-![image](https://user-images.githubusercontent.com/86189596/171350362-b66b1d88-bfee-4015-86e1-96dd1e16cf0f.png)
+`![image](https://user-images.githubusercontent.com/86189596/171350362-b66b1d88-bfee-4015-86e1-96dd1e16cf0f.png)`
 
 카테고리 바에서 TIL을 담당하는 공간의 코드이다. 연도별로 하위 템플릿들이 include 되어있고, 전체 TIL의 수를 세고 종합된 곳으로 이동시키는 링크가 있다. 이를 github repo 링크로 바꿔보겠다.
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/171351751-94255b80-9328-4d5f-9fb2-6b3d3cc82012.png)
+`![image](https://user-images.githubusercontent.com/86189596/171351751-94255b80-9328-4d5f-9fb2-6b3d3cc82012.png)`
 
 참 쉽다. 마찬가지로 하위 연도별 페이지도 이와 같이 repo 링크를 하드하게 바꿔 넣어준다.
 
 <br />
 
-![image](https://user-images.githubusercontent.com/86189596/171352547-6b33b98d-195d-4890-9cb6-0204aff3cfe4.png)
+`![image](https://user-images.githubusercontent.com/86189596/171352547-6b33b98d-195d-4890-9cb6-0204aff3cfe4.png)`
 
 참 쉽다.
 
@@ -86,7 +86,7 @@ TIL이라고 이름 붙였지만, 나는 이것이 개발일기와 같다고 생
 
 ### 4. TIL 카테고리 파일 서식 정리
 
-![image](https://user-images.githubusercontent.com/86189596/171353681-bcb4dbb3-dc27-4f5b-a231-a4c9c1b2f0da.png)
+`![image](https://user-images.githubusercontent.com/86189596/171353681-bcb4dbb3-dc27-4f5b-a231-a4c9c1b2f0da.png)`
 
 이제는 이런 식으로 '카테고리 이름이 TIL 2021 06인 애들은 모아서 여기 어쩌구 해줘' 라는 식의 파일은 필요하지 않다. 카테고리 명에 따라 파일을 분류할 TIL 파일 자체가 없기 때문이다. 그렇다면 카테고리 바에서 TIL이 사라지게 될까? 그건 아닐 것이다. 이 카테고리 서식 파일에 의한 것이 아니라 nav_list.html 템플릿에 의해 렌더링 되기 때문에 카테고리 목록에서는 링크를 확인할 수 있다. 그렇다면 걱정 없이 제거해도 되겠다.
 

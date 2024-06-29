@@ -94,7 +94,7 @@ export const generateErrorResponse = ({
 
 ### 왜 안 되시는지요?
 
-![image](https://github.com/Orchemi/PS/assets/86189596/1154a1d7-4192-413c-aafa-665edd2f465e)
+`![image](https://github.com/Orchemi/PS/assets/86189596/1154a1d7-4192-413c-aafa-665edd2f465e)`
 
 위와 같은 오류가 발생했다. client component이니 'use client'를 상단에 붙이란다. 그래서 붙였는데 서버에서는 client component를 쓸 수 없다고 한다. 당황스러웠다. 단순한 유틸 수준의 함수인데? 외부 라이브러리나 서버-클라이언트와 관련된 내부 유틸을 사용한 것도 아닌데?
 
@@ -118,15 +118,15 @@ export const generateErrorResponse = ({
 
 ### route-handlers
 
-Next.js의 app router, api routes를 사용해 서버를 개발하고 있기 때문에, [route handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)를 먼저 보았다. 하지만 파일명에 대한 디테일한 정보는 찾을 수 없었다.
+Next.js의 app router, api routes를 사용해 서버를 개발하고 있기 때문에, `[route handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)`를 먼저 보았다. 하지만 파일명에 대한 디테일한 정보는 찾을 수 없었다.
 
 <br />
 
 ### error-handling
 
-그래서 다음으로 [error handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/error-handling)를 보았다. 이 챕터에서는 `error.ts`를 만들어서 에러 핸들링을 할 수 있다고 한다.
+그래서 다음으로 `[error handling에 대한 공식문서 챕터](https://nextjs.org/docs/app/building-your-application/routing/error-handling)`를 보았다. 이 챕터에서는 `error.ts`를 만들어서 에러 핸들링을 할 수 있다고 한다.
 
-![image](https://github.com/Orchemi/PS/assets/86189596/c6a59d62-ddcc-4787-82cf-171cb2d3ee8f)
+`![image](https://github.com/Orchemi/PS/assets/86189596/c6a59d62-ddcc-4787-82cf-171cb2d3ee8f)`
 
 맞다. 알고 있었다. 그런데 /app/api/ 폴더 내에서는 서버라고 생각해서 분리되어 있을 줄 알았는데, 저 안에서도 `error.ts` 파일은 인식이 되었나 보다.
 
@@ -173,5 +173,5 @@ NextResponse를 route.ts 파일 외부에서 호출했기 때문에 걱정했는
 
 ## References
 
-- [Next.js 공식문서: route-handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
-- [Next.js 공식문서: error-handling](https://nextjs.org/docs/app/building-your-application/routing/error-handling)
+- `[Next.js 공식문서: route-handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)`
+- `[Next.js 공식문서: error-handling](https://nextjs.org/docs/app/building-your-application/routing/error-handling)`

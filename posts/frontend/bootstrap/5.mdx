@@ -80,7 +80,7 @@ flex-column-reverse
 
 그리고 그 결과이다.
 
-![image](https://user-images.githubusercontent.com/86189596/153248097-3a11a7d9-264a-4b36-9649-0921a438d409.png)
+`![image](https://user-images.githubusercontent.com/86189596/153248097-3a11a7d9-264a-4b36-9649-0921a438d409.png)`
 
 <br />
 
@@ -131,7 +131,7 @@ align-items-baseline  : item 내부 content의 baseline에 모든 item을 맞춤
 align-items-stretch   : container의 크기만큼 item을 꽉 채움
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153249897-19109a05-6040-4d78-bc44-ecafb6d09ec2.png)
+`![image](https://user-images.githubusercontent.com/86189596/153249897-19109a05-6040-4d78-bc44-ecafb6d09ec2.png)`
 
 `align-items-` prefix 뒤에 속성명을 붙이며 사용한다. 역시나 breakpoint infix를 사용할 수 있다.
 
@@ -149,7 +149,7 @@ align-items가 display: flex를 부여한 container (부모 태그)에 같이 �
 <div class="align-self-stretch">Aligned flex item</div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153250136-3fb67aca-c196-41fc-a50a-5b0801a348fa.png)
+`![image](https://user-images.githubusercontent.com/86189596/153250136-3fb67aca-c196-41fc-a50a-5b0801a348fa.png)`
 
 breakpoint infix 사용 가능하다. 이제는 두말하면 잔소리다.
 
@@ -173,7 +173,7 @@ item의 내부 content에 맞춰 여백을 모두 같게 설정하는 속성이�
 </div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153250754-50eb954a-b0cc-4f29-ab86-4effc22db29e.png)
+`![image](https://user-images.githubusercontent.com/86189596/153250754-50eb954a-b0cc-4f29-ab86-4effc22db29e.png)`
 
 이제는 얘기 안하면 breakpoint infix 사용 안 되는 특이한 예외인 것이라고 생각하자. 다 사용할 수 있어서 이게 낫겠다.
 
@@ -191,7 +191,7 @@ item의 내부 content에 맞춰 여백을 모두 같게 설정하는 속성이�
 </div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153251356-aded7310-1c92-43bd-94b1-187c289f9bb6.png)
+`![image](https://user-images.githubusercontent.com/86189596/153251356-aded7310-1c92-43bd-94b1-187c289f9bb6.png)`
 
 <br />
 
@@ -210,7 +210,7 @@ item의 내부 content에 맞춰 여백을 모두 같게 설정하는 속성이�
 
 하지만 `flex-shrink-1`로 자동 wrapping이 되어 shrink, 즉 수축되었다.
 
-![image](https://user-images.githubusercontent.com/86189596/153251753-aa166284-28aa-4a29-a22d-eecdea033abd.png)
+`![image](https://user-images.githubusercontent.com/86189596/153251753-aa166284-28aa-4a29-a22d-eecdea033abd.png)`
 
 <br />
 
@@ -240,7 +240,7 @@ item 태그 내에서 사용되며, item의 여백을 자동으로 설정해준�
 
 결과를 보며 코드를 해석해보자.
 
-![image](https://user-images.githubusercontent.com/86189596/153252505-600e5d3d-6c23-4e47-ad06-7959ebbb6f9e.png)
+`![image](https://user-images.githubusercontent.com/86189596/153252505-600e5d3d-6c23-4e47-ad06-7959ebbb6f9e.png)`
 
 보통 첫 번째 코드처럼 flex-start 쪽으로 밀착되는 것이 일반적인 상황이다. 그런데, 두 번째 코드는 첫 번째 item에 `me-auto` 속성이 들어간다. end쪽, 즉 오른쪽에 margin auto를 주겠다는 말이다. 그래서 두 번째 결과 사진을 보면 첫 번째 태그 이후에 `me-auto`로 부여된 margin이 있고, 그 이후에 2, 3번째 item이 있는 것을 알 수 있다.
 
@@ -258,7 +258,7 @@ item이 container를 넘어갔을 때 아래 줄로 item을 넘길지 아니면 
 <div class="d-flex flex-nowrap">...</div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153253476-0f4b6215-8583-47ba-8516-45a334a4c453.png)
+`![image](https://user-images.githubusercontent.com/86189596/153253476-0f4b6215-8583-47ba-8516-45a334a4c453.png)`
 
 <br />
 
@@ -266,7 +266,7 @@ item이 container를 넘어갔을 때 아래 줄로 item을 넘길지 아니면 
 <div class="d-flex flex-wrap">...</div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153253538-c076144e-9589-4fac-b652-cbd8efef1acc.png)
+`![image](https://user-images.githubusercontent.com/86189596/153253538-c076144e-9589-4fac-b652-cbd8efef1acc.png)`
 
 자동 줄 바꿈이 잘 되는 것을 확인할 수 있다.
 
@@ -278,7 +278,7 @@ wrap/nowrap만 결정하는 것이 아니라 `flex-wrap-reverse`를 통해 wrapp
 <div class="d-flex flex-wrap-reverse">...</div>
 ```
 
-![image](https://user-images.githubusercontent.com/86189596/153254005-e36c934f-1d40-421a-9c27-4dc27c60fb76.png)
+`![image](https://user-images.githubusercontent.com/86189596/153254005-e36c934f-1d40-421a-9c27-4dc27c60fb76.png)`
 
 breakpoint infix 사용이 가능하다.
 
@@ -314,4 +314,4 @@ align-items보다 align-content에 대한 속성이 더 다양하고, justify-co
 
 ## REFERENCE
 
-- [Bootstrap - Flex](https://getbootstrap.com/docs/5.1/utilities/flex/)
+- `[Bootstrap - Flex](https://getbootstrap.com/docs/5.1/utilities/flex/)`
