@@ -1,0 +1,89 @@
+---
+title: "[functional JS ES6+] 기본기"
+
+categories:
+  - Functional JS
+
+tags:
+  - [FE Language, JS, Functional JS]
+
+author_profile: true
+
+date: 2022-06-03T08:00
+last_modified_at: 2022-06-03T08:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+> 본 포스트는 인프런의 **함수형 프로그래밍과 JavaScript ES6+** 강의(`[링크](https://www.inflearn.com/course/functional-es6)`)를 듣고 정리한 내용입니다.
+
+<br />
+
+## 용어
+
+### 평가(execution)
+
+코드가 계산(evaluation) 되어 값을 만드는 것
+
+```js
+1 + 2 //3
+```
+
+<br />
+
+### 일급 함수
+
+```js
+const add5 = a => a + 5;
+log(add5);
+log(add5(5));
+
+const f1 = () => () => 1;
+log(f1());
+```
+
+- 함수를 **값**으로 다룰 수 있다.
+- 함수의 인자와 결과로 다룰 수 있다.
+- 함수가 일급이라는 점을 이용해 **조합성과 추상화** 확보
+
+<br />
+
+### 고차 함수
+
+- 함수를 값으로 다루는 함수
+
+> 함수를 인자로 받아서 실행하는 함수
+
+```js
+const apply1 = f => f(1);
+const add2 = a => a + 2;
+log(apply1(add2)); // 3
+
+// n번 f 함수를 실행하는 함수
+const times = (f, n) => {
+  let i = -1;
+  while (++i < n) f(i);
+}
+
+times(log, 3); // 0; 1; 2;
+times(a => log(a+10), 3); // 10; 11; 12;
+```
+
+- apply1은 함수를 인자로 받아 실행하므로 고차함수
+
+
+<br />
+
+> 함수를 만들어 return하는 함수
+
+```js
+const addMaker = a => b => a + b;
+const add10 = addMaker(10);
+log(add10(5)); //15
+```
+
+- 함수를 return하기 때문에 addMaker는 고차함수
+- 정확히는 **클로저**를 return. 위의 예에서는 **a를 기억**하는 함수

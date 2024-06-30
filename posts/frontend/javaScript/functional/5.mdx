@@ -1,0 +1,233 @@
+---
+title: "[functional JS ES6+] 코드를 값으로 다루어 표현력 높이기, go, pipe, curry"
+
+categories:
+  - Functional JS
+
+tags:
+  - [FE Language, JS, Functional JS]
+
+author_profile: true
+
+date: 2022-06-06T03:00
+last_modified_at: 2022-06-06T03:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+> 본 포스트는 인프런의 **함수형 프로그래밍과 JavaScript ES6+** 강의(`[링크](https://www.inflearn.com/course/functional-es6)`)를 듣고 정리한 내용입니다.
+
+<br />
+
+## go
+
+### go 함수란?
+
+> 함수 중첩이 심한 경우 가독성을 좋게 하기 위해 사용
+
+- **코드를 값으로 다루어 인자처럼 사용**
+- 인자의 첫 번째 결과를 다음 함수의 인자로 사용
+
+```js
+// args의 첫 요소는 항상 시작'값'이므로 args는 시작값
+const go = (...args) => reduce((a, f) => f(a), args);
+
+go(
+  0,
+  a => a + 1,
+  a => a + 10,
+  a => a + 100,
+  log); // 111
+```
+
+- 순서별로 값과 함수를 처리하는 값-함수 묶음
+
+<br />
+
+### go 함수의 활용
+
+```js
+// 기존 reduce, map, filter의 중첩
+const add = (a, b) => a + b;
+log(
+  reduce(
+    add,
+    map(p => p.price,
+      filter(p => p.price < 20000, products))));
+
+// go 함수의 활용
+// 위의 중첩에서 내부에서 외부 순으로 배치
+go(
+  products,
+  products => filter(p => p.price < 20000, products),
+  prices => map(p => p.price, products),
+  prices => reduce(add, prices),
+  log);
+```
+
+<br />
+
+## pipe
+
+### pipe란?
+
+- 함수들이 나열되어 있는 **합성된 함수**
+- 내부에서 go를 실행하는 함수
+- 첫 함수 동작에 필요한 초기값은 나중에 받음.
+- go와 비교하면 **값이 없는 완전한 함수 묶음**
+
+```js
+// 함수들 목록을 인자로 받는데, 초기값을 나중에 받고, 이를 go 함수에 넣어 실행
+const pipe = (...fs) => (a) => {go(a, ...fs)};
+
+const f = pipe(
+  a => a + 1,
+  a => a + 10,
+  a => a + 100);
+
+log(f(0));
+```
+
+<br />
+
+### pipe와 첫 함수 예외
+
+> pipe의 첫 함수에만 인자를 여러 개 받고 싶은 경우
+
+```js
+const pipe = (f, ...fs) => (...as) => {go(f(...as), ...fs)}
+
+const f = pipe(
+  (a, b) => a + b,
+  a => a + 10,
+  ...);
+```
+
+- 구조분해할당을 사용해 첫 함수와 첫 값들을 go 함수 인자 전달에서 인자 함수 내부에 넣어준다.
+- 이 경우 f(...as) 자체가 초기값이 되는 것
+
+<br />
+
+## curry
+
+### curry란?
+
+- 값으로 받아놓은 함수를 **내가 원하는 시점에 평가**시키는 함수
+- 원하는만큼의 인자를 받았을 때, 이를 저장해 나중에 평가
+
+<br />
+
+> 2개 이상의 인자를 받았을 때 함수를 실행하는 curry 함수 코드
+
+```js
+const curry = f => 
+  (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+```
+
+- 가. 함수(f)를 받는다.
+- 나. _.length가 참, 즉 a를 제외한 인자가 있는지 여부를 확인
+- 다. 조건문
+  - 다.1. a를 제외한 인자가 있다면 받아놓은 함수 f(a, ..._)를 즉시 실행
+  - 다.2. 아니라면 또 인자를 받아 f(a, ..._) 실행
+- 라. 함수 실행의 결과를 return
+
+<br />
+
+### curry 함수의 사용
+
+```js
+const multi = curry((a, b) => a * b);
+log(multi(3)); // (..._) => f(a, ..._)
+log(multi(3)(2)); // 6
+```
+
+- 인자가 1개일 때, 출력된 결과를 보자.
+- 인자 하나를 더 추가한다면, 받아두었던 함수에게 추가된 인자를 전달해 실행
+- **multi(3) 자체가 하나의 함수가 되므로** 소괄호를 따로 써준다.
+
+<br />
+
+- 다음과 같이 함수 결과를 함수로 재선언해 활용할 수 있다.
+
+```js
+const multi3 = multi(3);
+log(multi3(10)); // 30
+log(multi3(20)); // 60
+log(multi3(30)); // 90
+```
+<br />
+
+### curry 함수로 go 함수 축약
+
+```js
+// 기존 go 함수
+go(
+  products,
+  products => filter(p => p.price < 20000, products),
+  prices => map(p => p.price, products),
+  prices => reduce(add, prices),
+  log);
+
+// go 함수와 curry의 활용
+go(
+  products,
+  filter(p => p.price < 20000),
+  map(p => p.price),
+  reduce(add),
+  log);
+```
+
+- 기존 filter, map, reduce에 curry 함수를 씌운 상황
+- curry를 씌우면 **map(p => p.price, products)**는 **map(p => p.price)(products)**가 됨
+- go 함수는 이전 함수 실행 결과 값(iterable)을 다음 함수의 인자로 전달
+- 그렇다면 curry에 추가되는 products 등의 iterable 인자는 go 함수에 의해 이전 함수 실행 결과에서 전달
+- go 함수 내부에서는 인자를 따로 지정할 필요가 없이 이전 인자 함수에서 배열을 인자로 받으면 된다.
+
+<br />
+
+## 함수 조합
+
+> 여러 상황에서 중복되는 코드들을 pipe로 합쳐보자
+
+```js
+// 20000원 미만의 상품들의 합계 출력
+go(
+  products,
+  filter(p => p.price < 20000),
+  map(p => p.price),
+  reduce(add),
+  log);
+
+// 20000원 이상의 상품들의 합계 출력
+go(
+  products,
+  filter(p => p.price >= 20000),
+  map(p => p.price),
+  reduce(add),
+  log);
+
+
+// 중복 부분 간소화
+const total_price = pipe(
+  map(p => p.price),
+  reduce(add));
+
+// 함수를 인자로 전달
+const base_total_price = predi => pipe(
+  filter(predi),
+  total_price);
+
+// 적용
+go(
+  products,
+  base_total_price(p => p.price < 20000),
+  log);
+
+go(
+  products,
+  base_total_price(p => p.price >= 20000),
+  log);
+```

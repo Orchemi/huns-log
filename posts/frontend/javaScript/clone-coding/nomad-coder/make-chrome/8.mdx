@@ -1,0 +1,85 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 8. Math 모듈과 Randomness"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-06T14:00
+last_modified_at: 2022-03-06T14:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Randomness
+
+> 목표 : 10개의 명언 object로 구성된 array에서 랜덤으로 명언을 뽑아보자.
+
+<br />
+
+### Math.random
+
+```js
+Math.random()   // 0부터 1 사이의 숫자 임의 반환
+Math.round()    // float parameter를 반올림
+Math.ceil()     // float parameter를 올림
+Math.floor()    // float parameter를 내림
+```
+
+> 참고자료 : `[Math.random](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Math/random)`
+
+<br />
+
+### 활용 예제
+
+> 랜덤으로 명언을 화면에 표시해보자.
+
+<br />
+
+```html
+<!-- index.html -->
+
+<div id="quote">
+  <span></span>
+  <span></span>
+</div>
+```
+
+<br />
+
+```js
+// js/quotes.js
+
+const quotes = [
+  {
+    quote: "비범한 삶이 아니거든 안주하지 말라.",
+    author: "랠프 왈도 에머슨",
+  },
+  ...
+  {
+    quote: "산을 움직이려 하는 이는 작은 돌을 들어내는 일로 시작한다.",
+    author: "공자",
+  },
+];
+
+const quote = document.querySelector('#quote span:first-child');
+const author = document.querySelector('#quote span:last-child');
+
+
+const todaysQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+quote.innerText = todaysQuote.quote;
+author.innerText = todaysQuote.author;
+```
+
+- 첫 span과 마지막 span을 각각 quote와 author로 지정
+- 0부터 quotes.length-1 에 해당하는 수 사이의 값을 임의로 지정하여 quotes array에 인덱스로 사용
+- 이 명언 객체를 todaysQuote에 저장
+- quote와 author innerText를 property를 이용해 지정

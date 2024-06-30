@@ -1,0 +1,200 @@
+---
+title: "[JS] 3. 함수"
+
+categories:
+  - JS boostcourse
+
+tags:
+  - [FE Language, JS, JS boostcourse]
+
+date: 2022-02-07T00:29
+last_modified_at: 2022-02-07T00:29
+
+author_profile: true
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 참고 자료
+
+`[boostcourse 생활코딩: 자바스크립트의 시작](https://www.boostcourse.org/cs124/joinLectures/52258)`
+
+<br />
+
+## 함수
+
+### 함수의 필요성
+
+HTML의 style 태그 안에 이벤트마다 여러 줄의 코드를 넣는 것은 코드의 반복에도, 유지보수에도, 가독성에도 좋지 않기 때문에 함수로 지정해서 재사용까지 가능하게 한다.
+
+반복문으로 해결할 수 있는 것이 아닌가에 대한 의문이 들 수도 있는데, 연속되지 않는 경우 반복을 사용할 수 없기 때문에 함수를 혼용할 필요가 있다.
+
+<br />
+
+### 함수의 지정과 사용
+
+```js
+function funcName(){
+  code1
+  code2
+  code3
+  ...
+}
+```
+
+처럼 지정하고
+
+```js
+funcName();
+```
+
+으로 사용한다.
+
+<br />
+
+## Parameter와 Argument
+
+함수를 사용할 때 상황마다 다른 값들을 넣으면 그 값에 따른 다른 결과를 도출해내고 싶을 때 '인자'를 사용한다.
+
+```js
+function sum(left, right) {
+  document.write(left + right + "<br />");
+}
+
+sum(2, 3);
+// 5
+```
+
+- Argument
+
+  - 함수를 사용할 때 함수에 전달하는 인자
+  - '자판기의 물건을 선택하는 고객이 누르는 선택'의 개념
+  - 함수에 주는 입장
+
+- Parameter
+
+  - 함수의 정의에 따라 함수 내부에 전달되어 연산에 활용되는 매개인자
+  - '고객의 선택에 따라 선택되는 상품을 내놓기 위한 인식'
+  - 함수에서 받아서 처리하는 입장
+
+<br />
+
+## return
+
+### return이란?
+
+함수를 argument와 함께 실행하면, 어떠한 동작을 하는 것에서 그치지 않고 return을 통해 함수 자체가 어떠한 값으로 반환되는 것
+
+<br />
+
+### return의 의의
+
+여러 상황에서 상황에 맞는 HTML을 write해주려면 정말 많은 함수가 필요할 것이다.
+
+```js
+// 2와 3을 더한 값 5를 화면에 출력
+function sum2(left, right) {
+  document.write(left + right + "<br />");
+}
+
+// 2와 3을 더한 값 5를 빨간색으로 화면에 출력
+function sum2Red(left, right) {
+  document.write('<div style="color:red;">' + left + right + "</div><br />");
+}
+
+// 2와 3을 더한 값 5를 3rem 사이즈로 화면에 출력
+function sum2Size3Rem{
+  document.write('<div style="font-size:3rem;">' + left + right + "</div><br />");
+}
+
+sum2(2, 3);
+sum2Red(2, 3);
+sum2Size3Rem(2, 3);
+```
+
+<br />
+
+하지만 만약 return으로 값만 반환해서 그것을 재료로 사용한다면 불필요하게 많은 함수를 만들지 않고도 원하는대로 다양한 HTML 코드를 만들 수 있다.
+
+```js
+function sum2(left, right) {
+  return left + right;
+}
+
+// 2와 3을 더한 값 5를 화면에 출력
+document.write(sum2(2, 3) + "<br />");
+
+// 2와 3을 더한 값 5를 빨간색으로 화면에 출력
+document.write('<div style="color:red;">' + sum2(2, 3) + "</div><br />");
+
+// 2와 3을 더한 값 5를 3rem 사이즈로 화면에 출력
+document.write('<div style="font-size:3rem;">' + sum2(2, 3) + "</div><br />");
+```
+
+<br />
+
+## darkmode toggle에 적용
+
+```html
+<script>
+  function nightDayHandler(self){
+    var target = document.querySelector('body')
+    if(self.value === 'night'){
+      target.style.color='white';
+      target.style.backgroundColor='black';
+      self.value = 'day';
+
+      var a_arr = document.querySelectorAll('a')
+      var i = 0;
+      while(i < a_arr.length){
+        a_arr[i].style.color='powderblue';
+        i++;
+      }
+    } else {
+      target.style.color='black';
+      target.style.backgroundColor='white';
+      self.value = 'night';
+
+      var a_arr = document.querySelectorAll('a')
+      var i = 0;
+      while(i < a_arr.length){
+        a_arr[i].style.color='blue';
+        i++;
+      }
+    }
+  }
+</script>
+
+</head>
+<body style="color: black; background-color: white;">
+  <h1><a href="#">WEB</a></h1>
+  <input
+  type="button"
+  value="night"
+  onclick="nightDayHandler(this)"
+  />
+```
+
+nightDayHandle() 함수로 분리한 input 태그를 살펴보자. 얼마나 깔끔한가.
+
+<br />
+
+### 함수의 사용
+
+단지 onclick="" 내부에 있던 js 코드들을 script 태그 내의 nightDayHandler() 함수를 새로 정의하여 옮겨주었다. 이 과정에서 조금 변화가 필요하다.
+
+<br />
+
+### ⭐this와 self
+
+기존 input 태그 내 onclick에 있을 때는 태그 자체를 변화시키기 때문에 스스로를 this로 표현했다. 하지만 함수로 분리하고 나서는 this가 태그를 가리키지 않기 때문에 오류가 발생한다.
+
+이런 경우 함수에 argument로 this를 부여해서 함수에 태그를 전달해주고, 함수에서는 parameter로 self를 지정하여 함수 내에서 self.~~ 의 식으로 전개하면 해당 태그에 대해서 작업을 실행하게 되는 것이다.
+
+<br />
+
+## Chapter 03. clear
+
+`![image](https://user-images.githubusercontent.com/86189596/152688326-cc29e780-73fd-4012-addf-3076b8fc21dd.png)`
