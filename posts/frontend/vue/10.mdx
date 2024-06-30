@@ -1,0 +1,86 @@
+---
+title: "[Vue] Vue3의 문법"
+
+categories:
+  - Vue
+
+tags:
+  - [SPA, Vue]
+
+date: 2022-07-04T04:00
+last_modified_at: 2022-07-04T04:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 기존 함수의 type을 사용
+
+```js
+ReturnType<typeof [참조하고자 하는 것]>
+
+// ex. setInterval의 type과 같은 함수 timeInterval을 type과 함께 선언
+let timeInterval : ReturnType<typeof setInterval>;
+```
+- 어떤 함수를 선언하고 type을 정의할 때 사용
+
+<br />
+
+## props의 type 정의
+
+**defineProps** 사용
+
+```html
+<script>
+  defineProps<{ count: string, label: string }>()
+</script>
+```
+
+<br />
+
+## ref와 reactive
+
+- template 내부에서 참조해 사용하기 위한 변수, 상수, 함수들의 정의
+- ref는 원시타입(string, number 등), reactive는 참조타입(array, object 등)에 사용
+- vue로부터 import해서 사용
+- script 내부에서 함수의 재료로 사용하는 것은 별도로 ref나 reactive가 불필요
+
+```html
+<script setup lang="ts">
+// vue로부터 import
+import { ref, reactive } from 'vue';
+
+// 원시타입, 참조타입
+const count = ref(0)
+const obj1 = reactive({
+  'a': 'hello';
+  'b': 'world';
+})
+
+</script>
+```
+
+<br />
+
+## ref 값의 수정
+
+- reactive 함수로 정의한 참조 타입은 수정을 어떻게 해야할 지 알 것 같다.
+- 하지만 ref 함수로 정의한 원시 타입은 수정을 어떻게 할까.
+- 원시타입의 이름이 count라면 script 내부에서 **count.value**의 값이 원시 타입의 값이다.
+- **value 속성을 가진 object를 다루는 방식**
+
+<br />
+
+```html
+<script setup lang="ts">
+  let count = ref(0);
+  count.value = 10;
+</script>
+```
+
+- template에서 count는 최초 ref에서 정의한 0이 아닌, 이후에 재정의한 10이 된다.
