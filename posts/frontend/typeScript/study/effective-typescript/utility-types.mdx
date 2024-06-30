@@ -28,7 +28,7 @@ toc_sticky: true
 
 ## 초급
 
-### Awaited<Type>
+### `Awaited<Type>`
 
 > released: 4.5
 
@@ -47,7 +47,7 @@ type C = Awaited<boolean | Promise<number>>;
 
 <br />
 
-### Record<Keys, Type>
+### `Record<Keys, Type>`
 
 > released: 2.1
 
@@ -71,7 +71,7 @@ const cats: Record<CatName, CatInfo> = {
 
 <br />
 
-### Pick<Type, Keys>
+### `Pick<Type, Keys>`
 
 > released: 2.1
 
@@ -97,7 +97,7 @@ const todo: TodoPreview = {
 
 <br />
 
-### Extract<Type, Union>
+### `Extract<Type, Union>`
 
 > released: 2.8
 
@@ -125,7 +125,7 @@ type T2 = Extract<Shape, { kind: "circle" }>
 
 <br />
 
-### Omit<Type, Keys>
+### `Omit<Type, Keys>`
 
 > released: 2.1
 
@@ -161,7 +161,7 @@ const todoInfo: TodoInfo = {
 
 <br />
 
-### Exclude<UnionType, ExcludeMembers>
+### `Exclude<UnionType, ExcludeMembers>`
 
 > released: 2.8
 
@@ -190,7 +190,7 @@ type T3 = Exclude<Shape, { kind: "circle" }>
 
 <br />
 
-### Partial<Type>
+### `Partial<Type>`
 
 > released: 2.1
 
@@ -222,7 +222,7 @@ const todo2 = updateTodo(todo1, {
 
 ## 중급
 
-### Required<Type>
+### `Required<Type>`
 
 > released: 2.8
 
@@ -243,7 +243,7 @@ const obj2: Required<Props> = { a: 5 };
 
 <br />
 
-### Readonly<Type>
+### `Readonly<Type>`
 
 > released: 2.1
 
@@ -273,7 +273,7 @@ function freeze<Type>(obj: Type): Readonly<Type>;
 
 <br />
 
-### NonNullable<Type>
+### `NonNullable<Type>`
 
 > released: 2.8
 
@@ -289,7 +289,7 @@ type T1 = NonNullable<string[] | null | undefined>;
 
 <br />
 
-### Parameters<Type>
+### `Parameters<Type>`
 
 > released: 3.1
 > 
@@ -333,7 +333,7 @@ type T7 = Parameters<Function>;
 
 <br />
 
-### ReturnType<Type>
+### `ReturnType<Type>`
 
 > released: 2.8
 
@@ -380,7 +380,7 @@ type T8 = ReturnType<Function>;
 
 ## 고급
 
-### InstanceType<Type>
+### `InstanceType<Type>`
 
 > released: 2.8
 
@@ -414,7 +414,7 @@ type T4 = InstanceType<Function>;
 
 <br />
 
-### ThisParameterType<Type>
+### `ThisParameterType<Type>`
 
 > released: 3.3
 
@@ -437,7 +437,7 @@ console.log(numberToString(1234)); // "4d2"
 
 <br />
 
-### OmitThisParameter<Type>
+### `OmitThisParameter<Type>`
 
 > released: 3.3
 

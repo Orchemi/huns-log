@@ -196,7 +196,7 @@ for (const a of iterator) log(a); // 3 \n 2 \n 1
 ```
 
 - next() 메서드를 추가해서 i를 변화시키며 return 값을 변화
-- i의 값에 따라 0에 다다르면 { done: true } 반환
+- i의 값에 따라 0에 다다르면 `{ done: true }` 반환
 - 이 때문에 for of 문을 돌리면 done: true 일 때까지 value 값을 출력
 - **well-formed iterator**를 위해 자기 자신을 return하는 구문도 return문에 추가
 

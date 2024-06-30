@@ -43,10 +43,6 @@ jekyll과 Minimal Mistakes theme를 구성하고 있는 주요 문법이다. 모
 {% endraw %}
 ```
 
-결과
-
-{{ page.title }}
-
 <br />
 
 ## 2. Tags
@@ -101,15 +97,6 @@ jekyll과 Minimal Mistakes theme를 구성하고 있는 주요 문법이다. 모
 {% endraw %}
 ```
 
-결과
-
-{% cycle "first": "one", "two", "three" %}
-{% cycle "second": "one", "two", "three" %}
-{% cycle "second": "one", "two", "three" %}
-{% cycle "second": "one", "two", "three" %}
-{% cycle "second": "one", "two", "three" %}
-{% cycle "first": "one", "two", "three" %}
-
 범위 내에서 계속 순환하기 때문에 `"second" cycle`이 네번째 순회할 땐 다시 one을 출력하게 된다.
 
 <br />
@@ -127,11 +114,6 @@ jekyll과 Minimal Mistakes theme를 구성하고 있는 주요 문법이다. 모
 {% endraw %}
 ```
 
-결과
-
-{% assign SH = "SSAFY 합격" %}
-{{ SH }}
-
 #### 2) capture
 
 `태그로 둘러쌓여 있는 문자열을 변수에 저장`한다.
@@ -142,11 +124,6 @@ jekyll과 Minimal Mistakes theme를 구성하고 있는 주요 문법이다. 모
 {{ my_variable }}
 {% endraw %}
 ```
-
-결과
-
-{% capture my_variable %}I am being captured.{% endcapture %}
-{{ my_variable }}
 
 #### 3) increment, decrement
 
@@ -171,11 +148,6 @@ is turned into a comment.
 {% endraw %}
 ```
 
-결과
-
-Anything you put between {% comment %} 이것은 주석입니다~ {% endcomment %} tags
-is turned into a comment.
-
 <br />
 
 ### 바. 줄바꿈을 하고 싶지 않을 때
@@ -188,11 +160,6 @@ is turned into a comment.
 {{ my_variable }}
 {% endraw %}
 ```
-
-결과
-
-{% assign my_variable = "tomato" %}
-{{ my_variable }}
 
 <br />
 
@@ -208,10 +175,6 @@ is turned into a comment.
 {% endraw %}
 ```
 
-결과
-
-{{ "/my/fancy/url" | append: ".html" }}
-
 - 출력 값 뒤에 .html 문자열을 붙여서 출력한다.
 
 ### 나. prepend
@@ -221,8 +184,6 @@ is turned into a comment.
 {{ "adam!" | capitalize | prepend: "Hello " }}
 {% endraw %}
 ```
-
-{{ "adam!" | capitalize | prepend: "Hello " }}
 
 - adam! 문자열 값의 맨 앞 문자를 대문자로 바꾸고 앞에 Hello를 붙여서 출력한다.
 
