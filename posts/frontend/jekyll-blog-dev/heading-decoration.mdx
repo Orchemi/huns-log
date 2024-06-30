@@ -1,0 +1,100 @@
+---
+title: "[BlogDev] 블로그 헤딩 꾸미기"
+excerpt: "블로그 포스트의 헤딩을 꾸며보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, heading]
+
+date: 2021-12-25
+last_modified_at: 2021-12-25
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 1. Heading
+
+Heading은 `표제`라는 뜻으로, 일단 포스트의 내용과 달리 제목을 설정하는 것인데, h1부터 h6까지 다르게 구분하여 제목을 나눈다. 나는 보통 포스트 내에서 h2를 상위 제목으로, 그 이후 h3를 차상위로 사용하는 편이다.
+
+<br />
+
+## 2. Heading Decoration의 필요성
+
+포스트의 길이가 길어지면 내용과 제목의 구분이 불명확해진다. 물론 toc을 이용해 목차를 만든다면 원하는 섹션으로 이동할 수 있겠지만 구분이 필요하다. 이에 대한 불편을 계속 겪고 있었기 때문에 폰트 색을 바꿔보고자 하였다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147376048-978fdcfe-2036-453e-ab19-14b305c268fd.png)`
+
+(정말 구분이 안 되는 상황)
+
+<br />
+
+## 3. 속성 변경
+
+Minimal Mistakes의 경우 📂_sass/📃_base.scss 파일의 `h2`, `h3` 를 찾아 속성을 추가해준다.
+
+<br />
+
+### 가. 글자색 변경
+
+글자의 색을 변경하는 속성은 `color: 원하는 색상;`이다. 나의 경우 h2는 lightsalmon, h3은 lightyellow 색상을 선택했다.
+
+```css
+h2 {
+  font-size: $h-size-2;
+  color: lightsalmon;
+}
+
+h3 {
+  font-size: $h-size-3;
+  color: lightyellow;
+}
+```
+
+<br />
+
+> 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147376094-2fec4c53-8895-4aed-a825-df1bb64cda93.png)`
+
+<br />
+
+### 나. 그림자 설정
+
+h2의 경우 lightsalmon으로 티가 확 나는 색이지만, h3의 경우 lightyellow로 너무 티가 나지 않기도 했다. 하지만 하위 heading의 색을 너무 티나게 하고 싶지는 않았다. 그래서 `text-shadow` 속성을 통해 그림자를 설정하고자 한다.
+
+```css
+text-shadow: (가로길이) (세로길이) (색상);
+```
+
+나는 h2와 h3의 text-shadow 길이를 모두 0.1em으로 설정하고 색상은 black으로 설정하였다.
+
+```css
+h2 {
+  font-size: $h-size-2;
+  color: lightsalmon;
+  text-shadow: 0.1em 0.1em black;
+}
+
+h3 {
+  font-size: $h-size-3;
+  color: lightyellow;
+  text-shadow: 0.1em 0.1em black;
+}
+```
+
+<br />
+
+> 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147376128-a5f625c7-a4bb-4f8a-ac6f-516d6e394555.png)`
+
+한결 heading과 일반 내용이 구분이 되는 것을 알 수 있다.

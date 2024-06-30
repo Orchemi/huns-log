@@ -1,0 +1,88 @@
+---
+title: "[BlogDev] 소분류 카테고리 Hover 스타일링"
+excerpt: "블로그 사이드바 카테고리 hover 스타일링을 해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-01-19T22:31
+last_modified_at: 2022-01-19T22:31
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 설계 목적
+
+`![image](https://user-images.githubusercontent.com/86189596/150134039-e33e9079-bf25-40f3-a1e6-51bdec63b86d.png)`
+
+블로그 사이드바 소제목에 hover했을 때 다른 효과가 생기면 좋겠다고 생각했다. 글자색을 바꾸는 것보다 뭔가 눈에 확 띄는 그런 효과? 그래서 생각한 것은 카테고리의 왼쪽에 primary-color의 bar가 나오는 것을 생각해보았다.
+
+<br />
+
+## 디자인과 코드 설계
+
+소제목을 관리하는 코드는 📁_includes📃nav_list_main 파일에 존재한다. `nav__sub2-title` 이라는 클래스명으로 지정된 `<ul>` 태그를 활용하자.
+
+<br />
+
+### 📃_navigation.scss
+
+nav와 관련된 모든 scss의 속성을 관리하는 scss 파일이다. 이 파일에 이전에 소제목인 `nav__sub2-title`에 대한 scss 속성이 이미 존재한다.
+
+```scss
+.nav__sub2-title {
+  font-size: 1.1em;
+  margin: 0.2em 0;
+}
+```
+
+<br />
+
+이를 아래처럼 바꿔보자.
+
+```scss
+.nav__sub2-title {
+  font-size: 1.1em;
+  margin: 0.2em 0;
+
+  &:hover {
+    border-left: 0.2em solid $primary-color;
+    padding-left: 0.3em;
+  }
+
+  &:active {
+    border-color: white;
+    color: white;
+  }
+}
+```
+
+코드에 대해 설명해보자.
+
+<br />
+
+> &:hover
+
+이전 메인 `[페이지 스타일링](https://orchemi.github.io/blog/Blog_Index_layout_styling/)` 포스트에서도 언급했지만 `&:hover`은 해당 태그에 마우스를 올리면 달라지는 scss(css) 속성을 부여하기 위해서 사용한다.
+
+border-left 속성을 두어 왼쪽에 0.2em 두께의 주황 실선을 부여한다는 의미이다. 그리고 이렇게 생기는 border와 title간의 간격을 부여하기 위해 padding-left를 0.3em만큼 부여해서 여백을 뒀다.
+
+왼쪽에 사이드바에 `HTML` 카테고리에 hover했을 때의 디자인이다. 적당한 것 같다.
+
+`![image](https://user-images.githubusercontent.com/86189596/150140431-ecc1e5b1-fc9e-43c4-990b-4fb685b9f1f3.png)`
+
+<br />
+
+> &:active
+
+마찬가지로 링크를 클릭했을 때 그 순간에 생기는 디자인을 정의하기 위한 영역이다. 링크를 클릭하면 순간 왼쪽의 bar과 카테고리의 색이 흰색이 된다.

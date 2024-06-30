@@ -1,0 +1,140 @@
+---
+title: "[BlogDev] Google Analytics 등록하기"
+excerpt: "Google Analytics로 광고 "
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-01-11T00:36
+last_modified_at: 2022-01-11T00:44
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 참고자료
+
+`[GA 초보자 가이드북 2021](https://www.hedleyonline.com/ko/blog/%EA%B5%AC%EA%B8%80-%EC%95%A0%EB%84%90%EB%A6%AC%ED%8B%B1%EC%8A%A4-ga-%EA%B0%80%EC%9D%B4%EB%93%9C%EB%B6%81/)`
+
+<br />
+
+## Google Analytics
+
+구글 애널리틱스는 나중에 파워블로거가 됐을 때 광고 수익을 낼 수 있게 해주는 고마운 존재이다! 광고를 달 수 있을 정도로 덩치가 큰 블로그를 키워야겠지만 꿈은 크게 꾸라고 했다. 언제든 광고를 받을 수 있게 준비해보자.
+
+<br />
+
+## Google Analytics 계정 만들기
+
+위의 참고자료 링크를 참고해서 구글 애널리틱스 계정을 만들어준다. '처음 사용하는법' 부분부터 보면 된다.
+
+나는 이미 만든 뒤에 글을 쓰는 거라 과정을 캡쳐할 수는 없다. 위의 과정을 따라하기 전에 먼저 꿀팁을 주자면 **계정 이름과 속성 이름을 정하는데 공을 들이지 않는다.** 나중에 못 바꾸는 건 아닌지, 여차저차 고민을 하며 만들었는데, 나중에 다 설정에서 바꿀 수 있다.
+
+<br />
+
+## 데이터 스트림 추가
+
+### [관리 - 데이터 스트림 - 웹]
+
+`![image](https://user-images.githubusercontent.com/86189596/148785852-0c9d2214-8fbc-42b0-af58-f1be8596deea.png)`
+
+좌측 하단의 톱니바퀴 모양 `관리`를 들어가서 `데이터 스트림` 부분을 보면 웹 / iOS / Android 중에서 한 가지를 선택해서 새롭게 시작할 수 있다. 나는 이미 웹이 있기 때문에 새 스트림 추가 화면이라 신규 작성과는 화면이 다소 다를 것이다. 하지만 방식은 같다.
+
+<br />
+
+### 웹사이트 URL 설정
+
+https:// 은 기본으로 설정되어 있고, 그 뒤에 github 블로그 또는 내가 설정하고 싶은 사이트의 주소를 마저 기입한다. 나의 경우 github blog의 전체 URL은 https://orchemi.github.io 이므로 https:// 뒤의 부분인 orchemi.github.io 만 적어주었다. 스트림 이름은 그냥 아무거나 적어도 된다. 나는 Github Page 라고 적었다.
+
+<br />
+
+### 측정 ID 복사
+
+위에서 웹사이트에 대한 데이터 스트림을 잘 만들었다면, 임의로 측정 ID가 부여된 웹 스트림 세부정보 페이지를 확인할 수 있다.
+
+`![image](https://user-images.githubusercontent.com/86189596/148786857-72935521-6c7c-4c6b-b0a8-1dcbfa5468d0.png)`
+
+중요한 정보인지는 모르겠지만, 개인적인 부분이니 가렸다.
+
+<br />
+
+### 사이트 태그 복사
+
+측정 ID 옆의 복사 아이콘을 눌러 복사한다.
+
+<br />
+
+### 1. 일반 사이트
+
+참고로 github의 minimial-mistakes 테마를 사용하는 유저라면 이 파트는 넘어가도 좋다. minimal-mistakes는 구글 애널리틱스를 삽입하기도 정말 간편하게 사용자를 배려했기 때문이다. minimal-mistakes 유저들을 위한 방법은 후술하도록 하겠다. 이 파트는 일반 사이트에 구글 애널리틱스를 적용하는 방법이다.
+
+위의 '웹 스트림 세부정보' 페이지 캡쳐화면을 보면 아래 쪽에 빨간 네모칸이 하나 더 있다. `gtag.js` 어쩌구 하는 게 있다면 그것이다. 이것을 펼쳐보면 아래 모습과 같다.
+
+`![image](https://user-images.githubusercontent.com/86189596/148787666-601b978c-832e-47ff-829e-d68c350e333a.png)`
+
+그렇다. 개발에 익숙치 않다면 이 부분은 어려울 수 있다. 한 마디로 해당 데이터 스트림의 사이트의 데이터를 수집하게 해주는 코드이다. 그래도 이해가 안 간다면 그냥 따라하면 된다.
+
+1. 우측에 복사 아이콘을 눌러 복사한다.
+2. 원하는 사이트의 html 파일의 `<head>` 섹션에 붙여넣기 한다.
+
+html 파일 내에서도 JavaScript 코드를 돌아가게 하는 `<script>` 태그이다.
+
+<br />
+
+### 2. minimal-mistakes
+
+위의 `1. 일반 사이트`를 유심히 봤다면 알 수 있겠지만 저 가려진 두 부분은 측정 ID이다. 그렇다. 세부정보 페이지에 가려놓았던 것. 이 코드는 사이트 고유의 측정 코드 ID인데, minimal-mistakes는 이 코드만 있다면 쉽게 적용할 수 있다.
+
+1. 측정 ID 우측에 복사 아이콘을 눌러 복사한다.
+2. 📃_config.yml 에 들어간다. 참고로 블로그 최상위 폴더에 있다.
+3. 아래 파트를 찾아 측정 ID를 붙여넣는다.
+
+```yaml
+# Analytics
+analytics:
+  provider: "google" # false (default), "google", "google-universal", "custom"
+  google:
+    tracking_id: "O-OOOOOOOOO"
+    anonymize_ip: false # true, false (default)
+```
+
+analytics의 google의 tracking_id 에 붙여넣어주면 된다. 양 옆에 큰 따옴표를 잊지 않도록 한다. 그리고 주석 처리되어 있는 provider 부분을 "google"로 적어주면 된다.
+
+<br />
+
+## 코드의 흐름
+
+이것만으로 어떻게 되는 것일까? 이 구글 애널리틱스를 이용하려면 `1. 일반 사이트` 에서처럼 tracking_id 가 포함된 스크립트 코드를 목적 html 파일의 `<head>` 태그 내에 붙여넣어야 하는데, minimal-mistakes 테마에서는 이 스크립트를 미리 준비해서 tracking_id 부분만 뻥 뚫어놓았다. 그리고 provider가 "google"로 활성화되면 tracking_id를 그 뚫어놓은 구멍에 넣어주는 것이다. 이 코드를 확인하고 싶다면 아래 파일 경로를 따라가보자.
+
+📁_includes 📁anaylitics-providers 📃google-gtag.html
+
+📃google-gtag.html 파일을 들어가면 아래와 같은 liquid 문법의 파일들을 확인할 수 있다.
+
+<br />
+
+```liquid
+{% raw %}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.analytics.google.tracking_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '{{ site.analytics.google.tracking_id }}', { 'anonymize_ip': {{ site.analytics.google.anonymize_ip | default: false }}});
+</script>
+{% endraw %}
+```
+
+<br />
+
+liquid 문법의 변수 처리로 site.analytics.google.tracking_id로 js 파일의 tracking_id 부분이 들어가있는 것을 볼 수 있다. minimal-mistakes 테마 제작자의 세심하면서도 능력 있는 배려가 돋보인다.

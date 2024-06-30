@@ -1,0 +1,170 @@
+---
+title: "[BlogDev] 블로그 폰트 변경하기"
+excerpt: "블로그의 기본 폰트를 원하는 폰트로 변경해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, font]
+
+date: 2021-12-23
+last_modified_at: 2021-12-23
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 도입
+
+본 게시물은 `[공부하는 식빵맘](https://ansohxxn.github.io/blog/favicon/)`님의 게시물을 통해 배우고 따라하는 과정입니다. 이 글을 누군가 보고 있다면, 그리고 보다 전문적이고 자세한 설명을 바라신다면 위 링크의 블로그를 확인해보시길.
+
+<br />
+
+## 1. 웹 폰트 사이트에서 폰트 선택
+
+폰트는 다음의 두 사이트에서 찾아서 선택할 수 있다.
+
+- 눈누 `<https://noonnu.cc/index>`
+- 구글 폰트 `<https://fonts.google.com/>`
+
+<br />
+
+### 가. 눈누
+
+`[눈누](https://noonnu.cc/index)`에 접속해서 원하는 폰트를 선택하여 들어간다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147241955-f842fa28-ee80-4902-b8a7-eef05cbec2cd.png)`
+
+나는 깔끔하면서도 둥글둥글한 폰트인 **교보손글씨** 폰트를 선택했다.
+
+중간에 **웹폰트로 사용**의 코드를 복사한다. 이 코드는 이후의 과정에서 import한다.
+
+```css
+@font-face {
+  font-family: "KyoboHand";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+```
+
+<br />
+
+### 나. 구글 폰트
+
+`[구글 폰트](https://fonts.google.com/)`에 접속해서 원하는 폰트를 선택하여 들어간다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147242360-b41202d1-e262-4ede-9032-2faf59aef1cc.png)`
+
+다양한 언어의 폰트들이 있지만, Language를 한국어(Korean)으로 설정하면 한국어를 지원하는 폰트 목록을 확인할 수 있다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147242687-4c694db0-1295-4bf1-ae19-dd20a6f95327.png)`
+
+나는 역시 부드러우면서도 가독성이 좋은 **Gamja Flower** 폰트를 선택했다.
+
+`+ Select this style` 버튼을 클릭한다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147242824-72fd2705-f445-44b1-8da0-0d6f72e7208a.png)`
+
+- CSS에서 Import할 것이라면 `@import` 코드를 복사
+- HTML에서 Import할 거싱라면 `<link>` 코드를 복사
+
+```css
+@import url("https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap");
+```
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap"
+  rel="stylesheet"
+/>
+```
+
+성능 면에서 더 나은 방법은 `<head>` 태그 내에 `<link>` 태그를 사용하여 웹폰트를 import하는 것이라고 한다. 그 이유에 대해서는 확인할 수 없었다.
+
+<br />
+
+## 2. 폰트 Import하기
+
+### 가. CSS에 Import하기
+
+웹 코드를 복사하여 import하면, 폰트 파일을 다운로드해서 로컬 환경에 저장할 필요가 없다. 원하는 코드를 css 파일이나, HTML의 `<style>` 태그에 import 한다.
+
+minimal-mistakes의 경우 📂assets/📂css/📃main.scss 파일에 해당 웹 폰트 코드를 붙여넣으면 import가 완료된다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147253627-323a200a-662d-4828-aa5f-4576b00f3ec8.png)`
+
+나는 "교보손글씨 폰트" 와 "HS유지체 폰트"를 import했다.
+
+<br />
+
+### 나. HTML에 Import하기
+
+minimal-mistakes의 경우 📂_layout/📃default.html 을 보통 참조하고, 이 html 파일은 다시 📂_include/📂head/📃custom.html 을 참조하므로, 해당 파일에 태그를 넣어주었다.
+
+`![image](https://user-images.githubusercontent.com/86189596/147250167-f91e97de-0015-4db3-a482-d1304ef93df8.png)`
+
+나는 "Gamja Flower" 폰트를 import했다.
+
+<br />
+
+## 3. 폰트 적용하기 : font-family
+
+```
+font-family : "Gamja Flower"
+```
+
+이런 식으로 폰트를 적용하고자 하는 CSS 영역에 위와 같은 코드를 넣어주면 된다.
+
+📂_sass/📂minimal-mistakes/📃_variables.scss 파일에 들어가 `/* system typefaces */`를 찾는다.
+
+```scss
+/* system typefaces */
+$serif: "Gamja Flower", Georgia, Times, serif !default;
+$sans-serif: "Gamja Flower", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI",
+  "Helvetica Neue", "Lucida Grande", Arial, sans-serif !default;
+$monospace: "Gamja Flower", Monaco, Consolas, "Lucida Console", monospace !default;
+$orchemi: "Gamja Flower" !default;
+```
+
+Minimal-Mistakes 테마는 위의 📃_variables.scss 파일에 css 파일들이 사용할 `전역 변수`를 한 데 모아 선언한다. `$serif`, `$sans-serif`, `$monospace`는 minimal-mistakes 자체에서 원래 있던 변수이고, `$orchemi` 체는 내가 선택한 폰트이다. 폰트를 한 항목에 여러 개 배치하는 경우, 예비 후보 폰트라고 생각하면 좋다. 맨 좌측에 위치할수록 우선순위가 높고, 해당 폰트가 지원하지 않는 어떤 타입이 있을 때 다음 폰트로, 다음 폰트로 넘어가게 되는 것이다.
+
+```css
+font-family: "Gamja Flower";
+```
+
+처럼 쓰게 되면 폰트 이름 그대로 적용하는 방식이고,
+
+```css
+font-family: $orchemi;
+```
+
+처럼 쓰게 되면 `$orchemi` 변수로 저장한 `Gamja Flower` 폰트가 그대로 그 자리에 들어가 적용되게 되는 것이다.
+
+<br />
+
+## 4. 최종 단계
+
+폰트가 반영된 css 파일들을 저장하고 커밋-푸쉬하면 적용이 완료된다.
+
+<br />
+
+## 5. 자세한 내용
+
+minimal-mistakes의 경우 📂docs/📂_docs/📃16-stylesheets.md 에서 htmld의 `<link>` 태그를 사용하는 등 커스터마이징 팁을 참고하면 된다.
+
+<br />
+
+## References
+
+- `[공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)`

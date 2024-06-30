@@ -1,0 +1,891 @@
+---
+title: "[BlogDev] 사이드바 카테고리 세부분류 2"
+excerpt: "사이드바 카테고리 세부분류 및 디자인 과정을 기록한다."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-02-02T04:13
+last_modified_at: 2022-02-02T04:13
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 도입
+
+### 들어가며
+
+내가 보려는 용도로 작성했다면 이렇게 자세히 적지는 않을텐데 내 작업을 참고하려는 사람들에게 도움이 되고자 정말로 자세히 쓸 것이다. 평소와 달리 중간중간 남에게 말하는 듯한 어투로 글을 쓰게 될 것 같다.
+
+<br />
+
+### 이전 작업
+
+[[Blog] 사이드바 카테고리 세부분류](https://orchemi.github.io/blog/Blog_sidebar_subcategory/)
+
+BlogDev는 시간 순으로 작성되었지만, 이 포스트를 먼저 보셨다면 위의 포스트를 보시고 오는 것이 이해에 유리할 것이다.
+
+<br />
+
+### 작성 동기
+
+아주 옛날의 이야기부터 하겠다. 그동안 사이드바 카테고리의 소소한 scss 속성 변경이나 구조를 변경함에 대해서는 다루지 않았다. 왜냐하면 그 많은 컴포넌트들에 대한 코드를 정리해서 md파일에 남겨야 하고, 조금씩 수정해서 손 보는 scss 속성 특성상 너무 디테일한 부분은 생략하고자 했던 것이다.
+
+그런데 카테고리 내의 카테고리의 전개에 대한 html과 scss 속성을 다루는 과정을 남겨야겠다고 생각이 들었다. 포스트가 많아지면 많아질수록 세부적으로 분류해야 할 필요가 생기는 것이다. 예를 들면 BOJ 문제를 푸는 과정을 포스트로 남기기 위해 아래와 같이 카테고리로 만들었다. (옛날 사진이다. 그래봐야 10일 전 사진이지만.)
+
+`![image](https://user-images.githubusercontent.com/86189596/152010219-93994674-3c15-4cfb-81bd-bfd61e2fb262.png)`
+
+CODINGTEST(지금은 PS) 대분류 카테고리 내에 BOJ 카테고리가 있다. 당시에는 details와 summary 태그의 사용법을 알지도 못했고, 알 필요도 없었기 때문에 BOJ 카테고리는 그 자체로 BOJ 문제 풀이를 모아둔 페이지로 향하는 링크일 뿐이었다.
+
+그런데 문제 풀이가 30개, 40개가 되고 점점 불어가면서 장기적으로 보았을 때, 이것들을 분류할 필요가 있겠다고 생각이 들었다. 그래서 최초, details와 summary 태그를 이용해 세부 카테고리를 만들었다. 이 과정은 본 게시글의 서두의 `[이전 작업](https://orchemi.github.io/blog/Blog_sidebar_subcategory/)` 게시글에 남겼다.
+
+그 이후에 디테일한 scss 속성과 html을 소소하게 바꾸었지만 굳이 게시글로 다루진 않았다는 것이다. 이제 사이드바는 완전체에 다다른 것 같으니 그 모든 코드의 흐름을 정리하고, 누군가 본다면 이를 공유하고자 한다.
+
+<br />
+
+### 작성 목적
+
+오늘의 목적은 "난이도별로 분류된 BOJ 카테고리를 세부 난이도별로 나눠보자." 이다. 사실 TIL에 대해 subcategory의 subcategory로 작업하는 것을 먼저 했지만, 이를 기록하지 않아 BOJ를 세분화하며 이 과정을 다뤄보고자 하는 것이다.
+
+<br />
+
+## 작업 과정 0 : 파일 및 디렉토리 정리
+
+우선 이번 작업을 진행하며 필요한 파일과 디렉토리 구조에 대해 정리하고 시작하겠다. 이 개념이 잡히지 않으면 아래의 내용들을 이해하기 어려울테니 말이다. 이 포스트를 작성하는 시점으로는 모든 사이드바 작업이 완료되었으므로, 완료된 디렉토리 구조를 기준으로 작성하겠다.
+
+그리고 이번 작업에 불필요한 파일이나 디렉토리의 경우, 기입하면 혼란만 줄 수 있기 때문에 굳이 언급하지는 않겠다. 자. 내 보물창고를 공개한다.
+
+<br />
+
+### 디렉토리 구조 : 📂_includes
+
+```
+📂_includes
+    📃nav_list_main
+    📂nav_list_parts
+        📂nav_list_1_frontend
+            📃nav_list_1_frontend.html
+        📂nav_list_2_backend
+            📃nav_list_2_backend.html
+        📂nav_list_3_cs
+            📃nav_list_3_cs.html
+        📂nav_list_4_ps
+            📂nav_list_4_1_boj
+                📃nav_list_4_1_1_bronze.html
+                📃nav_list_4_1_2_silver.html
+                📃nav_list_4_1_3_gold.html
+                📃nav_list_4_1_4_platinum.html
+                📃nav_list_4_1_5_diamond.html
+                📃nav_list_4_1_boj.html
+            📂nav_list_4_2_swea
+                📃nav_list_4_2_swea.html
+            📃nav_list_4_ps.html
+        📂nav_list_5_etc
+            📃nav_list_5_etc.html
+        📂nav_list_6_private
+            📂nav_list_6_1_TIL
+                📃nav_list_6_1_1_2021TIL.html
+                📃nav_list_6_1_2_2022TIL.html
+                📃nav_list_6_1_TIL.html
+            📃nav_list_6_private.html
+```
+
+layout html에서 include하여 사용하기 위한 html, liquid 컴포넌트 문서들이다. 한 번에 많은 양의 코드를 적어 가독성이 떨어질 때 이렇게 컴포넌트를 세부분류로 나누어 html로 나누고, 이를 include하면 구조도 쉽게 파악할 수 있고, 컴포넌트를 복사해서 재사용하기도 용이하다.
+
+<br />
+
+### 디렉토리 구조 : 📂_pages
+
+```
+📂_pages
+    📂categories
+        📂1. Frontend
+            📃category-CSS.md
+            📃category-HTML.md
+        📂2. Backend
+            📃category-python.md
+        📂3. CS
+            📂Algorithm
+                📃category-Algorithm.md
+            📂EIP
+                📃category-EIP.md
+        📂4. PS
+            📂4.1.BOJ
+                📂4.1.1. Bronze
+                    📃category-BOJ_Bronze_1.md
+                    📃category-BOJ_Bronze_2.md
+                    📃category-BOJ_Bronze_3.md
+                    📃category-BOJ_Bronze_4.md
+                    📃category-BOJ_Bronze_5.md
+                    📃category-BOJ_Bronze.md
+                📂4.1.2. Silver
+                📂4.1.3. Gold
+                📂4.1.4. Platinum
+                📂4.1.5. Diamond
+            📂4.2.SWEA
+                📃category-SWEA_D1.md
+                📃category-SWEA_D2.md
+                📃category-SWEA_D3.md
+                📃category-SWEA_PS.md
+        📂5. ETC
+            📃category-Blog.md
+            📃category-Git.md
+        📂6. Private_f
+            📂PSR
+                📃category-PSR.md
+                📃category-Volunteer.md
+            📂Research
+                📃category-research.md
+            📂TIL
+                📂2021
+                    📃category-TIL-2021-06.md
+                    📃category-TIL-2021-07.md
+                    📃category-TIL-2021-08.md
+                    📃category-TIL-2021-09.md
+                    📃category-TIL-2021-10.md
+                    📃category-TIL-2021-11.md
+                    📃category-TIL-2021-12.md
+                    📃category-TIL-2021.md
+                📂2022
+                    📃category-TIL-2022-01.md
+                    📃category-TIL-2022-02.md
+                    📃category-TIL-2022.md
+                📃category-TIL.md
+```
+
+📂categories 폴더가 핵심이다. 특정 카테고리에 대해 어떤 식으로 페이지를 렌더링할 것인지를 결정하는 md 파일들을 모아두는 폴더이다. 원래는 없는 폴더인데 카테고리별 md 파일이 너무 많아져서 조직화를 위해 따로 만든 폴더이다.
+
+📂4.1.BOJ 폴더의 경우 각 난이도(Bronze, Silver..)별로 폴더를 만들고 그 내부에 세부 난이도(Bronze 1, 2, 3...)별로 md 파일을 만들었다. 아래의 Silver와 Gold.. 이후의 폴더들도 내부적으로 같은 구성이므로 내부 문서는 생략한다.
+
+📂Private_f는 개인적인 것들, 예를 들면 일기 형식의 TIL이라던가, 개인 조사 내용, Social Return등에 대한 포스트들을 넣어놓는 폴더이다. 디렉토리 명을 Private로 적으면 접근을 제한하는 Private 디렉토리가 되기 때문에 이를 피하기 위해 별도로 설정한 것이다. Private 디렉토리가 된다고 해서 생기는 불이익에 대해서는 아직 확인한 적은 없지만 디렉토리 아이콘이 바뀌는 게 불편해서 그냥 바꾼 거다.
+
+아래에서 차근차근 설명할테니 걱정하지 않도록 한다. 참고차 자세히 적은 것 뿐이다.
+
+<br />
+
+### 기타
+
+디렉토리 구조까지는 필요 없지만 커스텀에 필요한 파일들이다. 경로와 함께 설명하겠다.
+
+<br />
+
+> 📂_sass📂minimal-mistakes📃_navigation.scss
+
+details와 summary, inner-detail, nav\_\_sub2-title 등 여러 a 태그 클래스들에 대한 scss 속성을 정의한 scss 파일이다. 이번 사이드바 카테고리, 즉 nav_list의 디자인 작업에 핵심적인 역할을 하는 파일이다.
+
+<br />
+
+> 기타 posts 파일들
+
+category나 nav_list에서 포스트 md 파일의 categories와 tags를 적극 활용한다. 이는 뒤에서 설명하도록 하겠다.
+
+<br />
+
+## 작업 과정 1 : HTML & Liquid
+
+뼈대를 잡아가는 과정을 천천히 보이겠다.
+
+<br />
+
+### 📃nav_list_main
+
+만약 BlogDev를 처음부터 주욱 보고 왔다면 이 파일이 눈에 익을 것이다. 사이드바 작업을 할 때 가장 필수적이면서도 그 근본이 되는 루트파일이다. 뭐 사실 이를 include하는 파일들이 더 기저에 있긴 하지만 말이다.
+
+아무튼 이 파일을 살펴보자.
+
+```liquid
+{%- raw -%}
+<!--전체 글 수를 세기 위한 연산. sum 변수에 전체 글 수 저장-->
+
+{% assign sum = site.posts | size %}
+
+<nav class="nav__list">
+    <input id="ac-toc" name="accordion-toc" type="checkbox" />
+    <label for="ac-toc">{{ site.data.ui-text[site.locale].menu_label }}</label>
+    <ul class="nav__items" id="category_tag_menu">
+
+
+        <!--전체 글 수-->
+        <li>
+            <div>📃 전체 게시글 수 {{sum}} 개</div>
+        </li>
+
+
+        <li>
+            {% include nav_list_parts/nav_list_1_frontend/nav_list_1_frontend.html %}
+            {% include nav_list_parts/nav_list_2_backend/nav_list_2_backend.html %}
+            {% include nav_list_parts/nav_list_3_cs/nav_list_3_cs.html %}
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_ps.html %}
+            {% include nav_list_parts/nav_list_5_etc/nav_list_5_etc.html %}
+            {% include nav_list_parts/nav_list_6_private/nav_list_6_private.html %}
+        </li>
+    </ul>
+</nav>
+{% endraw -%}
+```
+
+이전에 세부분류를 할 때 각 대분류를 구성하는 html코드들을 컴포넌트화해서 include하는 과정을 적었기 때문에 자세하게 설명하지는 않겠다. 하지만 다시 강조할만큼 중요한 것은 📃nav_list_main 파일이 있는 디렉토리를 기준으로 경로를 상대적으로 추적해서 적어주어야 한다는 것이다.
+
+코드를 보면 나는 📃nav_list_main 파일이 있는 디렉토리에 📂nav_list_parts 폴더를 두고 그 안에 각각의 대분류 카테고리에 해당하는 디렉토리들을 넣어 이를 종합하는 대분류 html 파일을 만들었다.
+
+이 종합하는 파일 중 하나를 보여주겠다. 이미 작업이 모두 끝난 BOJ와 SWEA를 담고 있는 PS 대분류에 대한 html 파일이다.
+
+<br />
+
+### 📃nav_list_4_ps.html
+
+이 파일의 경로를 다시 알려주자면 📂_include📂nav_list_parts📂nav_list_4_ps 폴더 내의 📃nav_list_4_ps.html 파일이다. 📃nav_list_main 파일에 include되는 4번 대분류 PS 카테고리 코드이다. 코드를 살펴보자.
+
+```liquid
+{%- raw -%}
+<!-- 대분류 with span 태그-->
+<span class="nav__sub-title"> <!-- PS 문자 표시 -->
+PS
+</span>
+    <!-- 중분류 1. BOJ --------------------------------------------------------------------------------------->
+    {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_boj.html %}
+
+
+    <!-- 중분류 2. SWEA --------------------------------------------------------------------------------------->
+    {% include nav_list_parts/nav_list_4_ps/nav_list_4_2_swea/nav_list_4_2_swea.html %}
+{% endraw -%}
+```
+
+꽤나 간결한 것을 볼 수 있다. 그 이유는 BOJ 중분류 카테고리와 SWEA 중분류 카테고리에 대한 코드를 컴포넌트화하여 include 했기 때문이다. 그렇다면 첫번째 중분류 카테고리이자, 오늘 세분화하는 과정을 정리할 BOJ에 대해 살펴보자.
+
+위에서보면 여러 경로를 타고 📃nav_list_4_1_boj.html 파일을 include한다. 이 코드를 자세히 살펴보자.
+
+<br />
+
+### 📃nav_list_4_1_boj.html
+
+`![image](https://user-images.githubusercontent.com/86189596/152008038-eb3c8410-638a-4108-9e9b-9541a57a6e3d.png)`
+
+여기까지 왼쪽 목차를 보면 위의 디렉토리 구조이다. 헷갈린다면 참고하시길. 자세한 코드는 아래와 같다.
+
+```liquid
+{%- raw -%}
+    <!-- 중분류 1. BOJ --------------------------------------------------------------------------------------->
+    <details class="categories-detail">
+
+        <!-- 접힌 상태에서 중분류 -->
+        {% for tag in site.tags %}
+            {% if tag[0] == "BOJ" %}
+                <summary class="nav__sub2_1-title">BOJ ({{tag[1].size}})</summary>
+            {% endif %}
+        {% endfor %}
+
+        <!-- 내부 부분 -->
+        <div class="inner_detail">
+
+            <!-- 소분류. BOJ Total by tag -->
+            <ul class="nav__sub2_1-total">
+                {% for tag in site.tags %}
+                    {% if tag[0] == "BOJ" %}
+                        <li><a href="/categories/boj" class="">📂 BOJ ({{tag[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+
+            </ul>
+
+            <!-- 소분류. etc -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ ETC" %}
+                        <li><a href="/categories/boj_etc" class="">[⭐] BOJ etc ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- 소분류. Bronze -->
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_1_bronze.html %}
+
+            <!-- 소분류. Silver -->
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_2_silver.html %}
+
+            <!-- 소분류. Gold -->
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_3_gold.html %}
+
+            <!-- 소분류. Platinum -->
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_4_platinum.html %}
+
+            <!-- 소분류. Diamond -->
+            {% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_5_diamond.html %}
+        </div>
+    </details>
+{% endraw -%}
+```
+
+정말 할 얘기가 많은 코드이다. 우선 블로그의 현재 모습과 함께 보자.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/152023448-86d0fe15-f17a-4cd1-aff7-f0953ed18c09.png)`
+
+왼쪽에 사이드바의 구성에 주목한다.
+
+<br />
+
+위의 코드에서 가장 상단의 코드들만 따오겠다.
+
+```liquid
+{%- raw -%}
+<details class="categories-detail">
+
+        <!-- 접힌 상태에서 중분류 -->
+        {% for tag in site.tags %}
+            {% if tag[0] == "BOJ" %}
+                <summary class="nav__sub2_1-title">BOJ ({{tag[1].size}})</summary>
+            {% endif %}
+        {% endfor %}
+
+        <!-- 내부 부분 -->
+        <div class="inner_detail">
+{% endraw -%}
+```
+
+<br />
+
+#### details & summary
+
+이전에 다루었으니 길게 다루지는 않겠다. 중분류 카테고리인 BOJ 를 표시하는 details 태그는 `categories-detail` 이라는 클래스명으로 설정했다. 다시 말하지만 중분류 카테고리이다. 헷갈리지 않도록 한다.
+
+details 태그 내에 summary 태그를 두고, 그 아래에 다른 html 코드들을 넣는다. summary는 details가 접혀있을 때 표시하는 html에 대한 코드이고, 그 아래에는 details가 open되었을 때 표시하는 html에 대한 코드이다.
+
+summary는 `nav__sub2_1-title`이라는 클래스명으로 설정하였는데, details가 open되거나 close되었을 때, hover나 active되었을 때 등 다양한 상황에서 각각의 scss 속성을 설정하기 위해 태그마다 클래스는 지정해주었다.
+
+summary 주변에 liquid 언어로 무언가 감싸져 있는데 이는 사이트 내의 모든 포스트의 태그들에 대하여, 태그가 BOJ 인 포스트의 수를 `nav__sub2_1-title`의 옆에 표시하기 위해 작성한 것이다.
+
+<br />
+
+#### inner_detail
+
+열렸을 때 왼쪽에 노란색 라인과 함께 배경색을 조금 밝게 하는 스타일링을 위해 summary 아래 부분은 `inner_detail` 이라는 이름의 div 박스로 씌우고 그 안에 코드들을 두었다. summary 아래의 모든 코드들을 감싼다.
+
+<br />
+
+#### BOJ Total
+
+```liquid
+{%- raw -%}
+<!-- 소분류. BOJ Total by tag -->
+<ul class="nav__sub2_1-total">
+    {% for tag in site.tags %}
+        {% if tag[0] == "BOJ" %}
+            <li><a href="/categories/boj" class="">📂 BOJ ({{tag[1].size}})</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endraw -%}
+```
+
+사진을 살펴보면 BOJ 중분류 카테고리가 open 되면 난이도에 따라 나열되는 소분류들이 나오는데, 이때 이 위에 `📂 BOJ` 로 표시된 것이 보이는가. 저것은 소분류들의 분류 기준과 관계 없이 BOJ PS라면 모두 렌더링 되는 카테고리에 해당한다. 이는 tag에 BOJ가 포함된 모든 포스트들을 조회해서 렌더링하는 방식으로 진행된다. 위에서 `소분류. BOJ Total by tag`로 주석처리한 코드이다.
+
+<br />
+
+#### etc
+
+```liquid
+{%- raw -%}
+<!-- 소분류. etc -->
+<ul class="nav__sub3-title">
+    {% for category in site.categories %}
+        {% if category[0] == "BOJ ETC" %}
+            <li><a href="/categories/boj_etc" class="">[⭐] BOJ etc ({{category[1].size}})</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endraw -%}
+```
+
+카테고리를 내릴 필요 없이 그냥 BOJ ETC를 카테고리로 가지는 포스트를 찾아 렌더링하는 페이지로 이동시켜준다. 코드의 길이가 길지 않기 때문에 컴포넌트화하지 않고 BOJ에 그대로 넣은 것이다.
+
+<br />
+
+#### include
+
+```liquid
+{%- raw -%}
+<!-- 소분류. Bronze -->
+{% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_1_bronze.html %}
+
+<!-- 소분류. Silver -->
+{% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_2_silver.html %}
+
+<!-- 소분류. Gold -->
+{% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_3_gold.html %}
+
+<!-- 소분류. Platinum -->
+{% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_4_platinum.html %}
+
+<!-- 소분류. Diamond -->
+{% include nav_list_parts/nav_list_4_ps/nav_list_4_1_boj/nav_list_4_1_5_diamond.html %}
+{% endraw -%}
+```
+
+소분류 그 자체만으로도 길이가 길기 때문에 이를 컴포넌트화하여 html 파일로 각각 빼고, 이를 include한 것이다. 마치 📃nav_list_main 파일이 각각의 대분류 카테고리를 컴포넌트화해 include했듯이 이 역시 각각의 소분류 카테고리를 컴포넌트화해 include한 집합체인 것이다.
+
+이 소분류 컴포넌트의 하나인 Bronze에 대해 살펴보자. 파일명은 📃nav_list_4_1_1_bronze.html이고, 경로는 📃nav_list_main이 있는 디렉토리부터의 상대경로이다. 디렉토리가 깊어지면 깊어질수록 헷갈릴 수 있으니 경로를 표기함에 있어 주의하도록 하자.
+
+<br />
+
+### 📃nav_list_4_1_1_bronze.html
+
+디렉토리 구조에 대해 목차 리스트를 통해서 다시 한 번 숙지하도록 한다.
+
+`![image](https://user-images.githubusercontent.com/86189596/152009476-49874413-5208-40e8-845c-077470d0b891.png)`
+
+```liquid
+{%- raw -%}
+    <!-- 소분류. BOJ Bronze --------------------------------------------------------------------------------------->
+    <details class="categories-detail2">
+        <!-- 접힌 상태에서 BOJ Bronze -->
+        {% for tag in site.tags %}
+            {% if tag[0] == "BOJ Bronze" %}
+                <summary class="nav__sub2_2-title">[🟤] Bronze ({{tag[1].size}})</summary>
+            {% endif %}
+        {% endfor %}
+
+        <!-- BOJ Bronze 내부 부분 -->
+        <div class="inner_detail2">
+            <!-- 극소분류. BOJ Bronze Total by tag -->
+            <ul class="nav__sub2_1-total">
+                {% for tag in site.tags %}
+                    {% if tag[0] == "BOJ Bronze" %}
+                        <li><a href="/categories/boj_bronze">[🟤] Bronze ({{tag[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- BOJ Bronze 1 -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ Bronze I" %}
+                        <li><a href="/categories/boj_bronze_1" class="">Bronze I ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- BOJ Bronze 2 -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ Bronze II" %}
+                        <li><a href="/categories/boj_bronze_2" class="">Bronze II ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- BOJ Bronze 3 -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ Bronze III" %}
+                        <li><a href="/categories/boj_bronze_3" class="">Bronze III ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- BOJ Bronze 4 -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ Bronze IV" %}
+                        <li><a href="/categories/boj_bronze_4" class="">Bronze IV ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <!-- BOJ Bronze 5 -->
+            <ul class="nav__sub3-title">
+                {% for category in site.categories %}
+                    {% if category[0] == "BOJ Bronze V" %}
+                        <li><a href="/categories/boj_bronze_5" class="">Bronze V ({{category[1].size}})</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </details>
+{% endraw -%}
+```
+
+이전의 컴포넌트화에 대해 자세히 설명했다. 이 코드 역시 details와 summary, inner div로 나뉜 것은 BOJ html과 다름이 없다. 하지만 scss 속성을 달리 설정해주어야 하므로 클래스명이 각각 `categories-details`, `nav__sub2_2-title`, `inner_detail2` 로 달라짐을 알아야 한다.
+
+또한 종합하는 total a 태그의 클래스는 `nav__sub2_1-total`로 같은 것을 알아두자. scss 섹션에서 얘기하겠지만, 내부 태그들과 구분하기 위해 primary-color로 설정하였고, 내부 카테고리의 total과 외부 카테고리의 total의 scss 속성을 구분할 필요가 없어 통일하였다. 참고로 클래스 이름은 내가 마음대로 설정한 것이니 더 효율적인 이름이나 자신만의 규칙이 있다면 그대로 하면 되겠다.
+
+이 과정을 난이도별로 설정해주면 되었다.
+
+<br />
+
+## 작업 과정 2 : Category Markdown
+
+이렇게 구조화해서 만든 HTML 파일들이 쓸모가 있으려면, 같은 카테고리끼리 묶어 렌더링해줄 때 필수적인 category md파일들이 필요하다.
+
+이전 작업 과정에서 살펴보았지만, category마다 md 파일을 만들어주면 된다.
+
+<br />
+
+### 📃category-BOJ_Bronze_1.md
+
+대표적으로 Bronze 1 카테고리의 md 파일을 살펴보겠다.
+
+```liquid
+{%- raw -%}
+---
+title: "BOJ [🟤]Bronze I"
+layout: archive
+author_profile: true
+permalink: categories/boj_bronze_1
+---
+
+{% assign posts = site.categories.['BOJ Bronze I'] %}
+{% for post in posts %} {% include archive-single.html type=page.entries_layout %} {% endfor %}
+{% endraw -%}
+```
+
+> title
+
+카테고리별 페이지의 최상단 제목이다.
+
+<br />
+
+> layout
+
+사용하는 layout을 지정한다. 내 코드의 경우 archive layout의 혈통을 이어간다는 것이다.
+
+<br />
+
+> permalink
+
+카테고리 페이지로 향할 수 있는 url을 만들 때 사용된다. baseurl은 \_config.yml 파일에서 내 블로그의 기본 url로 설정되므로, 최종적으로는 baseurl + permalink가 합쳐져 페이지로 향하는 url이 된다.
+
+이는 위에서 html 파일들의 리스트를 구성하는 li 태그의 href에 지정해주는 url과 같다. 꼭 이를 통일해주어야 사이드바에서 li 태그를 클릭했을 때 해당하는 카테고리 페이지로 이동시켜주니 꼭꼭 확인하자.
+
+<br />
+
+아래 본문의 내용은 사이트의 모든 포스트에 대해 `BOJ Bronze I`의 카테고리를 가지는 포스트마다 `archive-single.html`에 해당하는 양식으로 HTML을 뽑아서 렌더링해주겠다는 말이다. 이에 대한 것은 이전의 BlogDev를 살펴보면 확인할 수 있으니 찾아보라.
+
+<br />
+
+### 📃category-BOJ_Bronze.md
+
+나름 중요하다고 생각하는 total에 대한 md 파일이다. 이전에는 태그와 연결해서 태그 페이지로 이동했는데, 이 역시 category로 따로 설정해서 모으면 될 것 같다고 생각해서 개선한 md 파일이다.
+
+```liquid
+{%- raw -%}
+---
+title: "BOJ [🟤]Bronze"
+layout: archive
+author_profile: true
+permalink: categories/boj_bronze
+---
+
+{% assign posts = site.tags.['BOJ Bronze'] %}
+{% for post in posts %} {% include archive-single.html type=page.entries_layout %} {% endfor %}
+{% endraw -%}
+```
+
+주목해야 할 부분은 `site.tags.['BOJ Bronze']` 이다. 즉, 위의 📃 category-BOJ_Bronze_1.md 파일은 카테고리에서 찾는 반면, 📃category-BOJ_Bronze.md, 다시 말해 total 파일은 tag에서 해당하는 것을 찾는다는 말이다.
+
+이는 왜냐하면 가장 바닥까지 내려간 카테고리의 경우 카테고리를 세면 되지만 total의 경우 이 모든 것을 포함해야 하고, 카테고리는 여러 개를 설정할 수 없기 때문에 tag에 공통된 내용들만 모아서 종합하는 것이다.
+
+그럼에도 permalink는 `categories/boj_bronze` 로 설정하여 categories 페이지의 양식을 따르게 하였다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/152009053-edcd61aa-ba73-4f51-ad57-f3a40119ea67.png)`
+
+사진처럼 모든 난이도와 total에 대한 md 파일들을 만들어주면 되겠다. 저 화면에 꽉찬 md 파일들은 오로지 BOJ에 해당하는 md 파일들이다.
+
+<br />
+
+### 주의사항
+
+다시 강조하지만 li의 href와 연결할 때 헷갈리지 않도록 주의한다. 대소문자를 구분하기 때문에 commit & push 하기 전에 항상 꼭 확인하도록 한다. 이것이 제대로 되지 않으면 push 과정에서부터 오류가 생겨 페이지에서는 구경조차 할 수 없을 것이다.
+
+또한 카테고리, 태그별 구분의 대상이 될 포스트들의 카테고리와 태그들을 신중하게 설정하도록 한다. 카테고리와 태그를 설정하는 방법을 모르는 정말 초보자들이 있을까봐 포스트 md 파일의 상단을 보여주겠다.
+
+<br />
+
+```
+---
+title: "[BOJ][🟤5][백준#02557] Hello World"
+excerpt: "BAEKJOON Online Judge 문제 풀이"
+
+categories:
+  - BOJ Bronze V
+
+tags:
+  - [BOJ, BOJ Bronze, PS, Python]
+
+published: false
+
+date: 2022-01-16T01:33
+last_modified_at: 2022-01-16T01:33
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+```
+
+가장 세부 카테고리가 될 세부 구분을 카테고리로 설정하고 태그는 리스트로 담아주었다. 이 태그들은 중분류, 소분류 등 total로 묶어줄 태그들이 될 수 있으므로 특징들을 잘 포함하면서도 상징적인 단어들을 신중하게 생각해서 작성한다. 나중에 파일의 개수가 많아지면 바꾸고 싶어도 힘들 수 있다. ~~BOJ 60개 바꾸느라 죽을 뻔 했다.~~
+
+또한 포스트 md 파일, 카테고리 md 파일, HTML 파일의 카테고리와 태그는 삼위일체되어야 한다. 이 역시 하나라도 이상하다면 렌더링에 문제가 생길 수 있으므로 꼭 조심해서 살피도록 한다.
+
+<br />
+
+## 작업 과정 3 : SCSS 스타일링
+
+대망의 scss 속성을 조금씩 건들며 작업을 해야하는 때가 되었다. 가장 섬세하며 미적인 센스가 돋보이는 섹션이다. 내 코드가 가장 미적으로 우수하다고 할 수는 없지만 내가 꽤나 오랜 시간 고심하며 완성한 scss의 정수이다. 보물창고를 또 하나 열겠다.
+
+<br />
+
+### 📃_navigation.scss
+
+작업에 필요한 모든 클래스의 scss 속성은 이곳에 있다. 없다면 이곳에 넣으면 되겠다.
+
+<br />
+
+### .nav\_\_sub2-title
+
+중분류 카테고리이지만 내용이 그리 많이 없어 summary를 하지 않는 ul 태그에 대한 scss 속성이다.
+
+```scss
+.nav__sub2-title {
+  font-size: 0.9em;
+  margin: 0.2em 0;
+
+  &:hover {
+    text-shadow: 0 0 0.5em white;
+  }
+
+  &:active {
+    border-color: white;
+    color: white;
+  }
+}
+```
+
+이전에 작성한 hover 효과가 돋보인다.
+
+<br />
+
+### .nav\_\_sub2_1-title
+
+중분류 카테고리 중 details가 접혀있을 때 보여지는 summary에 대한 코드이다.
+
+```scss
+.nav__sub2_1-title {
+  font-size: 0.7em;
+  margin: 0.2em 0;
+  cursor: pointer;
+
+  &:hover {
+    text-shadow: 0 0 0.5em white;
+  }
+
+  &:active {
+    color: white;
+  }
+}
+```
+
+가져다대면 마우스가 pointer 모양으로 바뀌게 설정을 추가했다.
+
+<br />
+
+### .nav\_\_sub2_2-title
+
+소분류 카테고리의 summary에 대한 클래스이다.
+
+```scss
+.nav__sub2_2-title {
+  font-size: 0.7em;
+  padding-left: 0.6em;
+  cursor: pointer;
+
+  &:hover {
+    text-shadow: 0 0 0.5em white;
+  }
+
+  &:active {
+    color: white;
+  }
+}
+```
+
+font-size나 padding의 수치가 디테일한 이유는 개발자 도구에서 이리저리 바꿔보며 경험적으로 조작해 작성하였기 때문이다.
+
+<br />
+
+### details[open]
+
+```scss
+.categories-detail[open] {
+  .nav__sub2_1-title {
+    opacity: 0.2;
+  }
+}
+
+.categories-detail2[open] {
+  .nav__sub2_2-title {
+    opacity: 0.2;
+  }
+}
+```
+
+`.categories-detail`과 `.categories-detail2`은 각각 외부와 내부의 details 태그를 의미한다. 이 각각이 open 되었을 경우에 달라지는 scss 속성에 대해 정의한 것이다.
+
+어차피 details가 열리면 닫혀있을 때 보이던 summary들이 선명하게 보일 필요가 없다. 왜냐하면 내부에 그것들을 종합하는 total 링크가 따로 있기 때문이다. 때문에 details들이 열려 내부가 드러나면 summary들의 opacity를 0.2로 줄여 거의 보이지 않도록 하였다.
+
+<br />
+
+### .nav\_\_sub2_1-total
+
+내부 링크들을 종합한 페이지로 이동하는 total에 해당한다.
+
+```scss
+.nav__sub2_1-total {
+  font-size: 0.8em;
+  margin: 0.1em 0 0.1em 0.3em;
+  color: $primary-color;
+
+  &:hover {
+    text-shadow: 0 0 0.5em white;
+  }
+
+  &:active {
+    color: white;
+  }
+}
+```
+
+color를 primary-color로 설정하여 다른 태그들과 구분되게 하였다.
+
+<br />
+
+### .nav\_\_sub3-title
+
+가장 바닥까지 내려갔을 때 링크에 사용되는 scss 속성이다.
+
+```scss
+.nav__sub3-title {
+  font-size: 0.8em;
+  margin: 0.1em 0 0.1em 0.3em;
+
+  &:hover {
+    text-shadow: 0 0 0.5em white;
+  }
+
+  &:active {
+    color: white;
+  }
+}
+```
+
+다른 링크들보다 크기를 조금 줄여 가장 바닥에 도달한 태그임을 암묵적으로 보였다.
+
+<br />
+
+### .inner_detail
+
+중분류 details를 열었을 때 외부 box를 의미한다.
+
+```scss
+.inner_detail {
+  border-left: 0.2em solid $primary-color;
+  padding: 0.2em 0.05em;
+  margin-left: 0.1em;
+  background-color: lighten($background-color, 3%);
+
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+```
+
+border-left 속성을 두고 두꺼운 실선 primary-color 두어 영역을 강하게 표시하였다. 또한 padding과 margin을 두어 내부 카테고리 링크의 구분을 하였으며, 여백이 적어 답답해보이는 상황을 방지했다.
+
+background-color는 배경색보다 아주 약간 밝게 하여 돋보이지 않게 구분했다.
+
+<br />
+
+### .inner_detail2
+
+내부 box를 의미한다. 소분류 카테고리가 details인 경우 외부 box와 구분되어야 하므로 약간의 scss 속성을 달리 했다.
+
+```scss
+.inner_detail2 {
+  border-left: 0.1em solid #484a4e;
+  margin-left: 0.6em;
+  padding: 0.2em 0.2em;
+
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+```
+
+border-left를 얇고 거의 티가 나지 않는 색으로 설정하였다.
+
+<br />
+
+> 정리 끝
+
+이로써 sidebar에 사용되는 모든 HTML, Markdown, SCSS 파일들을 모두 정리하였다. 정리하면서 보니 클래스명이 조금 지저분하고 scss 파일에서 중복된 내용들이 많았다. 아직까지는 파일이 그리 많지 않아 구조가 복잡하지 않지만 나중에 더 복잡해진다면 중복되는 scss 속성은 컴포넌트화해서 재사용하거나 상위 디렉토리에서 overriding하는 등 조치를 취해야겠다.
+
+<br />
+
+## 작업 후기 및 결과 화면
+
+정리하는 작업은 언제나 고되다. 작업하는 시간보다 이 과정을 정리하고 설명하는 시간이 더 걸린 것 같다. 하지만 남는 것은 기록이다. 한창 열심히 BlogDev를 하면서보니 초창기 황무지 같았던 내 블로그에 대한 사진이 별로 없었음을 알게 되었다. 내가 이렇게 열심히 해서 잘 가꿔온 블로그의 before 사진이 없음에 아쉬웠다.
+
+앞으로 얼마나 더 갈길이 있을지 모르겠지만, 이 블로그의 모습 역시 과거의 모습일 수 있으니 이제 사진을 많이 남겨놓으려고 한다. 오늘까지의 작업 결과이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/152033310-7b16ae46-8539-401b-bcd5-62fea3da4577.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152033365-186edd09-550b-4c7c-9780-7b0579ebc166.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152033501-bdfde81c-9ef8-416b-935d-03fdce7e00bd.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152033544-f18c9d47-756f-44e2-91f3-0f91e052d574.png)`
+
+<br />
+
+## 노력 사진
+
+그리고 그동안, 그리고 특히 설 연휴동안 열심히 달려온 나의 사진이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/152034591-b5ccf4ce-dfea-46a8-9828-b1f5853078df.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034781-17ada61c-01a6-44f3-9098-559192629f55.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034769-3e9e1376-4f40-4462-8c32-07edc4587716.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034736-5353ec47-d25e-4472-8891-66dddfa0bdfd.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034805-017fad75-6500-445e-acec-4122c23dded6.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034012-c9193602-bbe9-40b5-b0b0-278e7128187f.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034146-826964cc-e6d2-4afb-9d99-b8500efb3574.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/152034341-22cd4278-b773-4fbd-922a-934869212a6d.png)`
+
+이것으로 사이드바 세부분류 2 종료

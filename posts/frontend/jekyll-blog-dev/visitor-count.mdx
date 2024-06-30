@@ -1,0 +1,145 @@
+---
+title: "[BlogDev] 사이트 방문자수 뱃지 달기"
+excerpt: "사이드바에 방문자수 뱃지를 달아보자"
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, visitor]
+
+date: 2022-01-11T02:31
+last_modified_at: 2022-01-11T02:31
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 참고자료
+
+`[Allan Bae - Github Repository 방문자수 트래킹하기](https://medium.com/@gjbae1212/github-repository-%EB%B0%A9%EB%AC%B8%EC%88%98%EB%A5%BC-%ED%8A%B8%EB%9E%98%ED%82%B9-%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-1df4dfc5509c)`
+
+<br />
+
+## 방문자수 뱃지 디자인하기
+
+위의 Allan Bae라는 개발자분이 사이트 방문을 트래킹하는 오픈소스 프로젝트를 진행하셨고, 감사하게도 많은 사람들이 이용하기 편하게 코드를 만들어주셨다. 자세한 내용은 위의 참고자료의 링크를 참고하자.
+
+`[HITS](https://hits.seeyoufarm.com)` 라는 사이트를 들어가면 냅다 TARGET URL과 뱃지를 만드는 디자인 화면을 볼 수 있다.
+
+`![image](https://user-images.githubusercontent.com/86189596/148795417-461c5d30-977c-49af-a2a5-a3ca56072c4e.png)`
+
+<br />
+
+### 1. `TARGET URL`에 사이트 주소 입력
+
+나의 경우 github blog의 url인 `<https://orchemi.github.io>`를 입력했다.
+
+<br />
+
+### 2. 디자인 커스터마이징
+
+자유롭게 원하는 색상 조합과 아이콘 / 테두리 타입 / 뱃지 텍스트 까지 설정하면 된다. 나는 별 모양 아이콘을 넣었고, 블로그 블로그 메인 색상인 `$primary-color` 색상으로 디자인했다.
+
+<br />
+
+## HTML LINK COPY
+
+그러고 밑을 보면 MARKDOWN, HTML LINK, EMBED URL(NOTION)의 3가지 타입으로 적용할 수 있도록 코드들이 있음을 알 수 있다. 우리는 이 중 HTML LINK를 COPY 해서 코드에 집어넣을 것이다. 개발자에게 감사하는 마음을 가지며 `COPY` 버튼을 누른다.
+
+<br />
+
+## 코드에 삽입
+
+### 위치 결정하기
+
+사이트에서 원하는 자리를 골랐다면 해당하는 html 파일의 해당 위치에 코드를 삽입한다. minimal-mistakes 테마의 경우 html파일이 따로 패키징되어 있어 구조가 어렵기 때문에 원하는 위치를 못 잡을 수 있다. 하지만 어쩌겠는가. 커스터마이징하고 싶다면 liquid 문법과 minimal-mistakes 테마의 디렉토리 구조에 대해 공부할 수 있도록 한다.
+
+나는 프로필과 전체 게시글 수를 표시하는 영역 사이에 넣어보려고 한다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/148797254-4037691b-4b8f-403c-bcf3-6dc1bdff01a0.png)`
+
+<br />
+
+잘 어울리는 것 같다. 꿀팁이라면 크롬 브라우저의 개발자 도구에서 Edit as HTML을 통해 임시로 해당 부분에 코드를 넣어 변화를 확인할 수 있으니 그렇게 반영하면 되겠다. 이 사진도 개발자 도구에 코드를 삽입해서 만들어본 견본이다.
+
+<br />
+
+### 원하는 위치의 코드가 있는 html 파일 찾기
+
+나의 경우 📁_includes📃author-profile.html 에 코드를 삽입해야했다.
+
+```liquid
+<div class="author__urls-wrapper">
+  <button class="btn btn--inverse">
+    {% raw %}{{ site.data.ui-text[site.locale].follow_label | remove: ":" | default:"Follow" }}{% endraw %}
+  </button>
+  <ul class="author__urls social-icons">
+    {% raw %}{% if author.location %}{% endraw %}
+    <li
+      itemprop="homeLocation"
+      itemscope
+      itemtype="https://schema.org/Place"
+    ></li>
+  </ul>
+</div>
+...
+```
+
+<br />
+
+역시 크롬의 개발자 도구를 이용해 내가 원하는 위치에 넣으려면 어떤 class 또는 어떤 태그 뒤에 코드를 붙여넣어야 하는가를 확인한다. 나는 Email과 Github 링크 아래에 넣어야 하는데, 이 링크들은 author\_\_urls-wrapper 클래스에 속해있으므로 이 class의 div 태그가 끝나는 위치에 아까 `HITS`에서 복사한 HTML 태그를 삽입하면 되겠다.
+
+```html
+<a class="hits_visitor_badge" href="https://orchemi.github.io/"
+  ><img
+    src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Forchemi.github.io&count_bg=%23FFBF00&title_bg=%23555555&icon=apachespark.svg&icon_color=%23FFBF00&title=VISIT&edge_flat=false"
+/></a>
+```
+
+나는 HITS에서 COPY해온 코드 일부를 수정했다.
+
+<br />
+
+### 코드 수정
+
+> class="hits_visitor_badge"
+
+먼저 해당 `<a>` 태그에 "hits_visitor_badge" 라는 이름의 클래스를 부여했다. 왜냐하면 코드를 삽입하기만 하면 아래처럼 되기 때문이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/148799773-e90e81f4-9169-41e0-bad9-4dcac4048152.png)`
+
+<br />
+
+기본적으로 `width: 100%` css 설정을 가지기 때문인데, 이는 minimal-mistakes의 \_sidebar.scss 파일에서 .sidebar img 의 sass 설정이 그렇게 되어있기 때문이다. 코드에서도, 개발자 모드에서도 확인할 수 있다. 위에서 개발자 도구를 이용해 견본을 만들었을 때 width: auto 로 수정한 모습이었다. 그래서 class명을 부여해 sass 속성을 부여할 것이다.
+
+class="author\_\_urls-wrapper" 의 sass 속성을 부여하는 scss파일은 📁_sass📁minimal-mistakes📃_sidebar.scss 에 있다. 그 아래에 코드를 넣어주었다.
+
+```scss
+/* HITS 방문자수 트래킹 뱃지 */
+.hits_visitor_badge img {
+  width: auto;
+}
+```
+
+클래스 자체가 아니라 해당 클래스 하의 img 태그에 width를 설정해야 되므로 위와 같이 설정해준다.
+
+<br />
+
+> `href="https://orchemi.github.io"`
+
+원래 `<a>` 태그는 클릭했을 때, 다른 url로 이동하게 하기 위한 태그이다. 그런데 HITS에서 HTML 태그를 COPY해와서 보니, a 태그에 href로 HITS 사이트를 넣어놓은 것이다. 제작자에 대한 경의는 표하나, 누를 때마다 HITS로 이동되는 내 사용자 방문자들에게 불편을 야기하게 하고 싶지는 않아서 a 태그의 href를 내 사이트의 메인 url로 바꿔놓았다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/148802424-e98ba960-f99a-4f58-849a-82d7dcae2319.png)`
+
+잘 반영되었다.

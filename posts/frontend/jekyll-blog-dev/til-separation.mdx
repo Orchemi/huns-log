@@ -1,0 +1,99 @@
+---
+title: "[BlogDev] TIL 분리작업"
+excerpt: "page build 속도를 위해 TIL을 분리해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github]
+
+date: 2022-06-01T17:00
+last_modified_at: 2022-06-01T17:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 작업 동기
+
+...그래 때가 왔다. 2개월 전 극소분류 카테고리의 숫자를 세는 로직을 제거했음에도 불구하고 포스트의 수 자체가 많아지다보니 build 시간이 10분에 다다르기 시작했다. 나는 이전에도 생각했지만, 그 다음 제거 대상은 TIL임을 본능적으로 알 수 있었다.
+
+`![image](https://user-images.githubusercontent.com/86189596/171345646-22f65a53-39a3-4251-a250-90ef73d1cc41.png)`
+
+현재 311개의 TIL 포스트가 있다. 이를 블로그에서 제거할 필요가 있겠다.
+
+<br />
+
+## 작업 설계
+
+작업은 다음과 같이 진행해보려고 계획을 세웠다.
+
+1. 블로그 폴더에서 TIL 폴더를 별도로 분리한다.
+2. 이 TIL 폴더를 별도의 Github Repository로 생성한다.
+3. 해당 Repo의 월별 TIL 링크를 블로그 카테고리 위치에 a 태그로 연결한다.
+4. TIL 카테고리 서식 파일을 정리한다.
+
+별건 아니지만 계획이 있어야 착착 진행될 것 같다. 진행해보자.
+
+<br />
+
+## 작업
+
+### 1. TIL 분리
+
+어려운 작업도 아니다. 그냥 그냥 Github Page Repo 폴더 외부로 TIL 폴더를 꺼내주고, 이 제거사항을 커밋해주면 되는 일이었다. 이것만으로 깃헙 페이지 포스트 1,020개의 30%에 해당하는 300여 개의 TIL 파일이 제거되었다.
+
+<br />
+
+### 2. 새로운 Github Repository 생성
+
+TIL이라고 이름 붙였지만, 나는 이것이 개발일기와 같다고 생각했다. 이것이 항상 찝찝했는데, 이 기회에 개발 일기라는 식으로 이름을 바꿔 Repository를 만들었다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/171349743-cb4e280f-7863-48b5-b735-7dcb83a41e82.png)`
+
+연도별로 정리해나갈 수 있을 것 같다. README는 천천히 생각해서 만들어봐야겠다.
+
+<br />
+
+### 3. 블로그 카테고리와 월별 폴더 링크 연결 
+
+`![image](https://user-images.githubusercontent.com/86189596/171350362-b66b1d88-bfee-4015-86e1-96dd1e16cf0f.png)`
+
+카테고리 바에서 TIL을 담당하는 공간의 코드이다. 연도별로 하위 템플릿들이 include 되어있고, 전체 TIL의 수를 세고 종합된 곳으로 이동시키는 링크가 있다. 이를 github repo 링크로 바꿔보겠다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/171351751-94255b80-9328-4d5f-9fb2-6b3d3cc82012.png)`
+
+참 쉽다. 마찬가지로 하위 연도별 페이지도 이와 같이 repo 링크를 하드하게 바꿔 넣어준다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/171352547-6b33b98d-195d-4890-9cb6-0204aff3cfe4.png)`
+
+참 쉽다.
+
+<br />
+
+### 4. TIL 카테고리 파일 서식 정리
+
+`![image](https://user-images.githubusercontent.com/86189596/171353681-bcb4dbb3-dc27-4f5b-a231-a4c9c1b2f0da.png)`
+
+이제는 이런 식으로 '카테고리 이름이 TIL 2021 06인 애들은 모아서 여기 어쩌구 해줘' 라는 식의 파일은 필요하지 않다. 카테고리 명에 따라 파일을 분류할 TIL 파일 자체가 없기 때문이다. 그렇다면 카테고리 바에서 TIL이 사라지게 될까? 그건 아닐 것이다. 이 카테고리 서식 파일에 의한 것이 아니라 nav_list.html 템플릿에 의해 렌더링 되기 때문에 카테고리 목록에서는 링크를 확인할 수 있다. 그렇다면 걱정 없이 제거해도 되겠다.
+
+이 카테고리 서식 파일 역시 for문을 돌며 매 파일마다 어떤 카테고리명을 가지는지 확인하는 구조이기 때문에 12개의 for문을 제거해 보다 빠르게 rendering하게 하는 효과를 기대해볼 수 있다.
+
+<br />
+
+## 작업 결과
+
+렌더링 속도가 50% 향상되었다. 무엇보다 포스트가 많은 탓이었는지 사이트 한 페이지 페이지가 로딩이 상당히 오래 걸렸는데, 이 부분 역시 로딩 시간이 상당히 많이 개선되었다.
