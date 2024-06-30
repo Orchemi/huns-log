@@ -1,0 +1,218 @@
+---
+title: "[SCSS] mixin, extend"
+
+categories:
+  - SCSS
+
+tags:
+  - [FE Language, CSS, SCSS]
+
+date: 2022-06-30T05:20
+last_modified_at: 2022-06-30T05:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Mixin
+
+- 코드를 재사용하기 위해 만들어진 기능
+- 반복되는 코드를 include해서 사용
+- mixin이 여러 개인 경우 **_mixins.scss**에서 한 번에 관리
+
+<br />
+
+### Mixin 사용
+
+```scss
+@mixin 이름(매개변수) {} // 생성
+@include 이름(인수); // 사용
+```
+
+<br />
+
+> 인자가 없는 경우
+
+```scss
+@mixin flex-center-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  @include flex-center;
+  justify-content: left;
+}
+
+.aside {
+  @include flex-center;
+  flex-direction: row;
+}
+```
+
+- 원치 않는 속성은 overriding하여 덮어씌울 수 있음
+- 해당 코드 블럭을 아예 툭 가져오는 것으로 취급
+
+<br />
+
+> 인자가 있는 경우
+
+```scss
+@mixin flex($dir:column, $x:center, $y:center) {
+  display: flex;
+  flex-direction: $dir;
+  justify-content: $x;
+  align-items: $y;
+}
+
+.card {
+  // @include flex(column, left, center);
+  @include flex(column, left);
+}
+
+.aside {
+  // @include flex(row, center, center);
+  @include flex(row);
+}
+```
+
+- 인자를 사용해 능동적으로 스타일 적용
+- 인자에는 미리 default 값을 지정 가능
+- default를 사용할 경우 인자 전달 불필요
+- 앞에서부터 채워짐
+
+<br />
+
+## Extend
+
+- 연관 있는 요소들끼리 스타일 코드가 중복된 경우에 사용
+
+<br />
+
+### mixin과의 차이
+
+> mixin 쓰면 되는 거 아닌가요?
+
+- mixin : **관계 없는 선택자**에서 조금 다른 스타일을 적용할 때
+- extend : **관계 있는 선택자**들에 동일한 소스코드 적용할 때
+
+<br />
+
+### 사용 예시
+
+```scss
+.profile-user {
+    background-image: url("./programmer.png");
+    background-size: cover;
+    background-position : 50% 50%;
+    border-radius: 50%;
+    width : 50px;
+    height : 50px;
+  }
+  
+  .comment-user {
+    @extend .profile-user;
+  }
+```
+
+- 스타일을 가져오고자 하는 선택자 자체를 @extend 뒤에 붙여 사용
+
+<br />
+
+### %선택자의 사용
+
+```scss
+%base-button {
+  width: 133px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.follow-button {
+  @extend %base-button;
+  background-color: #ffffff;
+  color: #ff375f;
+  border: 3px solid #ff375f;
+}
+
+.message-button {
+  @extend %base-button;
+  background-color: #ff375f;
+  color: white;
+}
+```
+
+<br />
+
+> 무슨 차이죠?
+
+- **% 선택자는 CSS로 컴파일되지 않는다**
+
+<br />
+
+### %선택자 사용 예시
+
+> 모달
+
+```scss
+// Scss
+%modal {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+.login-modal {
+  @extend %modal;
+  width: 272px;
+  height: 405px;
+  padding: 10px 20px;
+}
+
+.event-modal {
+  @extend %modal;
+  width: 340px;
+  height: 160px;
+  padding
+```
+
+<br />
+
+> 포토링크 박스
+
+```scss
+// Scss
+%box-frame {
+  border: 2px solid #bb6bd9;
+  border-radius: 15px;
+  width: 574px;
+  height: 310px;
+}
+
+.phoster-span {
+  @extend %box-frame;
+  span {
+    display: inline-block;
+    border-top: 2px solid #bb6bd9;
+    padding: 16px 0 17px;
+    text-align: center;
+  }
+}
+
+.phoster-none {
+  @extend %box-frame;
+}
+```

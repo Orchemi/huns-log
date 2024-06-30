@@ -1,0 +1,97 @@
+---
+title: "[SCSS] SCSS 코딩 컨벤션과 미디어쿼리, 현업에서의 SCSS 파일 검색"
+
+categories:
+  - SCSS
+
+tags:
+  - [FE Language, CSS, SCSS]
+
+date: 2022-06-30T07:00
+last_modified_at: 2022-06-30T07:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Sass 컨벤션
+
+### 참고링크
+
+- 추천 : `[TOAST UI sass 컨벤션](https://ui.toast.com/fe-guide/ko_HTMLCSS#sass)`
+- `[티스토리 sass 컨벤션](https://webclub.tistory.com/518)`
+
+<br />
+
+### 주요 내용
+
+> 변수명에는 kebab-case를 사용
+
+- 하이픈을 기준으로 더블 클릭 했을 때 단어 단위 선택이 편리
+
+<br />
+
+> 인자가 없는 mixin 사용에 주의
+
+- 인자가 없는 mixin은 Gzip과 같은 압축 과정 없이는 불필요한 중복 코드 생성 가능
+
+<br />
+
+> extend 지시자 사용 지양
+
+- extend는 직관적이지 않음
+- 중첩 선택자와 동시 사용 시 문제 발생 가능
+- Gzip과 mixin을 사용 시 @extend의 이점을 취할 수 있음
+
+<br />
+
+> 선택자 중첩은 최대 3단계까지만 사용
+
+- 그 이상은 HTML과 너무 밀접하게 엮여있거나 재사용이 불가능하게 작성하고 있을 가능성
+
+<br />
+
+## 미디어쿼리
+
+```scss
+$md : "screen and (min-width:390px)";
+$lg : "screen and (min-width:1280px)";
+
+.card {
+  width: 100px;
+  height: 200px;
+}
+
+.font {
+  font-size: 18px;
+}
+
+@media #{md} {
+  .font { font-size: 16px; }
+  .card { ... }
+}
+
+@media #{lg} {
+  .font { font-size: 18px; }
+  .card { ... }
+}
+```
+
+- 미디어쿼리는 항상 기본 width 스타일 작성 후 하단부터 작성
+- 중간에 작성하게 되면 overriding되어 덮어씌워질 수 있음
+- breakpoint를 미리 변수로 지정해 사용
+
+<br />
+
+## 현업에서의 mixin
+
+github에서 **_mixin.scss**로 검색하여 opensource 참고
+
+<br />
+
+## 
+
