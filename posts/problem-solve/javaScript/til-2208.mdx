@@ -1,0 +1,146 @@
+---
+title: "[JS PS] 2022년 8월의 JS PS 회고"
+excerpt: "2022년 8월의 JS PS 회고"
+
+categories:
+  - JS PS TIL
+
+tags:
+  - [PS, JS PS, JS PS TIL]
+
+
+date: 2022-08-10T21:30
+last_modified_at: 2022-08-28T23:10
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+### [220810] 같은 수를 N번 반복하는 Array 만들기
+
+python에서는 [1]*N으로 N개의 배열을 만들 수 있었는데 javascript로는 어떻게 하는지 몰라서 빈 배열에 해당 횟수만큼 push 해주었다.
+
+```js
+const N = +input[0];
+const T = +input[1];
+const arr = [];
+for (let i = 0; i < N; i++) {
+  arr.push(1);
+}
+```
+
+그런데 더 효율적으로 만드는 코드가 있을 것 같아 찾아보았다. 
+
+<br />
+
+`[출처](https://www.acmicpc.net/source/40556359)`
+
+```js
+const wall = new Array(N).fill(1);
+```
+
+길이가 N개인 Array를 1로 채운 것을 wall에 할당한다는 것이다.
+
+<br />
+
+### [220811] forEach문의 index 세기
+
+- **Array.prototype.forEach((val, index) => {})**
+- 값과 함께 index를 찾아준다.
+- 불필요한 for문을 축약해준다.
+- python에서 **enumerate()** 같은 느낌인 듯
+
+<br />
+
+### [220811] 배열에서 값의 index 값 찾기
+
+- **Array.prototype.indexOf(value)** 메서드를 이용한다.
+- 배열 내에서 value에 해당하는 값의 index 값을 반환한다.
+
+<br />
+
+### [220814] 소수점 format: toFixed()
+
+[[BOJ][⚪3][백준#15821] 낚이고 낚아라](https://orchemi.github.io/boj%20silver%20iii/BOJ_TD01_15821/) 문제를 풀다가 format에 대한 요구가 나왔는데 node.js로는 내가 처음 문제를 푼 사람이라 구글링을 통해 포맷팅 방법을 알아보았다.
+
+<br />
+
+`Number.prototype.toFixed()` 사용
+
+```js
+(36).toFixed(2) => 36.00
+(36.5).toFixed(2) => 36.50
+(36.47).toFixed(2) => 36.47
+(36.369).toFixed(2) => 36.37
+(36.4692).toFixed(2) => 36.47
+```
+
+- 반올림을 포함한 포맷팅을 해주는 method
+- Number type에 사용하면 String type으로 반환
+
+<br />
+
+### [220816] Set의 사용
+
+[[BOJ][⚪4][백준#01269] 대칭 차집합](https://orchemi.github.io/boj%20silver%20iv/BOJ_TD01_01269/) 문제를 풀다가 Set의 hash적인 성질을 활용하고 싶었는데 방법을 알 수가 없어 다른 유저의 풀이를 통해서 알게 되었다.
+
+<br />
+
+1. `setA = new Set(Array)`를 통해서 Set을 만든다.
+2. `setA.has(a)`를 통해 setA에 a가 있는지 확인한다.
+
+<br />
+
+### [220816] Object의 key, value 찾기
+
+> 객체 obj의 key들을 찾는 방법 : **Object.keys(obj)**
+
+> 객체 obj의 value들을 찾는 방법 : **Object.values(obj)**
+
+<br />
+
+```js
+const object1 = {
+  a: 'somestring',
+  b: 42,
+  c: false
+};
+
+console.log(Object.keys(object1));  // Array ["a", "b", "c"]
+console.log(Object.values(object1));  // Array ["somestring", 42, false]
+```
+
+<br />
+
+### [220827] 2차원 배열 입력 Tip
+
+```js
+const board = Array.from({ length: n }, () => input.shift().split(""));
+```
+
+**input에서 행을 뽑아내어 한 문자씩 잘라 넣는 작업을 n번 실행**
+
+<br />
+
+### [220828] for문에서 변수 미지정
+
+for문에서 for문 외부의 변수를 사용하는 경우 비워두어도 된다.
+
+```js
+let l = Math.min(N, M);
+for (; l > 1; l--) {
+  ...
+}
+```
+
+<br />
+
+### [220828] 전역에서 return
+
+js에서 함수 내부가 아닌 곳에서의 return은 python에서 quit()과 같다.
+

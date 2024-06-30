@@ -1,0 +1,94 @@
+---
+title: "[JS PS] JavaScript 덱(Deque) 구현"
+excerpt: "JavaScript 덱(Deque) 구현"
+
+categories:
+  - JS PS DT
+
+tags:
+  - [PS, JS PS, JS PS DT]
+
+
+date: 2022-08-27T12:52
+last_modified_at: 2022-08-27T12:52
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## deque이란?
+
+- double-ended Queue의 약자
+- 스택과 큐를 합친 자료구조
+
+<br />
+
+## deque 구현
+
+```js
+class Deque {
+  // 인스턴스를 만들 때 처음에 default값
+  constructor() {
+    this.arr = [];
+    this.head = 0;
+    this.tail = 0;
+  }
+
+  // 맨 앞에 삽입 메서드
+  pushleft(item) {
+    // 인스턴스의 0번 인덱스에 값이 있다면
+    if (this.arr[0]) {
+      // 뒤로 한 칸씩 미뤄줌
+      for (let i= this.arr.length; i >0; i--) {
+        this.arr[i] = this.arr[i-1];
+      }
+    }
+    this.arr[this.head] = item;
+    this.tail++;
+  }
+
+  // 맨 뒤에 삽입 메서드
+  push(item) {
+    this.arr[this.tail++] = item;
+  }
+
+  // 맨 앞에서 뽑아내는 메서드
+  popleft(item) {
+    // deque에 아이템이 있는지 여부 판단
+    const result = this.head >= this.tail ? this.arr[this.head++] : null;
+    return result;
+  }
+
+  // 맨 뒤에서 뽑아내는 메서드
+  pop() {
+    // deque에 아이템이 있는지 여부 판단
+    const result = this.head >= this.tail ? this.arr[--this.tail] : null;
+    return result;
+  }
+}
+```
+
+<br />
+
+## deque 사용
+
+```js
+let deque = new Deque();
+deque.push(1); // arr : [1] head: 0 tail: 1
+deque.push(2); // arr : [1, 2] head: 0 tail: 2
+deque.push(3); // arr : [1, 2, 3], head: 0, tail: 3
+deque.popleft(); // result : 1, arr : [2, 3], head: 1, tail: 3
+deque.pop(); // result : 3, arr : [2] head: 1 tail: 2
+
+```
+
+<br />
+
+## REFERENCE
+
+- `[JavaScript 덱(Deque) 구현하기](https://velog.io/@kimhyo_0218/JavaScript-%EB%8D%B1Deque-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)`
