@@ -1,0 +1,125 @@
+---
+title: "[Algorithm] 분할정복과 퀵 정렬"
+excerpt: "분할정복 알고리즘을 활용하는 방법에 대해 알아보자."
+
+categories:
+  - Algorithm
+
+tags:
+  - Algorithm
+
+date: 2022-02-23T18:00
+last_modified_at: 2022-02-23T18:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 설계전략
+
+- 분할(Divide) : 해결할 문제를 여러 개의 작은 부분으로 나눈다.
+- 정복(Conquer) : 나눈 작은 문제를 각각 해결한다.
+- 통합(Combine) : (필요하다면) 해결된 해답을 모은다.
+
+<br />
+
+### 거듭 제곱(Exponentiation)
+
+```python
+def Power(Base, Exponent):
+    if Base == 0:
+        return 1
+    result = 1              # Base^0은 1
+
+    for i in range(Exponent):
+        result *= Base
+    return result
+```
+
+<br />
+
+- C^8 = ((C^2)^2)^2
+- C^n
+
+  - n은 짝수일 때 : C^(1/2)\*C^(1/2)
+  - n은 홀수일 때 : C^(1/2)\*C^(1/2)\*C
+
+```python
+def Power(Base, Exponent):
+    if Exponent==0 or Base==0:
+        return 1
+
+    if Exponent%2 == 0:
+        NewBase = Power(Base, Exponent/2)
+        return NewBase**2
+
+    else:
+        NewBase = Power(Base, (Exponent-1)/2)
+        return (NewBase**2) * Base
+```
+
+- 분할정복 기반 알고리즘의 시간 복잡도 : O(logn)
+
+<br />
+
+## 퀵 정렬(Quick Sort)
+
+- 주어진 배열을 두 개로 분할 후 각각 정렬
+
+<br />
+
+### 퀵정렬 vs 합병정렬
+
+> 합병정렬과 같지 않나?
+
+- 나누기
+
+  - 합병정렬 : 그냥 두 부분으로 나눔
+  - 퀵정렬 : 분할 할 때 기준 아이템(pivot item) 중심으로, 이보다 작은 것은 왼편, 큰 것은 오른편으로 위치
+
+- 후처리
+  - 합병정렬 : `합병` 후처리 필요
+  - 퀵정렬 : 필요 X
+
+<br />
+
+```python
+def quickSort(a, begin, end):
+    if begin < end:
+        p = partition(a, begin, end)
+        quickSort(a, begin, p-1)
+        quickSort(a, p+1, end)
+
+def partition(a, begin, end):
+    pivot = (begin + end) // 2
+    L = begin
+    R = end
+    while L < R:
+        while(L<R and a[L]<a[pivot]):
+            L += 1
+        while(L<R and a[R]>=a[pivot]):
+            R -= 1
+        if L < R:                        # 양 쪽의 구간에서 적절한 원소를 찾는 경우
+            if L==pivot:
+                pivot = R
+            a[L], a[R] = a[R], a[L]
+    a[pivot], a[R] = a[R], a[pivot]      # 자리 교환
+    return R
+
+N = 8
+a = [4, 67, 23, 21, 2, 5, 64, 34]
+quickSort(a, 0, N)
+```
+
+<br />
+
+### 퀵 정렬의 특징
+
+- 퀵 정렬의 평균 복잡도는 O(nlogn)로 평균적으로는 가장 빠른 편
+- 최악의 시간 복잡도는 O(n2)로, 합병정렬에 비해 비효율적

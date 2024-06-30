@@ -1,0 +1,493 @@
+---
+title: "[Algorithm] 그래프(graph)"
+excerpt: "그래프에 대해 알아보자."
+
+categories:
+  - Algorithm
+
+tags:
+  - Algorithm
+
+date: 2022-04-01T10:00
+last_modified_at: 2022-04-06T00:40
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 최단 경로
+
+### 간선 완화(Edge Relaxation)
+
+- 아래 그림은 간선 완화의 개념을 보여준다. 반드시 기억해두자.
+- 다익스트라 알고리즘에서도 동일한 개념이 적용된다.
+
+`![image](https://user-images.githubusercontent.com/86189596/161788093-8b01e342-c048-423b-a6eb-2d2db76c59f2.png)`
+
+<br />
+
+다음은 간선 완화 알고리즘이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/161788167-bff53554-6af8-468f-9ee2-7b76fa85e2d3.png)`
+
+<br />
+
+###  최소 이동 거리 - 단순무식
+
+```python
+for tc in range(1, int(input()) + 1):
+    N, E = map(int, input().split())  # N은 마지막 정점의 번호, E는 간선의 개수이다.
+    G = [[] for _ in range(N + 1)]  # 정점 0번부터 N번까지의 인접리스트 생성한다.
+    for _ in range(E):
+        u, v, w = map(int, input().split())  # u: 구간 시작지점, v: 구간 끝지점, w: 구간 거리 (가중치)
+        # 가중치 유향 그래프
+        G[u].append((v, w))  # G[시작 정점 번호] = (도착 정점 번호, 가중치)
+
+    # 거리를 저장하는 배열
+    D = [0xffffff] * (N + 1)
+    D[0] = 0  # 출발점 설정
+
+    # 모든 간선에 대해서 (간선 완화)
+    while True:
+        flag = True
+        for u in range(0, N + 1):  # 모든 정점들을 순회
+            for v, w in G[u]:     # 정점의 인접 정점을 순회
+                if D[v] > D[u] + w:
+                    D[v] = D[u] + w
+                    flag = False
+        # for문을 통해서 D 값의 변경이 없다면 최적해를 찾은 것이다.
+        if flag:
+            break
+    print(f'#{tc} {D[N]}')
+```
+
+<br />
+
+### 최소 이동 거리 - BFS
+
+다음 예제 그래프는 가중치가 부여된 무향 그래프이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/161788795-8ecbc159-c429-49aa-b7d4-30edd9f704b3.png)`
+
+<br />
+
+BFS에 간선 완화 개념을 추가해서 최단 경로를 구할 수 있다.
+
+`![image](https://user-images.githubusercontent.com/86189596/161788721-eeecc30d-fa12-45b6-938b-c2f1a55ba981.png)`
+
+<br />
+
+> 템플릿
+
+```python
+def BFS(s, G):
+    D = [0xfffff] * (V + 1)           ⭐ D의 각 값을 큰 값으로 초기화
+    P = [i for i in range(V + 1)]    
+    D[s] = 0                          ⭐ 출발점의 값을 0으로 초기화(부모가 없다는 말)
+    Q = [s]
+
+    while Q:
+        u = Q.pop(0)
+        for v, w in G[u]:
+            if D[v] > D[u] + w:       ⭐ 최단 거리가 갱신되면 Q에 v를 넣는 것이 중요
+                D[v] = D[u] + w
+                P[v] = u
+                Q.append(v)
+    print()
+
+# ----------------------------------------------
+
+import sys
+sys.stdin = open("weighted_graph.txt", "r")
+
+
+V, E = map(int, input().split())
+G = [[] for _ in range(V + 1)]
+
+
+for i in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+
+BFS(1, G)
+
+print(D[1:])
+print(P[1:])
+```
+
+<br />
+
+> 문제 적용
+
+```python
+V, E = map(int, input().split())
+G = [[] for _ in range(V+1)]
+
+for _ in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+# 시작점으로부터의 최단거리 배열 D 만들고 초기화
+D = [0xffffff] * (V+1)
+# 최단 경로 트리 저장, 노드까지의 최단경로에 이르는 부모노드번호 저장, 필수가 아닌 선택
+P = [0] * (V+1)
+# 시작점을 1로 가정하고 값을 0으로 설정(시작점~시작점 최단거리 : 0)
+D[1] = 0
+
+# 시작점 key 값을 Q에 등록
+Q = [1]
+
+while Q:
+    u = Q.pop(0)
+
+    # 기준점 u와의 모든 인접정점 v와 u-v간 가중치 w에 대하여
+    for v, w in G[u]:
+        # 시작점 ~ v의 기존 최단거리보다 시작점 ~ u까지의 최단거리 + u~v 가중치가 더 작으면
+        if D[v] > D[u] + w:
+            D[v] = D[u] + w       # v까지의 최단거리를 재정의해주고
+            P[v] = u              # v의 최단경로 부모노드를 u로 설정
+            Q.append(v)           # v를 기준점으로 인접정점 최단거리 재확인해야 함
+
+# 0번 인덱스는 의미 X
+print(D[1:])
+```
+
+- D의 값이 0xffffff 라면 아직 출발점부터의 경로가 발견되지 않은 노드
+- 거리를 기준으로 하기 때문에 방문표시 필요 X
+
+<br />
+
+### 최소 이동 거리 - DFS
+
+```python
+def DFS_SHORTEST(u):
+    for v, w in G[u]:
+        if D[v] > D[u] + w:
+            D[v] = D[u] + w
+            P[v] = u
+            DFS_SHORTEST(v)
+
+
+V, E = map(int, input().split())
+G = [[] for _ in range(V + 1)]
+
+for i in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+D = [0xfffff for _ in range(V + 1)]
+P = [0 for _ in range(V + 1)]
+D[1], P[1] = 0, 1
+
+DFS_SHORTEST(1)
+
+print(D[1: V + 1])
+print(P[1: V + 1])
+```
+
+<br />
+
+### 다익스트라
+
+- 우선순위 큐 사용(최소 힙)
+- 남아있는 D 중에서 가장 가중치가 작은 노드를 골라
+- 해당 노드의 인접 노드들 중에 D가 무한대, 즉 방문하지 않은 노드들의 경로 계산
+
+- 우선 순위 큐에 (v, D[v])에 저장하는 방식
+- 우선 순위 기준은 D[v]가 가장 작은 노드
+- 먼저 PQ에 시작 정점과 초기 가중치(보통 0)을 집어넣고 시작
+- v와 연결된 정점 u들 중 D[u]가 INF가 아닌, 즉 갱신되지 않은 노드들을 PQ에 저장
+
+<br />
+
+#### 템플릿 1
+
+```python
+def DIJKSTRA_ARRAY(s):
+
+    D = [0xfffff] * (V + 1)
+    P = [i for i in range(V + 1)]
+    visit = [False] * (V + 1)
+    D[s] = 0
+
+    cnt = V
+    while cnt:                              # 정점의 수 만큼 반복
+
+        u, MIN = 0, 0xfffff                 # D[] 가 최소인 정점 찾기
+        for i in range(1, V + 1):           # 무식하게 리스트에서 찾기
+            if not visit[i] and D[i] < MIN:
+                u, MIN = i, D[i]
+
+        visit[u] = True
+
+        for v, w in G[u]:
+            if not visit[v] and D[v] > D[u] + w:
+                D[v] = D[u] + w
+                P[v] = u
+
+        cnt -= 1
+
+    print(D[1: V + 1])
+    print(P[1: V + 1])
+
+
+V, E = map(int, input().split())
+G = [[] for _ in range(V + 1)]
+for i in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+DIJKSTRA_ARRAY(1)
+```
+
+<br />
+
+#### 템플릿 2
+
+```python
+from heapq import heappop, heappush
+
+def DIJKSTRA_PRIORITYQ(s):
+
+    D = [0xfffff] * (V + 1)
+    P = [i for i in range(V + 1)]
+    # 다익스트라는 방문하지 않은 노드 중 D가 최소인 노드를 Q에서 선택하므로 visit 필요
+    visit = [False] * (V + 1)
+    D[s] = 0
+    Q = [[0, s]]
+
+    while Q:
+        d, u = heappop(Q)
+        if visit[u]: continue
+
+        visit[u] = True
+        for v, w in G[u]:
+            if not visit[v] and D[v] > D[u] + w:
+                D[v] = D[u] + w
+                P[v] = u
+                heappush(Q, [D[v], v])
+
+    print(D[1:])
+    print(P[1:])
+
+
+V, E = map(int, input().split())
+G = [[] for _ in range(V + 1)]
+for i in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+DIJKSTRA_PRIORITYQ(1)
+```
+
+<br />
+
+#### 무식한 다익스트라
+
+바람직하지 않으니 참고만 하기
+
+```python
+# 입력 처리
+V, E = map(int, input().split())
+G = [[] for _ in range(V+1)]
+
+for _ in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+# 시작점으로부터의 최단거리 배열 D 만들고 초기화
+D = [0xffffff] * (V+1)
+# 최단 경로 트리 저장, 노드까지의 최단경로에 이르는 부모노드번호 저장, 필수가 아닌 선택
+P = [0] * (V+1)
+# 시작점을 1로 가정하고 값을 0으로 설정(시작점~시작점 최단거리 : 0)
+D[1] = 0
+
+# 다익스트라는 방문하지 않은 노드 중 D가 최소인 노드를 Q에서 선택하므로 visit 필요
+visit = [0]*(V+1)
+
+for _ in range(V):
+    # u는 임의의 0으로 정의, min_val는 INF로 정의
+    u, min_val = 0, 0xffffff
+    # D가 가장 작은 노드를 찾는 과정
+    # 1부터 V까지의 노드 번호 i 에 대하여
+    # 방문하지 않았고, D[i]가 더 작으면 i와 D[i] 갱신
+    for i in range(1, V+1):
+        # i번 노드가 방문하지 않았고, 
+        if not visit[i] and min_val > D[i]:
+            u, min_val = i, D[i]
+    # 방문 표시
+    visit[u] = 1
+
+    # 위에서 구한 u의 인접정점에 대해 최단거리 확인
+    for v, w in G[u]:
+        if not visit[v] and D[v] > D[u]+w:
+            D[v] = D[u]+w
+
+# 0번 인덱스는 의미 X
+print(D[1:])
+```
+
+<br />
+
+## 최소신장트리(MST)
+
+### 프림(prim) 알고리즘
+
+하나의 정점에서 연결된 간선들 중에 하나씩 선택하면서 MST를 만들어가는 방식
+
+1. 임의 정점을 하나 선택해서 시작
+2. 선택한 정점과 인접하는 정점들 중의 **최소 비용의 간선이 존재하는 정점**을 선택(실제로는 간선 선택과 같다.)
+3. 모든 정점이 선택될 때까지 위의 과정 반복
+
+<br />
+
+- 서로소인 2개의 집합(2 disjoint-sets) 정보를 유지
+  - 트리 정점들(tree vertices) - MST를 만들기 위해 선택된 정점들
+  - 비트리 정점들(nontree vertices) - 선택되지 않은 정점들
+
+- 그리 자주 사용되지는 않는다고 한다.
+
+<br />
+
+> 템플릿
+
+```python
+# 다익스트라 알고리즘과 유사
+# 입력 처리
+from heapq import heappop, heappush
+
+V, E = map(int, input().split())
+G = [[] for _ in range(V+1)]
+for _ in range(E):
+    u, v, w = map(int, input().split())
+    G[u].append((v, w))
+    G[v].append((u, w))
+
+key = [0xffffff] * (V+1)    # 큰 수를 넣어 초기화한 가중치 배열
+p = list(range(V+1))        # 부모 정보(간선 정보)
+tree = [0] * (V+1)          # 트리에 포함된 정점들의 집합
+
+# 시작점은 임의의 값 4, queue는 시작정보와 함께 초기화
+key[4] = 0
+Q = [(0, 4)]
+
+while Q:
+    val, v = heappop(Q)       # queue에서 정보 가져오기
+    if tree[u]: continue      # 방문했던 정점은 패스 
+    tree[u] = 1               # 선택해서 다시 넣지 않도록
+    ans += val                # 현재 간선을 선택할 거니까 ans에 val 누적
+
+    # 인접정점들의 key 값 조사해서 갱신
+    # u의 인접정점들에 대하여
+    for v, w in G[u]:
+        # 방문하지 않았고, key 값을 더 작게 갱신할 수 있다면
+        if not tree[v] and key[v] > w:
+            key[v] = w                     # v의 key 값을 w로 갱신
+            p[v] = u                       # v의 부모노드를 u로 갱신
+            heappush(Q, (w, v))            # v를 기준으로 하여 heap에 추가
+
+print(ans)
+print(p)
+print(key)
+```
+
+<br />
+
+### 서로소 집합(disjoint set)
+
+- 각 노드들이 루트노드가 무엇인지에 대한 정보를 가지고 있다.
+- 이를 바로 찾아낼 수 있는 find_set() 함수를 작성한다.
+- 때문에 이 루트노드만 확인해서 같으면 같은 집합 내에 있는 것
+- 다른 집합이라면 루트 노드 아래에 이식해 같은 집합으로 만들어준다.
+
+```python
+# 가. 원소(정점) 수 만큼 부모를 저장하는 배열
+V = 7
+# 자기 자신의 인덱스를 값으로 가리키는 배열
+p = [i for i in range(V+1)]  # 모든 원소에 대해 make_set() 실행
+# x만 포함하는 집합을 생성  -> x만 있는 트리(x가 루트)
+# def make_set(x):
+#     p[x] = x
+
+p[2], p[3], p[4] = 1, 2, 3
+print(p)
+
+
+# 나. 이어지는 노드들과 루트노드를 연결
+def find_set(x):        # x가 속하는 집합의 식별값 --> x가 속한 트리의 루트 노드 번호
+    if x != p[x]:
+        p[x] = find_set(p[x])
+    return p[x]
+
+
+# 다. x, y가 각각 속한 집합을 합치기 : 2개의 트리를 하나로 합치는 것
+def union(x, y):
+    # x, y의 루트 노드를 a, b에 저장
+    a = find_set(x)
+    b = find_set(y)
+    
+    p[a] = b        # p[b] = a도 무관. 그냥 부모를 바꿔서 이식하는 개념
+```
+
+<br />
+
+### 크루스칼(kruskal) 알고리즘
+
+- 서로소 집합을 활용
+- 가중치 순으로 모든 간선 정보를 오름차순 정렬해 시작
+- 모든 노드가 같은 루트노드를 가지는, 즉 한 집합이 될 때까지 집합 이식
+
+```python
+# 입력처리 ......................
+V, E = map(int, input().split())
+# 연결노드, 가중치를 튜플로 저장할 리스트 초기화
+edges = []
+for _ in range(E):
+    # edges에 입력을 튜플로 처리해 삽입
+    edges.append(tuple(map(int, input().split())))
+
+# 간선들을 가중치 순으로 정렬 ......................
+edges.sort(key=lambda x:x[2])
+
+# disjoint_set ......................
+# 자기 인덱스를 값으로 하는, 즉 자기를 루트로 하는 set 생성
+p = [i for i in range(V+1)]
+def find_set(x):
+    if x != p[x]:
+        p[x] = find_set(p[x])
+    return p[x]
+
+# 싸이클이 생기지 않도록 V-1개의 간선 선택 ..............
+cnt = 0               # V-1개 까지 선택하기 위한 카운트 변수
+ans = 0               # 누적값 변수
+mst = []              # 선택한 정보 저장. 필수는 아님
+for edge in edges:
+    u, v, w = edge
+    # u와 v가 연결된 상태인지 확인
+    a = find_set(u)
+    b = find_set(v)
+
+    # 같은 루트 노드 공유하는 경우 다음 edge 확인
+    if a==b: continue
+    mst.append(edge)
+    p[a] = b                # union 함수 별도로 안 만들고 바로 루트 이식
+    cnt += 1                # cnt 1 추가
+    ans += w                # ans에 이번 간선의 가중치 누적
+    if cnt == V:            # V개의 정점, V-1개의 간선을 선택한 경우
+        break
+
+print(ans, mst)
+```

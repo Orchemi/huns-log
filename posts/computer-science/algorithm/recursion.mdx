@@ -1,0 +1,107 @@
+---
+title: "[Algorithm] 재귀호출"
+excerpt: "재귀호출에 대해 알아보자."
+
+categories:
+  - Algorithm
+
+tags:
+  - [Algorithm, recursion, 재귀, python]
+
+date: 2022-01-20T14:15
+last_modified_at: 2022-01-20T14:15
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 재귀란?
+
+재귀(Recursion)란 '어떠한 것을 정의할 때 자기 자신을 참조하는 것'을 말한다.
+
+<br />
+
+## 재귀 함수
+
+재귀 함수는 함수의 반환값, 즉 return에 함수 자기 자신을 넣음으로써 스스로를 다시 호출하는 방식의 함수이다.
+
+```python
+def recursionFunc(arg):
+    ...
+
+    return recursionFunc(arg)
+```
+
+<br />
+
+### 재귀 함수를 끝내는 방법
+
+재귀 함수는 그 자신을 다시 불러오기 때문에 반복을 끝내는 설정을 제대로 하지 않는다면 끊임없이 반복하는 `무한 루프`에 빠질 수 있다. 때문에 이를 피하기 위해 조건문을 반드시 넣는다.
+
+조건문에는 이 재귀 함수를 끝내는지에 대한 여부를 확인하고 일반적으로는 함수의 parameter가 점차 축소되는 방향으로 코드를 작성한다. 그러다가 이 parameter가 일정 지점에 도달하면 반복문에 의해 재귀 함수가 끝나고 return 값의 return 값의 return 값으로 꼬리를 물며 재귀함수의 시작점으로 되돌아간다.
+
+```python
+def recursionFunc(num):
+    if 조건문:
+        return 1
+    else:
+        ...
+        return recursionFunc(num-1)
+```
+
+<br />
+
+### 재귀호출과 parameter
+
+재귀 함수는 local 변수를 사용해서 반복을 끝낼 수 없고, 함수 외부의 변수나 입력값을 parameter로 사용하여야 한다. 왜냐하면 return값으로 함수 자신을 다시 호출하기 때문에 함수 내에서 선언한 idx 변수는 값을 줄이는 조작이 무의미하게 재정의되는 것이다.
+
+<br />
+
+### 예시. Factorial
+
+재귀함수를 사용하는 가장 대표적인 예시는 팩토리얼이다. 팩토리얼(factorial)은 느낌표(!)로 표시하며, 4!의 경우 4x3x2x1=24 라는 값을 내는 방식이다.
+
+이를 점화식으로 표현하면 n!=nx(n-1)x(n-2)x...x2x1 이다. 재귀함수는 이런 점화식으로 표현할 수 있는 알고리즘에 유용하다.
+
+```python
+def factorial(n):
+    if n==0 or n==1:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+
+[입력 예시]
+print(factorial(5))
+
+[출력 예시]
+120
+```
+
+<br />
+
+## 재귀 함수의 장단점
+
+### 장점
+
+앞서 말했듯이 점화식으로 표현할 수 있는 알고리즘의 경우, 반복문을 사용하는 것보다 코드를 간결하고 가시성 있게 작성할 수 있다는 장점을 가진다.
+
+### 단점
+
+하지만 재귀함수를 끝내야 하는지에 대한 여부를 확인하기 위해 매 함수마다 조건문을 반드시 거쳐야 하고, 함수 전체를 다시 호출하는 방식이기 때문에 코드가 길어질수록, parameter의 크기가 크면 클수록 연산 속도가 현저히 느려진다는 단점을 가진다.
+
+<br />
+
+## 구글의 재치
+
+내용이랑 상관은 없지만 구글에 '재귀' 또는 영어로 'recursion'이라고 검색하면 '이것을 찾으셨나요? 재귀' 라고 나온다.
+
+`![image](https://user-images.githubusercontent.com/86189596/150248261-8230f4df-42a1-45fa-993c-4e213747947a.png)`
+
+이를 눌러보면 다시 재귀를 검색한 화면으로 이동한다. 구글 개발자들의 기막힌 재치가 아닐 수 없다.
