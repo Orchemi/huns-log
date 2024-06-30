@@ -1,0 +1,79 @@
+---
+title: "[ESLint] yarn lint 명령어 오류 해결"
+excerpt: "왜 yarn lint가 되지 않는지, 그리고 어떻게 해결했는지에 대한 내용"
+
+categories: 
+- Trouble Shooting
+
+tags:
+- Trouble Shooting
+
+date: 2023-09-20T11:01
+last_modified_at: 2023-09-20T11:01
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 문제 상황
+
+husky의 pre-commit 기능을 정상적으로 적용하여, 커밋 전에 자동으로 `yarn type-check`와 `yarn lint-staged`를 실행하게 하였다.
+
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+yarn type-check
+yarn lint-staged
+```
+
+<br />
+
+그런데 `yarn lint-staged`가 정상적으로 작동되지 않았다. `yarn lint-staged` 명령어로 문제를 세부적으로 확인했을 때, 아래와 같은 오류 내용을 뱉었다.
+
+`![1](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/136735f9-492d-4eb3-839a-ad2def47b9d5)`
+
+
+`ESLint: 8.44.0`이 딱 박혀있는 걸 보니 버전 문제인가 싶긴 했다. 아무튼 그래서 오늘도 구글링을 시작했다.
+
+<br />
+
+## 해결 방법
+
+ESLint 공식 Github 이슈 중에 `[나랑 같은 오류](https://github.com/eslint/eslint/issues/15149)` 로그를 보이는 이슈를 확인할 수 있었다.
+
+`![2](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/c6294024-2447-4dc6-88e0-89fa26a51804)`
+
+<br />
+
+그리고 많은 유저들이 eslint의 버전 문제라고 댓글을 달아 알려주었다.
+
+`![3](https://github.com/Orchemi/FE_Study_ssafy7th_deajeon2/assets/86189596/8d85f68e-03f5-4a9f-81cc-f3b499cc26be)`
+
+<br />
+
+실제로 내 프로젝트 설정 packages.json 파일을 확인해보니, eslint의 버전이 7.32.0으로 고정되어 있었다.
+
+```json
+{
+  ...
+  "devDependencies": {
+    ...
+    "eslint": "^7.32.0",
+  },  
+}
+```
+
+그런데 `yarn.lock` 파일을 확인해보니 8.44.0 버전으로 비정상적으로 높은 버전으로 되어있음을 확인할 수 있었다. 그래서 `yarn.lock` 파일을 제거한 뒤, `yarn install`을 통해 `packages.json` 파일에 명시된 버전으로 eslint를 재설치하였다.
+
+
+<br />
+
+## References
+
+`[ESLint Github issue #15149](https://github.com/eslint/eslint/issues/15149)`

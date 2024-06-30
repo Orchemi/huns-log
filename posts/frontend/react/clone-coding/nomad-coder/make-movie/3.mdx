@@ -1,0 +1,228 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 3.1. State"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-03-24T02:20
+last_modified_at: 2022-03-24T02:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## JSX와 변수
+
+JSX 코드 내에 변수를 삽입해보자.
+
+```jsx
+let counter = 0;
+const Container = () => (
+  <div>
+    <h3>Total Clicks: {counter}</h3>
+    ...
+);
+```
+
+**변수명을 중괄호를 이용해 둘러싸**서 표시
+
+<br />
+
+## EventListener에 함수 삽입
+
+```jsx
+<button onClick={countUp}>Click me</button>
+```
+
+props로 넣은 eventListener에 함수명을 넣어주면 되겠다.
+
+<br />
+
+## 리렌더링
+
+- 버튼에 이벤트리스너를 지정해주고, counter를 올리는 함수를 지정해주었다.
+- 그럼에도 화면에 UI는 counter가 올라가지 않는다.
+- console에서 counter를 입력하면 올라가고 있는 것을 확인할 수 있다.
+
+- **페이지가 리렌더링되지 않았기 때문!!**
+- 변경된 정보를 담은 변수를 다시 리렌더링해줘야 한다.
+
+<br />
+
+### 어려운 방식
+
+```jsx
+<script type="text/babel">
+  const root = document.getElementById("root");   
+  let counter = 0;
+  function countUp() {
+    counter = counter + 1;
+    render();
+  }
+  function render() {
+    ReactDOM.render(<Container />, root);
+  }
+  const Container = () => (
+    <div>
+      <h3>Total Clicks: {counter}</h3>
+      <button onClick={countUp}>Click me</button>
+    </div>
+  );
+  render();
+</script>
+```
+
+render() 함수를 만들어서 처음에 렌더링할 때 한 번, 그리고 이벤트리스너가 호출될 때마다 또 한 번씩 실행되게 하였다.
+
+<br />
+
+### 쉬운 방식 : useState()
+
+```jsx
+function App() {
+  const data = React.useState();
+  console.log(data);
+  return (
+    <div>
+      <h3>Total Clicks: 0</h3>
+      <button>Click me</button>
+    </div>
+  );
+};
+```
+
+React.useState()를 사용하고 변수에 이를 담아 console에 출력하면 다음과 같은 것을 볼 수 있다.
+
+```
+(2) [undefined, ƒ]
+```
+
+변수와 함수를 하나씩 담은 array이다.
+
+- 변수 : **state**; 조작되는 변수
+- 함수 : **modifier**; 변수를 조작하는 로직을 담은 함수
+
+<br />
+
+### 번외 : array 항목별 변수명 지정
+
+변수명을 하나하나 저장하는 것보다 쉬운 방법이 있다.
+
+```jsx
+const food = ["tomato", "potato"];
+const [myfood1, myfood2] = food;
+```
+
+이렇게 된다면 myfood1에는 "tomato"가, myfood2에는 "potato"가 저장되게 된다.
+
+<br />
+
+### useState의 function ⭐
+
+```js
+const root = document.getElementById("root");   
+function App() {
+  const [counter, setCounter] = React.useState(0);
+  const onClick = () => {
+    setCounter(counter + 1);
+  };
+  return (
+    <div>
+      <h3>Total Clicks: {counter}</h3>
+      <button onClick={onClick}>Click me</button>
+    </div>
+  );
+};
+ReactDOM.render(<App />, root);
+```
+
+- useState의 **state**와 **modifier** 함수를 각각 정의
+- useState(default)에는 **변수의 초기값**을 지정
+- 버튼에 onClick 이벤트리스너, onClick 함수 지정
+- onClick 함수는 modifier 함수의 함수명인 setCounter() 함수 호출
+- setCounter()은 state인 counter에 1을 더해 리렌더링
+
+> useState의 함수(modifier)는 **변수(state)를 바꾸고 컴포넌트에 반영해 리렌더링**!!
+
+- modifier의 괄호 내 인자로 들어가는 값으로 state 변경
+- 전체 컴포넌트가 다 새로 생기는 것은 아니고 바뀌는 값만 갱신
+
+<br />
+
+> 보통 modifier는 state를 조작하는 용도이므로 **set-** 의 함수명으로 작성
+
+<br />
+
+## modifier 함수의 안전한 사용
+
+> counter 변수가 다른 곳에서도 조작하는 함수라면?
+
+```js
+const onClick = () => {
+  setCounter(counter + 1); 
+};
+```
+
+- 변수를 직접 가져와서 +1 하는 로직
+- counter 변수가 **다른 곳에서도 조작되는 변수라면 위험**할 수 있다.
+
+<br />
+
+> Then How?
+
+```js
+const onClick = () => {
+  // setCounter(counter + 1); 
+  setCounter((current) => current + 1);
+};
+```
+
+- setCounter, 즉 modifier의 함수명은 동일하게 작성
+- **현재 state를 기반으로 계산**을 하기 위해 함수를 사용
+- current는 임의의 이름, 다른 이름을 사용 가능
+
+<br />
+
+## 전체 코드
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+<script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.17.8/babel.min.js"></script>
+<script type="text/babel">
+  const root = document.getElementById("root");   
+  function App() {
+    const [counter, setCounter] = React.useState(0);
+    const onClick = () => {
+      // setCounter(counter + 1); 
+      setCounter((current) => current + 1);
+    };
+    return (
+      <div>
+        <h3>Total Clicks: {counter}</h3>
+        <button onClick={onClick}>Click me</button>
+      </div>
+    );
+  };
+  ReactDOM.render(<App />, root);
+</script>
+</html>
+```

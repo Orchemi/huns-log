@@ -1,0 +1,736 @@
+---
+title: "[Vue] Router props & emit 데이터 흐름 예시"
+
+categories:
+  - Vue
+
+tags:
+  - [SPA, Vue]
+
+date: 2022-05-09T17:00
+last_modified_at: 2022-05-09T17:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+# [PRACTICE] Vue
+
+## 문제
+
+> Props와 emit event를 활용하여 아래와 같이 데이터를 주고받는 Application을 완성하시오. 
+
+`![image](https://user-images.githubusercontent.com/86189596/167907590-252e27b6-128e-471f-8108-be7d0315df97.png)`
+
+<br />
+
+## 조건
+
+- 데이터를 중복 선언하지 않는다.
+- 데이터를 선언한 곳에서만 데이터를 수정한다.
+- 컴포넌트들이 데이터를 공유한다면 공통 부모에 데이터를 저장하는 구조를 작성한다.
+
+<br />
+
+## 가. App.vue 편집
+
+```html
+{%- raw -%}
+<template>
+  <div id="app">
+    <h1>App</h1>
+    <input type="text">
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'App',
+  components: {
+  },
+  data: function () {
+    return {
+      parentData: null,
+      childData: null
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+  border: 1px solid black;
+}
+</style>
+{% endraw -%}
+```
+
+- 필요한 요소들에 대해 App.vue 내부에 작성해준다.
+- data는 function의 return형으로 parentData와 childData로 나누어 정의한다.
+- 초기값은 null로 초기화한다.
+- 이 두 값은 각각 AppParent와 AppChild 컴포넌트로부터 받을 것이다.
+
+<br />
+
+## 나. 컴포넌트 생성 및 App.vue에 추가
+
+> AppParent.vue
+
+```js
+{%- raw -%}
+<template>
+  <div id="appParent">
+    <h1>AppParent</h1>
+    <input type="text">
+    <p>appData: {{ appData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-child></app-child>
+  </div>
+</template>
+
+<script>
+import AppChild from "./AppChild.vue"
+export default {
+  name: "AppParent",
+  components: {
+    AppChild,
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style>
+#appParent {
+  border: 1px solid red;
+  margin: 1px;
+}
+</style>
+{% endraw -%}
+```
+
+<br />
+
+> AppChild.vue
+
+```js
+{%- raw -%}
+<template>
+  <div id="appChild">
+    <h1>AppChild</h1>
+    <input type="text">
+    <p>appData: {{ appData }}</p>
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "AppChild",
+  methods: {
+  }
+}
+</script>
+
+<style>
+#appChild {
+  border: 1px solid blue;
+  margin: 1px;
+}
+</style>
+{% endraw -%}
+```
+
+- App.vue는 AppParent를 자식 컴포넌트로 가진다.
+- AppParent는 AppChild를 자식 컴포넌트로 가진다.
+- 이를 적절하게 import하고 template을 작성해준다.
+- 주의할 점은 data는 최상위 컴포넌트인 App에서 한 번에 보관하므로 하위 컴포넌트에서는 이를 받는 props와 조작하는 method만 가지게 된다.
+- 스타일에 대한 정의는 이것으로 마치므로 이후에는 생략한다.
+
+<br />
+
+## 다. appData 내리기 1: App.vue
+
+```js
+{%- raw -%}
+<template>
+  <div id="app">
+    <h1>App</h1>
+    <input type="text" @input="onInputChange">
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-parent
+      :app-data="appData"
+    ></app-parent>
+  </div>
+</template>
+
+<script>
+import AppParent from "./components/AppParent.vue"
+export default {
+  name: 'App',
+  components: {
+    AppParent,
+  },
+  data: function () {
+    return {
+      appData: null,
+      parentData: null,
+      childData: null
+    }
+  },
+  methods: {
+    onInputChange: function (event) {
+      this.appData = event.target.value
+    }
+  }
+}
+</script>
+{% endraw -%}
+```
+
+- 하위 컴포넌트에 props로 전달해줄 appData를 data function에 추가한다.
+- 초기값은 null로 초기화한다.
+- App 컴포넌트의 input 값이 입력된다면(input) onInputChange 콜백함수를 호출한다.
+- 이 함수는 컴포넌트의 appData를 event.target.value로 할당한다.
+- 이를 자식 컴포넌트인 app-parent에 전달한다.
+
+<br />
+
+## 라. appData 내리기 2: AppParent와 AppChild
+
+> AppParent
+
+```js
+{%- raw -%}
+<template>
+  <div id="appParent">
+    <h1>AppParent</h1>
+    <input type="text">
+    <p>appData: {{ appData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-child
+      :app-data="appData"
+    ></app-child>
+  </div>
+</template>
+
+<script>
+import AppChild from "./AppChild.vue"
+export default {
+  name: "AppParent",
+  components: {
+    AppChild,
+  },
+  methods: {
+
+  },
+  props: {
+    appData: String,
+  }
+}
+</script>
+
+<style>
+#appParent {
+  border: 1px solid red;
+  margin: 1px;
+}
+</style>
+{% endraw -%}
+```
+
+<br />
+
+> AppChild
+
+```js
+{%- raw -%}
+<template>
+  <div id="appChild">
+    <h1>AppChild</h1>
+    <input type="text">
+    <p>appData: {{ appData }}</p>
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "AppChild",
+  methods: {
+  },
+  props: {
+    appData: String,
+  }
+}
+</script>
+{% endraw -%}
+```
+
+- AppParent에서는 App으로부터 받은 appData props를 컴포넌트에서 사용한다.
+- 그와 동시에 자식 컴포넌트인 AppChild에게 props로 전달한다.
+- AppChild는 props로 appData를 String으로 저장하고, 이를 사용한다.
+
+<br />
+
+## 마. parentData 올리기
+
+- 이 일련의 컴포넌트들에서 데이터는 최상위 컴포넌트인 App 컴포넌트에만 저장한다.
+- 때문에 AppParent 컴포넌트에서 inputData를 바꾸더라도 이를 App 컴포넌트로 올려 App 컴포넌트의 parentData를 갱신해주어야 한다.
+
+> AppParent
+
+```js
+{%- raw -%}
+<template>
+  <div id="appParent">
+    <h1>AppParent</h1>
+    <input type="text" @input="onParentInputChange">
+    <p>appData: {{ appData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-child
+      :app-data="appData"
+    ></app-child>
+  </div>
+</template>
+
+<script>
+import AppChild from "./AppChild.vue"
+export default {
+  name: "AppParent",
+  components: {
+    AppChild,
+  },
+  methods: {
+    onParentInputChange: function (event) {
+      this.$emit('parent-input-change', event.target.value);
+    }
+  },
+  props: {
+    appData: String,
+  }
+}
+</script>
+{% endraw -%}
+```
+
+- input event에 대해 eventListener를 추가하고, onParentInputChange라는 콜백함수를 지정한다.
+- 이 콜백함수는 event의 target.value, 즉 input 태그 내의 입력값을 parent-input-change에 담아 App 컴포넌트로 emit한다.
+
+<br />
+
+> App
+
+```js
+{%- raw -%}
+<template>
+  <div id="app">
+    <h1>App</h1>
+    <input type="text" @input="onInputChange">
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-parent
+      :app-data="appData"
+      @parent-input-change="onParentInputChange"
+    ></app-parent>
+  </div>
+</template>
+
+<script>
+import AppParent from "./components/AppParent.vue"
+export default {
+  name: 'App',
+  components: {
+    AppParent,
+  },
+  data: function () {
+    return {
+      appData: null,
+      parentData: null,
+      childData: null
+    }
+  },
+  methods: {
+    onInputChange: function (event) {
+      this.appData = event.target.value
+    },
+    onParentInputChange: function (inputData) {
+      this.parentData = inputData
+    }
+  }
+}
+</script>
+{% endraw -%}
+```
+
+- AppParent로부터 @parent-input-change를 청취하다가 이벤트를 청취하면, onParentInputChange 콜백함수를 호출하도록 지정한다.
+- 이 콜백함수는 App 컴포넌트의 parentData를 AppParent가 전달한 inputData로 갱신하는 함수이다.
+- emit을 통해 이를 함께 전달하므로, inputData를 그대로 this.parentData로 지정한다.
+
+<br />
+
+## 바. parentData 내리기
+
+- 하위 컴포넌트에서 이 parentData를 사용해야 하므로, AppChild까지 내려보자.
+
+> App
+
+```html
+{%- raw -%}
+...
+<app-parent
+  :app-data="appData"
+  :parent-data="parentData"
+  @parent-input-change="onParentInputChange"
+></app-parent>
+...
+{% endraw -%}
+```
+
+:parent-data를 통해 parentData를 props로 전달한다.
+
+<br />
+
+> AppParent
+
+```js
+{%- raw -%}
+props: {
+  appData: String,
+  parentData: String,
+}
+{% endraw -%}
+```
+
+```html
+{%- raw -%}
+...
+<app-child
+  :app-data="appData"
+  :parent-data="parentData"
+></app-child>
+...
+{% endraw -%}
+```
+
+- App 컴포넌트로부터 받은 parentData를 props에 지정하여 받는다.
+- 이를 다시 app-child 컴포넌트로 props로 전달한다.
+
+<br />
+
+> AppChild
+
+- props에 parentData(String)을 추가한다.
+
+<br />
+
+## 사. childData 올리기
+
+- AppParent와 같은 방식으로 App 컴포넌트까지 AppChild의 input의 값을 올려 갱신해보자.
+
+<br />
+
+> AppChild
+
+- input 태그에 `@input="onChildInputChange"`를 추가한다.
+- input event에 대해 onChildInputChange를 호출한다.
+
+- methods에 다음의 함수를 정의한다.
+
+``` js
+{%- raw -%}
+methods: {
+  onChildInputChange: function (event) {
+    this.$emit('child-input-change', event.target.value)
+  }
+},
+{% endraw -%}
+```
+
+- input 태그 내의 값에 대해 child-input-change라는 이벤트와 함께 emit으로 상위 컴포넌트인 AppParent로 전달한다.
+
+<br />
+
+> AppParent
+
+- `app-child` 컴포넌트에 `@child-input-change="onChildInputChange"` 를 추가한다.
+- child-input-change 이벤트가 발생하면 정보와 함께 onChildInputChange를 호출한다.
+- methods에 다음의 함수를 정의한다.
+
+```js
+{%- raw -%}
+methods: {
+  ...
+  onChildInputChange: function (inputData) {
+    this.$emit('child-input-change', inputData)
+  }
+},
+{% endraw -%}
+```
+
+- 마찬가지로 input 태그 내의 값에 대해 child-input-change라는 이벤트와 함께 emit으로 상위 컴포넌트인 App으로 전달한다.
+
+<br />
+
+> App
+
+- `app-parent` 컴포넌트에 `@child-input-change="onChildInputChange"` 를 추가한다.
+- child-input-change 이벤트가 발생하면 정보와 함께 onChildInputChange를 호출한다.
+- methods에 다음의 함수를 정의한다.
+
+```js
+{%- raw -%}
+methods: {
+  ...
+  onChildInputChange: function (inputData) {
+    this.childData = inputData
+  }
+},
+{% endraw -%}
+```
+
+- 최상위 App 컴포넌트이므로 childData를 가지고 있다.
+- AppChild부터 가져온 inputData를 비로소 갱신하는 용도로 사용한다.
+
+<br />
+
+## 아. childData 내리기
+
+- childData를 갱신했으니 하위 컴포넌트로 이를 다시 내리는 일련의 작업이 필요하다.
+
+<br />
+
+> App
+
+```html
+{%- raw -%}
+<app-parent
+  ...
+  :child-data="childData"
+  ...
+></app-parent>
+{% endraw -%}
+```
+
+- `app-parent` 컴포넌트에 `:child-data="childData"` 를 추가한다.
+- app-parent 컴포넌트에 childData를 props로 전달하는 것이다.
+
+<br />
+
+> AppParent
+
+```js
+{%- raw -%}
+props: {
+  ...
+  childData: String,
+}
+{% endraw -%}
+```
+
+- props에 childData를 받아 String형으로 정의한다.
+- 이는 AppParent 내에서 interpolation으로 사용하게 된다.
+- 동시에 하위 컴포넌트인 AppChild로 내려주어야 한다.
+- 때문에 template의 app-child 컴포넌트에 `:child-data="childData"`를 추가한다.
+
+<br />
+
+> AppChild
+
+- props에 childData를 받아 String형으로 정의한다.
+
+<br />
+
+## 자. input에 value 부여
+
+- input 태그 내에는 입력값만 있는 것이지 value 자체가 바뀌는 것이 아니다.
+- 때문에 input 태그 내에서 입력값에 대한 개별적인 갱신값을 value로 지정해 최신화해주어야 한다.
+
+- App의 input 태그 내에 `:value="appData"`를 추가한다.
+- AppParent의 input 태그 내에 `:value="parentData"`를 추가한다.
+- AppChild의 input 태그 내에 `:value="childData"`를 추가한다.
+
+<br />
+
+## 결과
+
+> 결과 화면
+
+`![image](https://user-images.githubusercontent.com/86189596/167653020-5488eeb2-bf50-44a2-9a05-e3d162c74cb6.png)`
+
+<br />
+
+> App
+
+```js
+{%- raw -%}
+<template>
+  <div id="app">
+    <h1>App</h1>
+    <input type="text" :value="appData" @input="onInputChange">
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-parent
+      :app-data="appData"
+      :parent-data="parentData"
+      :child-data="childData"
+      @parent-input-change="onParentInputChange"
+      @child-input-change="onChildInputChange"
+    ></app-parent>
+  </div>
+</template>
+
+<script>
+import AppParent from "./components/AppParent.vue"
+export default {
+  name: 'App',
+  components: {
+    AppParent,
+  },
+  data: function () {
+    return {
+      appData: null,
+      parentData: null,
+      childData: null
+    }
+  },
+  methods: {
+    onInputChange: function (event) {
+      this.appData = event.target.value
+    },
+    onParentInputChange: function (inputData) {
+      this.parentData = inputData
+    },
+    onChildInputChange: function (inputData) {
+      this.childData = inputData
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+  border: 1px solid black;
+}
+</style>
+
+{% endraw -%}
+```
+
+<br />
+
+> AppParent
+
+```js
+{%- raw -%}
+<template>
+  <div id="appParent">
+    <h1>AppParent</h1>
+    <input type="text" :value="parentData" @input="onParentInputChange">
+    <p>appData: {{ appData }}</p>
+    <p>childData: {{ childData }}</p>
+    <app-child
+      :app-data="appData"
+      :parent-data="parentData"
+      :child-data="childData"
+      @child-input-change="onChildInputChange"
+    ></app-child>
+  </div>
+</template>
+
+<script>
+import AppChild from "./AppChild.vue"
+export default {
+  name: "AppParent",
+  components: {
+    AppChild,
+  },
+  methods: {
+    onParentInputChange: function (event) {
+      this.$emit('parent-input-change', event.target.value);
+    },
+    onChildInputChange: function (inputData) {
+      this.$emit('child-input-change', inputData)
+    }
+  },
+  props: {
+    appData: String,
+    parentData: String,
+    childData: String,
+  }
+}
+</script>
+
+<style>
+#appParent {
+  border: 1px solid red;
+  margin: 1px;
+}
+</style>
+{% endraw -%}
+```
+
+<br />
+
+> AppChild
+
+```js
+{%- raw -%}
+<template>
+  <div id="appChild">
+    <h1>AppChild</h1>
+    <input type="text" :value="childData" @input="onChildInputChange">
+    <p>appData: {{ appData }}</p>
+    <p>parentData: {{ parentData }}</p>
+    <p>childData: {{ childData }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "AppChild",
+  methods: {
+    onChildInputChange: function (event) {
+      this.$emit('child-input-change', event.target.value)
+    }
+  },
+  props: {
+    appData: String,
+    parentData: String,
+    childData: String,
+  }
+}
+</script>
+
+<style>
+#appChild {
+  border: 1px solid blue;
+  margin: 1px;
+}
+</style>
+{% endraw -%}
+```

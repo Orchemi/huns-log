@@ -1,0 +1,143 @@
+---
+title: "[JS] 6.4. Prototype"
+
+categories:
+  - JS boostcourse
+
+tags:
+  - [FE Language, JS, JS boostcourse]
+
+date: 2022-02-13T00:38
+last_modified_at: 2022-02-13T00:38
+
+author_profile: true
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 참고 자료
+
+`[boostcourse 생활코딩: 자바스크립트의 시작](https://www.boostcourse.org/cs124/joinLectures/52258)`
+
+<br />
+
+## Prototype
+
+- 원형: 어떤 사물의 본래의 모습
+- prototype의 중요도
+  - 중급, 고급 JS로의 길목
+  - JS를 프로토타입 기반 언어(prototype based language)라고 부르기도 한다.
+
+<br />
+
+### Prototype의 필요성
+
+- 생성자 안에서 메서드의 구조를 정의했을 때 생기는 단점
+- 로직이 바뀐다면 객체마다 `객체.method() = ~~` 해서 바꿔줘야 한다.
+- 그리고 객체가 생성될 때마다 method가 새롭게 생성되고 return된다.
+- 생산성이 떨어진다.
+
+<br />
+
+> 만약 Person()이라는 생성자를 이용해서 만든 모든 객체가 공통적으로 사용하는 속성과 함수를 만들 수 있다면?
+
+<br />
+
+### Prototype의 사용
+
+```js
+// 기존 Person() 생성자
+function Person(name, first, second, third) {
+  (this.name = name),
+    (this.first = first),
+    (this.second = second),
+    (this.third = third),
+    (this.sum = function () {
+      return this.first + this.second + this.third;
+    });
+}
+
+var kim = new Person("kim", 30, 20, 10);
+var lee = new Person("lee", 10, 10, 10);
+console.log("kim.sum()", kim.sum());
+console.log("lee.sum()", lee.sum());
+```
+
+위에는 기존 코드이고, 아래는 Prototype을 사용한 코드이다.
+
+<br />
+
+```js
+// Person() 생성자의 정의
+function Person(name, first, second, third) {
+  (this.name = name),
+    (this.first = first),
+    (this.second = second),
+    (this.third = third);
+}
+
+// Prototype 함수의 정의
+Person.prototype.sum = function () {
+  return "modified : " + (this.first + this.second + this.third);
+};
+
+var kim = new Person("kim", 30, 20, 10);
+var lee = new Person("lee", 10, 10, 10);
+console.log("kim.sum()", kim.sum());
+console.log("lee.sum()", lee.sum());
+```
+
+Person() 생성자 내부의 sum함수를 밖으로 빼낸 뒤, `생성자.prototype.함수` 의 방식으로 정의한다.
+
+<br />
+
+결과
+
+```
+kim.sum() modified : 60
+lee.sum() modified : 30
+```
+
+이렇게 되면 객체가 생성될 때마다 함수를 함수를 실행하는 것이 아닌, 필요한 객체들에 대하여 한 번만 실행되기 때문에 메모리 공간에서의 절약을 취할 수 있다.
+
+동시에 프로토타입의 함수를 수정하게 되면, 이를 참조하는 모든 객체들이 해당 프로토타입 함수를 사용할 때 수정된 함수를 사용하게 되므로 유지보수 측면에서도 유리하다.
+
+<br />
+
+### Prototype의 선택적 사용
+
+> 만약 한 객체의 메서드만 다른 방식으로 동작하게 하고 싶다면?
+
+<br />
+
+```js
+// Prototype 함수의 선택적 사용
+var kim = new Person("kim", 30, 20, 10);
+kim.sum = function () {
+  return " this : " + (this.first + this.second + this.third);
+};
+
+var lee = new Person("lee", 10, 10, 10);
+var park = new Person("park", 30, 30, 10);
+console.log("kim.sum()", kim.sum());
+console.log("lee.sum()", lee.sum());
+console.log("park.sum()", park.sum());
+```
+
+객체 kim이 생성되고 나서 `kim.sum = function() {}` 방식으로 메서드를 정의해주었다. 그리고 sum()메서드를 실행한 결과이다.
+
+<br />
+
+```
+kim.sum()  this : 60
+lee.sum() modified : 30
+park.sum() modified : 70
+```
+
+여기에서 JS의 로직과 Prototype의 특징을 알 수 있다.
+
+- JS는 객체의 sum() 메서드를 호출할 때, 객체 내부에 sum이라는 속성을 가지는지 먼저 찾는다.
+
+- 만약 내부에 sum이라는 key를 가지는 메서드가 없다면, 객체 생성자(Person())의 prototype에 sum이라는 메서드가 정의되어 있는지 확인

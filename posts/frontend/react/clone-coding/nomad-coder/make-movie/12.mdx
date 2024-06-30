@@ -1,0 +1,238 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 11. Router Parameter"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-04-10T23:30
+last_modified_at: 2022-04-10T23:30
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Parameter
+
+> Router를 이용해 기본 url을 설정할 때, **detail한 route를 지정**하는 값
+
+<br />
+
+### 문법
+
+```js
+<Route path="/movie">
+```
+
+기존의 detail movie route 컴포넌트 url이다. 이를 아래처럼 바꿔보자.
+
+<br />
+
+```js
+<Route path="/movie/:id">
+```
+
+<br />
+
+### props와의 연결
+
+> 문제
+
+그런데 Movie 컴포넌트의 props에는 id가 없다.
+
+<br />
+
+> 해결
+
+- 추가해주면 된다!
+- Home.js의 Movie Component 호출부의 props 정의에 추가해준다.
+
+
+```js
+// Home.js : Home()
+
+return (
+  <div>
+    {loading ? (
+      <h1>Loading...</h1>
+    ) : (
+      <div>
+        {movies.map((movie) => (
+          <Movie
+            // props를 이용해 component 내로 데이터 전달
+            id={movie.id}  ⭐// id props 추가
+            key={movie.id}
+            title={movie.title}
+            // coverImg로 component명 지정
+            coverImg={movie.medium_cover_image}
+            summary={movie.summary}
+            genres={movie.genres}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+);
+```
+
+<br />
+
+### PropTypes
+
+> props를 추가해주었으니, propTypes에도 type을 추가해보자
+
+```js
+// Movie.js
+
+Movie.propTypes = {
+  id: PropTypes.number.isRequired,
+  coverImg: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  // string을 담은 array 형식
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+```
+
+<br />
+
+### Link와 parameter
+
+> Movie 컴포넌트의 Link url에 parameter를 적용해보자
+
+```js
+function Movie({ title, coverImg, summary, genres }) {
+  return (
+    <div>
+      <h2>
+        <Link to="/movie">{title}</Link>
+      </h2>
+      <img src={coverImg} alt={title} />
+      <p>{summary}</p>
+      {/* 장르는 array에 담겨 있으므로 map 함수로 component화 */}
+      <ul>
+        {genres.map((g) => (
+          // key를 genre 그 자체로 넣어주는 방식
+          <li key={g}>{g}</li>
+        ))}
+      </ul>
+      <br />
+    </div>
+  );
+}
+```
+
+- 위는 원래의 Movie 컴포넌트 코드이다.
+- 기존 코드를 아래와 같이 바꿔보자.
+
+```js
+// 기존 코드
+<Link to="/movie">{title}</Link>
+
+// parameter 적용 코드
+<Link to={`/movie/${id}`}>{title}</Link>
+```
+
+이제는 특정 id의 영화에 대한 detail route로 이동할 수 있게 되었다.
+
+<br />
+
+## useParams
+
+> 우리가 어떤 parameter들을 사용하고 있는지 어떻게 알죠?
+
+<br />
+
+### useParams의 사용
+
+> Detail.js에서 Detail 페이지의 url의 id를 어떻게 활용할 수 있는지 알아보자.
+
+```js
+function Detail() {
+  return <h1>Detail</h1>;
+}
+
+export default Detail;
+```
+
+- 위는 단순히 'Detail' 제목만 띄우는 역할을 하는 기존 Detail.js 코드이다.
+- 이를 아래처럼 바꿔보자.
+
+<br />
+
+```js
+import { useParams } from "react-router-dom";
+function Detail() {
+  const x = useParams();
+  console.log(x);
+  return <h1>Detail</h1>;
+}
+
+export default Detail;
+```
+
+- x에 useParams() 함수의 반환값을 저장
+- x를 콘솔에 출력
+
+<br />
+
+> 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/162623192-5bd2327a-a2ee-432c-b226-20fccaf0cb55.png)`
+
+- id와 값이 object형으로 console에 출력
+- useParams()는 **Route 컴포넌트의 path parameter의 이름과 값을 object 형으로 반환**
+
+<br />
+
+### API에 적용
+
+> useParams() 함수를 이용해 얻은 정보를 API 호출에 적용해보자
+
+> 사전준비 : 영화 상세 페이지 API
+
+> API 정보
+- `<https://yts.mx/api/v2/movie_details.json?movie_id=34015>`
+- id가 34015인 영화의 상세 정보를 더 확인할 수 있는 API
+
+<br />
+
+> 코드
+
+```js
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+function Detail() {
+  const { id } = useParams();
+  const getMovie = async () => {
+    const json = await (
+      await fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${id}`)
+    ).json();
+    console.log(json);
+  };
+  useEffect(() => {
+    getMovie();
+  }, []);
+  return <h1>Detail</h1>;
+}
+
+export default Detail;
+```
+
+- useParams() 함수를 react-router-dom으로부터 import하여 사용
+- params를 object형으로 id에 저장
+
+- component가 호출되면, useEffect에 의해 API 처음 한 회 호출
+- getMovie() 함수를 호출하는 useEffect 함수
+
+- getMovie 함수는 영화 id를 이용해 영화 디테일 정보 json을 받아오는 함수
+- url로 사이트에 접속하는 함수는 **fetch**
+- **async와 await**는 항상 같이 붙어다녀야 하는 것에 주의
+
+- json은 state에 저장해 따로 setState하여 사용도 가능

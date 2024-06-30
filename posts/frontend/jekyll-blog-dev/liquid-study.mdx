@@ -1,0 +1,195 @@
+---
+title: "[BlogDev] Liquid 문법"
+excerpt: "블로그 커스터마이징에 필요한 Liquid 문법에 대해 알아보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll, Liquid]
+
+date: 2021-12-19
+last_modified_at: 2021-12-19
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 도입
+
+본 게시물은 `[공부하는 식빵맘](https://ansohxxn.github.io/blog/liquid/)`님의 게시물을 통해 배우고 따라하는 과정입니다. 이 글을 누군가 보고 있다면, 그리고 보다 전문적이고 자세한 설명을 바라신다면 위 링크의 블로그를 확인해보시길.
+
+<br />
+
+## Liquid 문법
+
+jekyll과 Minimal Mistakes theme를 구성하고 있는 주요 문법이다. 모든 문법이 Liquid 문법으로 구성되어 있으며 자세한 설명은 `[Liquid 공식 문서](http://shopify.github.io/liquid/)`를 참고한다.
+
+<br />
+
+## 1. Objects
+
+`{{`와 `}}`로 감싼 것을 의미한다. page에 Object 자체를 출력하며, 변수라고 생각하면 된다.
+
+```
+{% raw %}
+{{ page.title }}
+{% endraw %}
+```
+
+<br />
+
+## 2. Tags
+
+`{% raw %}{%{% endraw %}` 와 `{% raw %}%}{% endraw %}`를 사용하여 감싼다. HTML의 태그처럼 `논리와 제어`를 담당한다.
+
+### 가. Control flow
+
+- if 문 : `{% raw %}{% if 조건문 %} ... {% endif %}{% endraw %}`
+- if-else if-else 문 : `{% raw %}{% if 조건문 %}{% elsif 조건문 %}{% else 조건문 %} ... {% endif %}{% endraw %}`
+- if not 문: `{% raw %}{% unless 조건문 %} ... {% endunless %}{% endraw %}`
+- switch-case문: `{% raw %}{% case 조건문 %}{% when 값 %} ... {% endcase %}{% endraw %}`
+
+<br />
+
+### 나. Iteration - 반복문
+
+#### 1) for문
+
+```
+{% raw %}
+{% for product in collection.products %}
+  {{ product.title }}
+{% endfor %}
+{% endraw %}
+```
+
+그리고 for문에서도 else를 사용할 수 있는데, 이는 반복하려는 contents가 없어서 for문을 한 번도 실행할 수 없을 때 해당한다.
+
+```
+{% raw %}
+{% for product in collection.products %}
+  {{ product.title }}
+{% else %}
+  The collection is empty.
+{% endfor %}
+{% endraw %}
+```
+
+이 밖에도 for문에 `limit`, `offset`, `range` 등으로 반복 횟수와 범위를 제어할 수 있다.
+
+#### 2) cycle문
+
+```
+{% raw %}
+{% cycle "first": "one", "two", "three" %}
+{% cycle "second": "one", "two", "three" %}
+{% cycle "second": "one", "two", "three" %}
+{% cycle "second": "one", "two", "three" %}
+{% cycle "second": "one", "two", "three" %}
+{% cycle "first": "one", "two", "three" %}
+{% endraw %}
+```
+
+범위 내에서 계속 순환하기 때문에 `"second" cycle`이 네번째 순회할 땐 다시 one을 출력하게 된다.
+
+<br />
+
+### 다. Variable assignments
+
+#### 1) assign
+
+"변수를 할당하다"
+
+```
+{% raw %}
+{% assign SH = "SSAFY 합격" %}
+{{ SH }}
+{% endraw %}
+```
+
+#### 2) capture
+
+`태그로 둘러쌓여 있는 문자열을 변수에 저장`한다.
+
+```
+{% raw %}
+{% capture my_variable %}I am being captured.{% endcapture %}
+{{ my_variable }}
+{% endraw %}
+```
+
+#### 3) increment, decrement
+
+변수의 값을 증가시키고 감소시킨다.
+
+<br />
+
+### 라. Liquid 문법 그대로를 출력하고 싶을 때
+
+Liquid 문법을 `{% raw %}`와 `{% endraw %}`로 감싼다.
+
+<br />
+
+### 마. 주석
+
+`{% comment %}`와 `{% endcomment %}`로 감싼다.
+
+```
+{% raw %}
+Anything you put between {% comment %} 이것은 주석입니다~ {% endcomment %} tags
+is turned into a comment.
+{% endraw %}
+```
+
+<br />
+
+### 바. 줄바꿈을 하고 싶지 않을 때
+
+텍스트를 출력하지 않더라도 Liquid 언어에서 태그를 사용하면 한 줄의 공백이 출력될 수 있다. 이때 공백 한 줄이 출력되지 않게 하려면 태그의 % 안에 `-`를 붙이면 된다.
+
+```liquid
+{% raw %}
+{%- assign my_variable = "tomato" -%}
+{{ my_variable }}
+{% endraw %}
+```
+
+<br />
+
+## 3. Filters
+
+`|` 기호를 사욯아여 객체의 아웃풋 형태를 필터링하여 바꾼다.
+
+### 가. append
+
+```liquid
+{% raw %}
+{{ "/my/fancy/url" | append: ".html" }}
+{% endraw %}
+```
+
+- 출력 값 뒤에 .html 문자열을 붙여서 출력한다.
+
+### 나. prepend
+
+```liquid
+{% raw %}
+{{ "adam!" | capitalize | prepend: "Hello " }}
+{% endraw %}
+```
+
+- adam! 문자열 값의 맨 앞 문자를 대문자로 바꾸고 앞에 Hello를 붙여서 출력한다.
+
+<br />
+
+## References
+
+- `[공부하는 식빵맘](https://ansohxxn.github.io/blog/posting/)`
+- `[Liquid 공식 문서](http://shopify.github.io/liquid/)`

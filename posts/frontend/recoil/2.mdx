@@ -1,0 +1,175 @@
+---
+title: "[Recoil] Recoil의 사용 : Recoil Hooks"
+
+categories:
+  - Recoil
+
+tags:
+  - [SPA, Recoil]
+
+date: 2022-10-25T15:30
+last_modified_at: 2022-10-25T15:30
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+### useRecoilState
+
+- atom이나 selector의 값을 사용할 때 사용
+- recoil 상태를 인자로 받는다.
+- **selector의 경우 set을 설정해주지 않으면 사용하지 못한다.**
+
+```ts
+const [count, setCount] = useRecoilState(countState);
+
+const increaseCount = () => {
+	setCount(count + 1);
+}
+```
+
+<br />
+
+> 심화
+
+```ts
+// src/components/Organisms/QuizDifficulty.tsx
+
+// 1. state에 정의된 QuizDifficulty.ts를 불러오는 방법
+import { QuizDifficultyState } from 'src/state';
+
+...
+const QuizDifficulty = () => {
+  // 2. recoilState의 사용방법 : Hook처럼 사용방법
+  const [quizDifficulty, setQuizDifficulty] = useRecoilState(
+    QuizDifficultyState,
+  )
+
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setQuizDifficulty(e.target.value);
+  };
+
+  return (
+    <select
+      data-testid={DIFFICULTY_SELECT_TEST_ID}
+      margin="16px 0px"
+      value={quizDifficulty}
+      onChange={handleChange}
+    >
+    </select>
+  );
+};
+```
+
+- `[코드 링크](https://github.com/david718/trophy-quiz-mobile/blob/master/src/components/Organisms/QuizDifficulty.tsx)`
+
+<br />
+
+> 왜 QuizDifficulty가 아니라 QuizDifficultyState 인거죠?
+
+```ts
+// src/state/index.ts
+import QuizDifficultyState from './QuizDifficulty';
+import QuizResultsState from './QuizResults';
+...
+
+export {
+  QuizDifficultyState,
+  QuizResultsState,
+  ...
+};
+```
+
+- 구조분해할당으로 컴포넌트 내에서 한 번에 import하기 위한 `index.ts` 처리
+- 이 과정에서 `State`가 파일명 뒤에 붙어서 export
+
+<br />
+
+### useRecoilValue
+
+- `useRecoilState`의 기능 중 get(read-only)만을 위한 hook
+- recoil state의 값을 **반환**
+
+```ts
+const count = useRecoilValue(countState);
+```
+
+<br />
+
+### useSetRecoilState
+
+- `useRecoilState`의 기능 중 set만을 위한 hook
+- recoil state의 값을 **변경**
+
+```ts
+const setCount = useSetRecoilState(countState);
+```
+
+<br />
+
+### useResetRecoilState
+
+- atom이나 selector의 값을 초기화할 때 사용
+- atom과 selector의 경우 다르게 사용
+
+<br />
+
+> atom
+
+```tsx
+const resetCount = useResetRecoilState(countState);
+...
+<button onClick={resetCount}>reset count</button>
+```
+
+- atom 등록 시의 default값으로 atom을 되돌린다.
+
+<br />
+
+> selector
+
+```ts
+// sumCountSelector.ts
+
+import { DefaultValue, selector } from "recoil";
+import countState from "../atom/countState";
+
+export default selector({
+    key: "countSelector",
+    get: ({get}): number => {
+        const count = get(countState);
+        return count + 1;
+    },
+    set: ({set, get}, newCount:any)=>{
+        return set(
+            countState,
+            newCount instanceof DefaultValue ? newCount : newCount+10,
+        )
+    }
+})
+```
+
+- set은 DefaultValue 객체를 매개변수로 전달
+- 때문에 **selector에서 set을 사용할 때 조건 처리를 해주어야 한다.**
+- 일반적으로 set을 할 경우 받아온 카운트에 10을 더해서 반환하지만, DefaultValue가 오게 되면 초깃값을 반환
+
+<br />
+
+```ts
+// handleCount.tsx
+
+const resetSumCount = useResetRecoilState(sumCountSelector);
+...
+<button onClick={resetSumCount}>reset count</button>
+```
+
+<br />
+
+## References
+
+- `[유튜브/Recoil : 비동기 데이터 전역 상태로 관리하기](https://www.youtube.com/watch?v=7nwpEiSpPqY&list=RDLVt934FOlOMoM&index=2)` 
+- `[Recoil 정리 2편 - Recoil 활용하기](https://talkwithcode.tistory.com/76)`

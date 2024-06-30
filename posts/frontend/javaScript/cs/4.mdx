@@ -1,0 +1,383 @@
+---
+title: "[JS CS] 배열"
+
+categories:
+  - JS CS
+
+tags:
+  - [FE Language, JS, JS CS]
+
+author_profile: true
+
+date: 2022-04-26T15:00
+last_modified_at: 2022-04-26T15:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 배열(Arrays)
+
+### 배열의 정의와 특징
+
+- 키와 속성들을 담고 있는 참조 타입의 객체(object)
+- **순서를 보장**
+- 주로 대괄호를 이용해 생성
+- 0을 포함한 양의 정수 인덱스로 특정 값에 접근 가능
+- 배열의 길이는 .length로 접근
+
+<br />
+
+### 메서드 기본 1 : reverse
+
+- 원본 배열의 요소들의 순서를 반대로 정렬
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+numbers.revers()
+console.log(numbers) // [5, 4, 3, 2, 1]
+```
+
+<br />
+
+### 메서드 기본 2 : push & pop
+
+- push : 가장 뒤에 요소 추가
+- pop : 가장 뒤의 요소 제거
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+
+numbers.push(100)
+console.log(numbers) // [1, 2, 3, 4, 5, 100]
+
+numbers.pop()
+console.log(numbers) // [1, 2, 3, 4, 5]
+```
+
+<br />
+
+### 메서드 기본 3 : unshift & shift
+
+- unshift : 가장 앞에 요소 추가
+- shift : 가장 앞의 요소 제거
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+
+numbers.unshift(100)
+console.log(numbers) // [100, 1, 2, 3, 4, 5]
+
+numbers.shift()
+console.log(numbers) // [1, 2, 3, 4, 5]
+```
+
+<br />
+
+### 메서드 기본 4 : includes
+
+- arr.includes(value)
+- 배열에 특정 값이 존재하는지 판별 후 참거짓 반환
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+
+console.log(numbers.includes(1))    // true
+console.log(numbers.includes(100))  // false
+```
+
+<br />
+
+### 메서드 기본 5 : indexOf
+
+- 배열에 특정 값이 존재하는지 확인 후 가장 첫 번재로 찾은 요소의 인덱스 반환
+- 해당 값이 없을 경우 -1 반환
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+let result
+
+result = numbers.indexOf(3)     // 2
+console.log(result)
+
+result = numbers.indexOf(100)   // -1
+console.log(result)
+```
+
+<br />
+
+### 메서드 기본 6 : join
+
+- arr.join(separator)
+- 배열의 모든 요소를 연결하여 반환
+- separator는 선택적으로 지정
+- 생략 시 기본값은 쉼표
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+let result
+
+result = numbers.join()     // 1,2,3,4,5
+console.log(result)
+
+result = numbers.join('')   // 12345
+console.log(result)
+
+result = numbers.join(' ')  // 1 2 3 4 5
+console.log(result)
+
+result = numbers.join('-')  // 1-2-3-4-5
+console.log(result)
+```
+
+<br />
+
+### Spread operator(...)
+
+- 배열 내부에서 배열 전개 가능
+- ES5까지는 **Array.concat()** 메서드 사용
+- 얕은 복사에 활용 가능
+
+```js
+const array = [1, 2, 3]
+const newArray = [0, ...array, 4]
+
+console.log(newArray) // [0, 1, 2, 3, 4]
+```
+
+<br />
+
+### 메서드 심화
+
+- 배열을 순회하며 특정 로직을 수행
+- 메서드 호출 시 인자로 **callback 함수**를 받는 것이 특징
+- callback 함수 : 어떤 함수의 내부에서 실행될 목적으로 인자로 넘겨받는 함수
+
+<br />
+
+### 메서드 심화 1 : forEach
+
+- ****배열의 각 요소에 대해 콜백 함수를 한 번씩 실행**
+- arr.forEach(callback(element[, index[, arr]]))
+- 배열의 요소(element), 배열 요소의 인덱스(index), 배열 자체(array)로 구성
+- **반환 값(return)이 없는 메서드**
+
+```js
+array.forEach(element, index, array) => {
+  // do something
+}
+```
+
+```js
+const fruits = ['딸기', '수박', '사과', '체리']
+
+fruits.forEach((fruit, index) => {
+  console.log(fruit, index)
+  // 딸기 0
+  // 수박 1
+  // 사과 2
+  // 체리 3
+})
+```
+
+<br />
+
+### 메서드 심화 2 : map
+
+- **배열의 각 요소에 대해 콜백 함수를 한 번씩 실행**
+- **콜백 함수의 반환 값을 요소로 하는 새로운 배열 반환**
+- 기존 배열 전체를 다른 형태로 바꿀 때 유용
+
+- arr.map(callback(element[, index[, array]]))
+
+```js
+array.map((element, index, array) => {
+  // do something
+})
+```
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+const doubleNums = numbers.map((num) => {
+  return num * 2
+})
+
+console.log(doubleNums) // [2, 4, 6, 8, 10]
+```
+
+<br />
+
+### 메서드 심화 3 : filter
+
+- **배열의 각 요소에 대해 콜백 함수를 한 번씩 실행**
+- 콜백 함수의 반환 값이 참인 요소들만 모아서 새로운 배열 반환
+
+- arr.filter(callback(element[, index[, array]]))
+
+```js
+array.filter((element, index, array) => {
+  // do something
+})
+```
+
+```js
+const numbers = [1, 2, 3, 4, 5]
+const oddNums = numbers.filter((num) => {
+  return num % 2
+})
+
+console.log(oddNums) // [1, 3, 5]
+```
+
+<br />
+
+### 메서드 심화 4 : reduce
+
+- 배열의 각 요소에 대해 콜백 함수를 한 번씩 실행
+- 콜백 함수의 반환 값들을 **하나의 값(acc)에 누적 후 반환**
+- reduce 메서드의 주요 매개변수
+  - acc : 이전 callback 함수의 반환 값이 누적되는 변수
+  - initialValue(optional) : 최초 callback 함수 호출 시 acc에 할당되는 값, default 값은 배열의 첫 번째 값
+- 빈 배열의 경우 initialValue를 제공하지 않으면 에러 발생
+
+```js
+array.reduce((acc, element, index, array) => {
+  // do something
+}, initialValue)
+```
+
+```js
+const numbers = [1, 2, 3]
+
+const result = numbers.reduce((acc, num) => {
+  return acc + num  // 이 반환값이 acc에 저장됨
+}, 0)
+
+console.log(result) // 6
+```
+
+<br />
+
+### 메서드 심화 5 : find
+
+- 배열의 각 요소에 대해 콜백 함수를 한 번씩 실행
+- 반환값이 참이면, **조건을 만족하는 첫 번째 요소** 반환
+- 찾는 값이 배열에 없으면, **undefined** 반환
+
+```js
+array.find((element, index, array)) {
+  // do something
+}
+```
+
+```js
+const avengers = [
+  {name: 'Tony Stark', age: 45}.
+  {name: 'Steve Rogers', age: 32}.
+  {name: 'Thor', age: 40}.
+]
+
+const result = avengers.find((avengers) => {
+  return avenger.name === 'Tony Stark'
+})
+
+console.log(result) // {name: "Tony Stark", age: 45}
+```
+
+<br />
+
+### 메서드 심화 6 : some
+
+- 배열의 **요소 중 하나라도** 주어진 판별 함수를 통과하면 참을 반환
+- or처럼 배열의 모든 요소가 false인 경우 거짓 반환
+- **빈 배열은 항상 거짓 반환**
+
+```js
+cost numbers = [1, 3, 5, 7, 8]
+
+const hasEvenNumber = numbers.some((num) => {
+  return num % 2 === 0
+})
+console.log(hasEvenNumber) // true
+
+const hasOddNumber = numbers.some((num) => {
+  return num % 2
+})
+console.log(hasOddNumber) // true
+```
+
+<br />
+
+### 메서드 심화 7 : every
+
+- 배열의 모든 요소가 주어진 판별 함수를 통과하면 참 반환
+- and처럼 하나의 요소라도 false라면 false 반환
+- **빈 배열은 항상 참 반환**
+
+```js
+const numbers = [2, 4, 6, 8, 9]
+
+const isEveryNumberEven = numbers.every((num) => {
+  return num % 2 === 0
+})
+console.log(isEveryNumberEven) // false
+
+const isEveryNumberOdd = numbers.ever((num) => {
+  return num % 2
+})
+console.log(isEveryNumberOdd) // false
+```
+
+<br />
+
+### 배열 순회 방법 비교
+
+> for loop
+
+- 모든 브라우저 환경에서 지원
+- 인덱스를 활용하여 배열의 요소에 접근
+- break, continue 사용 가능
+
+```js
+const chars = ['A', 'B', 'C', 'D', 'E']
+
+for (let idx=0; idx < chars.length; idx++) {
+  console.log(idx, chars[idx])
+}
+```
+
+<br />
+
+> for ... of
+
+- 일부 오래된 브라우저 환경에서 지원 X
+- 인덱스 없이 배열의 요소에 바로 접근 가능
+- break, continue 사용 가능
+
+```js
+const chars = ['A', 'B', 'C', 'D', 'E']
+
+for (const char of chars) {
+  console.log(char)
+}
+```
+
+<br />
+
+> forEach
+
+- 대부분의 브라우저 환경에서 지원
+- **break, continue 사용 불가능**
+
+```js
+chars.forEach((char, idx) => {
+  console.log(idx, char)
+})
+
+chars.forEach((char) => {
+  console.log(char)
+})
+```

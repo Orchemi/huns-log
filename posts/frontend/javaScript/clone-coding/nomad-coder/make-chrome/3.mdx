@@ -1,0 +1,115 @@
+---
+title: "[JavaScript] JS로 크롬 만들기 3. 자바스크립트와 브라우저"
+
+categories:
+  - JS CloneCoding
+
+tags:
+  - [FE Language, JS, JS CloneCoding]
+
+date: 2022-03-02T00:40
+last_modified_at: 2022-03-02T00:40
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## HTML 파일의 요소 선택하기
+
+### Id 선택자 : getElementById
+
+브라우저의 콘솔에서 다음을 입력해보자.
+
+```js
+document.getElementById("title");
+```
+
+id값이 "title"인 태그 정보를 가져온다.
+
+<br />
+
+이를 js 파일에서 실행해보자.
+
+```js
+const title = document.getElementById("title");
+console.dir(title);
+```
+
+`console.dir(??)`: `console.log(??)` 보다 더 많은 정보를 보여준다.
+
+<br />
+
+### Class 선택자 : getElementsByClassName
+
+id는 일반적으로 브라우저 상에서 많이 사용하지 않는 선택자이다. 많이 사용하는 class를 통해 Element를 찾아보자.
+
+```js
+const hellos = document.getElementsByClassName("hello");
+console.log(hellos);
+```
+
+<br />
+
+### Tag 선택자 : getElementByTagName
+
+모든 태그마다 클래스가 있을 수는 없으니, 태그 이름으로 Element를 찾아보자.
+
+```js
+const title = document.getElementsByTagName("h1");
+console.log(title);
+
+// 결과 : HTMLCollection [h1.hello]
+```
+
+- 결과로는 HTMLCollection(1)이 나오는데, 이는 h1 태그를 가지는 array
+- 이 자체로 프로퍼티를 찾거나 할 수는 없다.
+
+<br />
+
+### querySelector
+
+- element를 CSS 방식으로 검색할 수 있도록 한다.
+- 클래스 내부의 특정 element를 가져오기 가능
+- selector가 중복되는 경우 맨 첫 번째 selector를 가져온다.
+
+- 가장 사용이 용이
+
+```js
+const title = document.querySelector(".hello h1");
+console.log(title);
+
+// 결과 : <h1>Grab me!</h1>
+```
+
+의미 : "css selector를 통해 hello 클래스를 찾고, 내부의 h1태그를 가져와달라."
+
+<br />
+
+### querySelectorAll
+
+- 여러 개의 selector를 조회할 수 없는 querySelector의 단점 보완
+- array 형식
+
+```js
+const title = document.querySelectorAll(".hello h1");
+console.log(title);
+
+// 결과 : NodeList(3) [h1, h1, h1]
+```
+
+<br />
+
+## Style
+
+자바스크립트를 통해 element의 스타일을 바꿀 수 있다.
+
+```js
+const title = document.querySelectorAll(".hello h1");
+title.style.color = "blue";
+```
+
+element 내에 style이라는 object가 있고, color 프로터티를 blue로 재정의해준 것이다. 이를 통해 title에 해당하는 element의 글자색이 파란색으로 바뀐다.

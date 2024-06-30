@@ -1,0 +1,342 @@
+---
+title: "[CSS] CSS상속과 캐스케이딩"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-06T23:20
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## CSS 상속
+
+- 부모 태그에 CSS 속성을 적용하면 자식 태그에도 적용되는 것  
+  ※ 일부 속성(background-color, margin, padding, position) 등은 해당되지 않는다.
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>CSS상속 예제1</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>header h1</h1>
+      <p>header p</p>
+    </header>
+  </body>
+</html>
+```
+
+```css
+* css 파일 header {
+  color: red;
+}
+```
+
+이 경우 header 태그 안의 header h1, header p 모두 빨간색이 된다.
+<br /><br />
+이 때 css 문서가 다음과 같다면 어떻게 될까.
+
+```css
+* css 파일 header {
+  color: red;
+}
+
+h1 {
+  color: blue;
+}
+p {
+  color: blue;
+}
+```
+
+이 경우 header h1, header p 모두 파란색이 된다. **같은 속성인 경우
+부모 태그에게 상속받은 속성보다, 직접 적용된 속성이 더 강하기 때문!**
+
+<br />
+
+> 부모 태그가 다르지만, 자식 태그의 이름은 같은 경우?
+
+예를 들어보자.
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>CSS상속 예제2</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>header h1</h1>
+      <p>header p</p>
+    </header>
+
+    <footer>
+      <h1>footer h1</h1>
+      <p>footer p</p>
+    </footer>
+  </body>
+</html>
+```
+
+인 경우, css 문서가 다음과 같다면 어떻게 될까.
+
+```css
+* css 파일 header {
+  color: red;
+}
+
+h1 {
+  color: blue;
+}
+p {
+  color: blue;
+}
+```
+
+결과는 `<h1>`태그와 `<p>` 태그에 속성을 직접 부여하였기 때문에 header, footer
+모두 파란색 글씨이다.
+
+<br />
+
+> 만약 `<header>` 태그 안의 `<h1>` 태그와 `<p>` 태그만 적용하고 싶다면?
+
+**누구집 자식인지만 태그명 앞에 써주면 된다.**
+
+```css
+* css 파일 header {
+  color: red;
+}
+
+header h1 {
+  color: blue;
+}
+header p {
+  color: blue;
+}
+```
+
+---
+
+## 캐스케이딩
+
+- 케스케이딩은 **같은 영역에 같은 디자인을 적용했을 때
+  어느 디자인을 우선해서 적용하는지**의 우선순위를 나타낸다.
+- 다음의 3가지가 우선순위에 영향을 미친다.
+
+> 1. CSS 속성이 입력된 순서
+> 2. 선택자를 구체적으로 입력했는지 여부
+> 3. type/id/class 선택자
+
+<br />
+
+### 가. 입력순서에 따른 우선순위
+
+- **같은 선택자 안에 같은 속성을 적용했을 때 마지막에 작성한 속성값이 우선 적용**
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>우선순위 예제1</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <p>Hello World</p>
+  </body>
+</html>
+```
+
+```css
+* css 파일 p {
+  color: red;
+}
+
+/* 나중에 적용된 CSS 속성값의 우선순위가 더 높음*/
+p {
+  color: blue;
+}
+```
+
+실행결과 나중에 작성된 color: blue; 의 영향을 받아 파란색이 됨을 확인할 수 있다.
+
+<br />
+
+### 나. 선택자 입력에 따른 우선순위
+
+- **선택자를 구체적으로 작성할수록 CSS 속성의 우선순위가 높아진다.**
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>우선순위 예제2</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <header>
+      <h2>Hello World</h2>
+    </header>
+  </body>
+</html>
+```
+
+```css
+* css 파일
+
+    /* 선택자를 구체적으로 작성할수록 우선순위가 더 높음*/
+
+header h2 {
+  color: red;
+}
+
+h2 {
+  color: blue;
+}
+```
+
+이 경우 h2 선택자의 css 속성이 나중에 쓰여졌지만 header h2 선택자가
+더욱 구체적이기 때문에 header 태그 안의 h2의 선택자는 빨간색 글씨일 것이다.
+
+<br />
+
+### 다. 선택자의 종류에 따른 우선순위
+
+- 선택자의 종류에 따라 우선순위는 달라진다.
+- 우선순위 : **id선택자 > class선택자 > type선택자**
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>우선순위 예제3</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <h3 class="color">Welcome to CSS</h3>
+  </body>
+</html>
+```
+
+```css
+* css 파일 1 class vs type
+
+/* class 선택자*/
+.color {
+  color: red;
+}
+
+/* type 선택자 */
+h3 {
+  color: green;
+}
+```
+
+실행결과 .color인 class 선택자의 우선순위가 h3인 type 선택자보다
+우선순위가 높기 때문에 빨간색 글자로 출력된다. <br /><br />
+
+위의 html 파일에 id 선택자를 추가해보자.
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>우선순위 예제4</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <h3 id="color" class="color">Welcome to CSS</h3>
+  </body>
+</html>
+```
+
+```css
+* css 파일 2 id vs class vs type
+
+/* id 선택자*/
+#color {
+  color: blue;
+}
+
+/* class 선택자*/
+.color {
+  color: red;
+}
+
+/* type 선택자 */
+h3 {
+  color: green;
+}
+```
+
+실행결과 id 선택자의 우선순위가 class 선택자, type 선택자보다 높기 때문에
+글자는 파란색으로 출력될 것이다.
+
+<br />
+
+### 라. 인라인 방식
+
+- HTML 태그에 직접 style 속성을 적용하는 방식인 '인라인 방식'과  
+  id 선택자의 우선순위는 어떻게 될까.
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>우선순위 예제5</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <h3 style="color: pink;" id="color" class="color">Welcome to CSS</h3>
+  </body>
+</html>
+```
+
+실행결과 글자는 분홍색으로 출력된다. 때문에 익스터널 방식 중 가장 우선순위가 높은
+id 선택자보다도 html 문서에서 직접 속성을 적용하는 인라인 방식의 우선순위가
+더 높은 것을 확인할 수 있다.
+
+> 우선순위 : 인라인 방식 > id 선택자 > class 선택자 > type 선택자
+
+<br />
+
+---
+
+## CSS 파일에 주석을 작성하는 방법
+
+- /_ 과 _/ 사이에 주석 내용을 입력
+- 주석 내용 안에 주석을 중복으로 넣을 수 없다.

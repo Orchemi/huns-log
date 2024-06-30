@@ -1,0 +1,192 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 7. array에 element 추가 & 개별 컴포넌트화"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-04-07T02:30
+last_modified_at: 2022-04-07T02:30
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## Form과 Submit
+
+### form의 기본동작 제거 : preventDefault
+
+> input과 submit 버튼을 만들고, form의 기본 설정을 제거해보자
+
+- input은 할 일(toDo)를 입력받는 용도
+- submit은 할 일을 할 일 리스트에 추가하는 용도
+
+```js
+import { useState } from "react";
+
+function App() {
+  const [toDo, setToDo] = useState("");
+  const onChange = (event) => setToDo(event.target.value);
+  const onSubmit = (event) => {
+    event.preventDefault();
+  };
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          onChange={onChange}
+          value={toDo}
+          type="text"
+          placeholder="Write your to do..."
+        />
+        <button>Add To Do</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- **event.preventDefault()** JS 문법을 onSubmit 함수가 정의
+- 이 onSubmit은 form 태그의 속성으로 입력, 속성값은 정의된 onSubmit 함수
+
+<br />
+
+### 입력값을 array에 추가
+
+> 할 일 리스트에 할 일을 추가하는 로직을 만들자
+
+```js
+function App() {
+  const [toDo, setToDo] = useState("");
+  const [toDos, setToDos] = useState([]);
+  const onChange = (event) => setToDo(event.target.value);
+  const onSubmit = (event) => {
+    event.preventDefault();
+    if (toDo === "") {
+      return;
+    }
+    // toDos array에 toDo 추가
+    // state라서 직접 push 불가능하고 setState modifier 이용
+    // 1) setState 함수 내에서 직접 state 조작
+    // 2) setState 함수 내에 state를 조작하는 함수를 입력
+    setToDos((currentArray) => [toDo, ...currentArray]);
+    // unpacking을 ...로 하는 것
+
+    // 공백이 아닌 toDo가 입력, form이 submit되면 실행되는 코드들
+    // toDo를 ""으로 만들어 input 비우기
+    // input의 value가 toDo니까 ""으로 만들면 value가 ""으로 비어보임
+    setToDo("");
+  };
+...
+```
+
+- toDos state : 할 일 리스트, 생성시 []
+- onSubmit : input에 값이 담겨 form이 submit될 때 event에서 정보 처리
+
+1. event.preventDefault()로 새로고침 방지
+2. toDo가 비어있다면 하위 코드 실행 X
+3. toDo의 값을 ""로 만들어 input 내의 value 제거
+4. setToDos 함수로 기존 할 일 리스트 currentArray(toDos)에 toDo 추가
+  - state를 새로 만드는 것
+  - 기존 state(toDos)였던 currentArray를 **...currentArray**를 이용해 unpacking
+  - 이를 toDo와 함께 array에 담아 toDos로 지정
+  
+<br />
+
+### array의 값들을 하나하나 component / render
+
+> **map함수를 이용**해 toDos array의 toDo들을 하나하나 컴포넌트화해보자
+
+<br />
+
+App 컴포넌트의 return JSX에 다음을 추가한다.
+
+```js
+<ul>
+  {toDos.map((item) => (
+    <li>{item}</li>
+  ))}
+</ul>
+```
+
+- toDos array의 각각의 item에 대해 li 태그를 씌워준다.
+- 이를 ul 태그로 감싸 render한다.
+
+> 어, 그런데 console에 에러가 막 뜨는데요?
+
+<br />
+
+- 그 이유는 **각각의 item이 고유한 key prop을 가져야하기 때문**이다.
+- 코드를 아래와 같이 바꿔보자.
+
+```js
+<ul>
+  {toDos.map((item, index) => (
+    <li key={index}>{item}</li>
+  ))}
+</ul>
+```
+
+- map 함수가 제공하는 index를 받아 li태그의 key에 지정해주었다.
+- console에서 발생하는 오류를 해결할 수 있다.
+
+<br />
+
+## 전체 코드
+
+```js
+import { useState } from "react";
+
+function App() {
+  const [toDo, setToDo] = useState("");
+  const [toDos, setToDos] = useState([]);
+  const onChange = (event) => setToDo(event.target.value);
+  const onSubmit = (event) => {
+    event.preventDefault();
+    if (toDo === "") {
+      return;
+    }
+    // toDos array에 toDo 추가
+    // state라서 직접 push 불가능하고 setState modifier 이용
+    // 1) setState 함수 내에서 직접 state 조작
+    // 2) setState 함수 내에 state를 조작하는 함수를 입력
+    setToDos((currentArray) => [toDo, ...currentArray]);
+    // unpacking을 ...로 하는 것
+
+    // 공백이 아닌 toDo가 입력, form이 submit되면 실행되는 코드들
+    // toDo를 ""으로 만들어 input 비우기
+    // input의 value가 toDo니까 ""으로 만들면 value가 ""으로 비어보임
+    setToDo("");
+  };
+  return (
+    <div>
+      <h1>My To Dos ({toDos.length})</h1>
+      <form onSubmit={onSubmit}>
+        <input
+          onChange={onChange}
+          value={toDo}
+          type="text"
+          placeholder="Write your to do..."
+        />
+        <button>Add To Do</button>
+      </form>
+      <hr />
+      <ul>
+        {toDos.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```

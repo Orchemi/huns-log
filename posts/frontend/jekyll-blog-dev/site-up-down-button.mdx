@@ -1,0 +1,291 @@
+---
+title: "[BlogDev] 페이지 Up-Down 이동 버튼 제작"
+excerpt: "클릭 시 사이트의 최상단과 최하단으로 이동시키는 Up/Down 버튼을 만들어보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-01-14T23:34
+last_modified_at: 2022-01-14T23:34
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## Top 버튼
+
+카카오톡이나 일부 웹 사이트를 보면 y축으로 내용이 길어지는 경우 사이트의 최상단으로 이동하기 쉽도록 버튼을 만들어둔 것을 확인할 수 있다. 이를 클릭하면 단번에 사이트의 최상단으로 이동할 수 있다. 이 Top 버튼을 만들어볼 것이다.
+
+<br />
+
+## HTML
+
+📁_layouts📃default.html의 최하단에 top 버튼을 구성하는 HTML 코드를 입력한다.
+
+```html
+<aside class="sidebar__top">
+  <a href="#site-nav"> <i class="fas fa-chevron-circle-up"></i></a>
+</aside>
+```
+
+다른 페이지의 링크를 담아 클릭하면 이동하는 `<a>`를 활용할 것이고, 아이콘을 사용할 때 사용하는 `<i>` 태그에 class 명을 부여해 sass 속성을 입힐 것이다.
+
+<br />
+
+> `<a href="#site-nav">`
+
+href="#site-nav" 라는 것은 다른 사이트로 이동하는 것이 아니라, 해당 사이트의 site-nav id를 가진 내용 방향으로 이동한다는 것이다. #site-nav는 블로그 제목과 masthead menu-item이 있는 사이트의 최상단이다.
+
+<br />
+
+> `<i class="fas fa-chevron-circle-up"></i>`
+
+사실 `<i>` 태그가 아닌 `<span>`이나 `<div>` 태그를 사용해도 된다. 하지만 아이콘의 경우 `<i>`를 사용하는 것을 권장하는데, 이는 원래의 목적이라면 italic체로 만들어주는 태그인데 CSS의 발달로 `<i>`가 사실상 죽은 태그가 되어버렸기 때문에 사용하지 않기 때문이다. 그래서 오히려 아이콘의 HTML을 변경하거나 확인/탐색할 때 `<i>` 태그를 활용하게 된 것이다. 아이러니하지 않은가.
+
+그런데 더 아이러니한 것은 이것은 우리가 신경쓸 필요가 없다는 것이다. 저 더러운 class명이 어디서 왔는지 궁금하지 않은가.
+
+<br />
+
+### 아이콘 선택 : `fontawesome`
+
+`[fontawesome](https://fontawesome.com/v5.15/icons?d=gallery&p=2&s=solid&m=free)` 이라는 사이트는 다양한 아이콘을 제공한다. 사이트의 검색창에 여러 키워드를 입력하면 상황에 맞는 적절하고 깔끔한 아이콘을 무료로 제공받을 수 있다. ~~아 물론 부분유료라서 무료인 것 중에 선택해야 한다.~~ 나는 입력창에 arrow를 입력해서 마음에 드는 아이콘을 클릭했다.
+
+`![image](https://user-images.githubusercontent.com/86189596/149517065-28172b9f-04e1-42a4-b476-ea81c2503e35.png)`
+
+`Start Using This Icon`을 클릭하면 HTML 태그를 복사할 수 있다. 그것이 나의 경우 `<i class="fas fa-chevron-circle-up"></i>` 였던 것이다. 이를 HTML 코드에 붙여넣으면 렌더링 후 해당 아이콘이 화면에 나오게 된다.
+
+<br />
+
+## Scss
+
+```scss
+.sidebar__top {
+  position: fixed;
+  width: 2em;
+  height: auto;
+  right: 2em;
+  bottom: 2em;
+  z-index: 5;
+}
+```
+
+우선 사이트의 어디에 있든 같은 위치에 있어야하므로 position은 fixed로 설정한다. 이후로 가로 너비를 2em, 세로 너비는 그에 적절하게 맞추기 위해 auto로 설정해보겠다. 임시로 설정한 거라 push해서 렌더링이 된 것을 확인하고 소폭 수정할 수 있다. right와 bottom을 각각 2em씩 두어서 너무 화면에 딱 붙지 않게 여백을 두었고, z-index는 5 정도로 두어서 HTML 코드 사이에 파묻히지 않도록 했다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149519761-b55f3acc-defd-4a83-9878-644591caa62b.png)`
+
+구현은 잘 되었지만 무슨 문제가 있는지 단번에 알 수 있을 것이다.
+
+괜찮다. 원래 개발은 일단 뜨기만 하면 개발자 도구로 코드 넣어보고 실제로 바꿔서 완성하면 되니까..
+
+<br />
+
+## DOWN 버튼 추가
+
+scss 속성을 수정하기 이전에 최상단으로 올라가는 버튼이 있으면, 최하단으로 내려가는 버튼도 있으면 좋겠다고 생각이 들었다. 그래서 HTML과 SCSS 파일을 각각 조금씩 수정했다.
+
+<br />
+
+📃default.html
+
+```html
+<aside class="sidebar__updown">
+  <a href="#site-nav"> <i class="updown_button"></i></a>
+  <a href="#footer"> <i class="updown_button"></i></a>
+</aside>
+```
+
+sidebar\_\_top이라는 클래스 이름을 sidebar\_\_updown으로 수정했고, down 아이콘을 찾아 수정해넣었다. down 버튼을 두르면 사이트 최하단인 footer로 이동한다.
+
+<br />
+
+📃_sidebar.scss
+
+```scss
+.sidebar__updown {
+  position: fixed;
+  width: 2em;
+  height: auto;
+  right: 2em;
+  bottom: 2em;
+  z-index: 5;
+
+  a {
+    display: block;
+  }
+}
+```
+
+마찬가지로 .sidebar\_\_top이라는 클래스 이름을 .sidebar\_\_updown으로 수정했다. display를 block으로 설정했는데, 두 `<a>` 아이콘 각각의 block으로 설정되어야 위아래로 배치될 것 같다고 생각했기 때문이다. display는 .sidebar\_\_updown 클래스 내의 a태그에만 적용되어야 했기 때문에 내부에 따로 a 태그 코드를 만들어 display를 설정했다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149527437-0f7b4d74-7552-44d2-8fd2-f4c492a13f96.png)`
+
+뭐 기능 상으로는 둘 다 최상단과 최하단으로 이동하는 기능을 가진다.
+
+<br />
+
+## 디자인 수정
+
+자. 그러면 디자인을 위해 SCSS에서 수정해야 될 것이 무엇인지 목록을 파악해보자.
+
+1. 버튼의 크기가 조금 크면 좋겠다.
+2. 버튼이 스크롤바 쪽으로 조금 이동하면 좋겠다.
+3. 색깔이 달랐으면 좋겠다.
+4. 마우스를 올리면 변화가 생기면 좋겠다.
+
+<br />
+
+### 1. 버튼 크기
+
+버튼의 크기는 부모 클래스인 `.sidebar__updown` 이 아니라 그 내부의 `<a>` 태그의 font-size에 의존한다. 때문에 크기를 설정하게 하기 위한 `.sidebar__updown`의 width와 height 속성은 필요가 없으므로 삭제하고 하위 태그인 `<a>` 태그에 font-size를 지정해보자.
+
+📃_sidebar.scss
+
+```scss
+.sidebar__updown {
+  position: fixed;
+  right: 2em;
+  bottom: 2em;
+  z-index: 5;
+
+  a {
+    display: block;
+    font-size: 1.7em;
+  }
+}
+```
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149528055-bfce1bf1-4eaa-4755-9c04-54389f705385.png)`
+
+버튼의 크기가 원하는 정도로 커졌다.
+
+<br />
+
+### 2. 버튼 위치
+
+조금 더 스크롤바 쪽으로 붙이고(오른쪽 여백 하향), 아래 쪽으로 붙이고 싶다(아래 여백 하향). 때문에 right와 bottom을 각각 1em으로 줄여보겠다.
+
+```scss
+.sidebar__updown {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+  z-index: 5;
+
+  a {
+    display: block;
+    font-size: 1.7em;
+  }
+}
+```
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149528945-29cc3507-d5db-495d-a9b5-ec13b5af73a0.png)`
+
+버튼의 위치가 적당히 들어갔다.
+
+<br />
+
+### 3. 버튼 색상
+
+개발자 도구 옵션에서 updown 버튼을 누르면 `<a>` 태그의 color가 기본 `<a>` 태그의 컬러로 설정되어있음을 알 수 있다. 때문에 .sidebar\_\_updown a{} 태그 내에 color를 설정해 덮어버리면 된다. 색상은 lightgray로 하고, 혹시나 반응형 웹 문제로 버튼이 내용과 겹치더라도 내용이 잘 보일 수 있도록 opacity(투명도)를 0.1로 설정하겠다.
+
+```scss
+.sidebar__updown {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+  z-index: 5;
+
+  a {
+    display: block;
+    font-size: 1.7em;
+    color: lightgray;
+    opacity: 0.1;
+  }
+}
+```
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149529821-455c01d3-2bc6-4cae-b76c-d3b837b9b6ff.png)`
+
+너무 티가 나지 않으면서도 조화로운 것이 너무 마음에 든다.
+
+<br />
+
+### 4. 마우스 올렸을 때 설정
+
+마우스를 올렸을 때, 투명도가 조금 낮아져 색이 더 진하게 보이며, 색상은 이 사이트의 강조색인 오렌지색을 띄도록 해보자.
+
+마우스를 올렸을 때 css가 변하게 설정하는 것은 `:hover`이다. 코드는 아래와 같다.
+
+```scss
+.sidebar__updown {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+  z-index: 5;
+
+  a {
+    display: block;
+    font-size: 1.7em;
+    color: lightgray;
+    opacity: 0.1;
+  }
+
+  a:hover {
+    opacity: 0.2;
+    color: mix(#fff, $primary-color, 40%);
+  }
+}
+```
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/149531364-287b609a-7178-4c3c-b71d-4228de5ec783.png)`
+
+화면 캡쳐에서는 마우스가 보이지는 않지만 마우스를 올려놓은 hover 상태이다. 색상이 과하게 진하지 않아 티가 안 날까 걱정했지만, 조금의 데코 효과는 있으면서도 그리 튀지 않는 것이 적당하다고 느껴진다.
+
+<br />
+
+## 결과
+
+### PC 버전
+
+`![image](https://user-images.githubusercontent.com/86189596/149529821-455c01d3-2bc6-4cae-b76c-d3b837b9b6ff.png)`
+
+계속 PC버전 위주로 작업했기 때문에 가장 먼저 결과를 보기도 했고, 익숙한 화면이다. 버튼의 좌우 공백도 여백과 정확히 일치해서 편안함을 느낀다.
+
+<br />
+
+### 태블릿 버전
+
+`![image](https://user-images.githubusercontent.com/86189596/149531753-aeb35ef0-734b-4c41-936e-53137e3c9b89.png)`
+
+<br />
+
+### 모바일 버전
+
+`![image](https://user-images.githubusercontent.com/86189596/149531666-0ef0abe3-548c-405c-9d74-ef77316555b8.png)`
+
+<br />
+
+우려했던대로 태블릿과 모바일 버전에서는 UpDown 버튼과 내용이 겹쳤다. 사실상 내용이 화면을 꽉 채우는 모바일과 태블릿 특성상 어쩌면 당연한 결과였다.
+
+하지만 대비했던대로 opacity가 얕게 깔려있었기 때문에 내용을 가리지 않고 어두운 배경에서만 그 존재감을 확인할 수 있는 정도였다. 전체적으로 만족스러운 결과를 얻었다.

@@ -1,0 +1,280 @@
+---
+title: "[BlogDev] 게시물 페이지 스타일링"
+excerpt: "게시물 각각의 페이지를 스타일링해보자."
+
+categories:
+  - BlogDev
+
+tags:
+  - [FE Project, BlogDev, Github, jekyll]
+
+date: 2022-01-22T00:52
+last_modified_at: 2022-01-22T02:18
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+
+## 설계 목적
+
+포스트 페이지도 여러 가지 손 볼 게 많다. 오늘은 포스트 페이지의 디자인을 개선해보겠다.
+
+<br />
+
+## 개선점 파악
+
+현재 내 포스트 페이지의 상단과 하단의 사진이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/150519222-f7d8e8ee-dc9f-4bb3-a9f0-f869a7a9bddf.png)`
+
+`![image](https://user-images.githubusercontent.com/86189596/150519544-e8125841-b74c-4fe4-83fa-ae555f92ae0c.png)`
+
+마음에 안 드는 거 투성이다. 뭘 바꿔야할지 따져보자.
+
+<br />
+
+## 1. 태그 스타일 변경
+
+가장 열받는 스타일이다. `<a>` 태그에 대해 모두 primary와 white를 일부 섞은 lightyellow에 가까운 색으로 설정했는데, 태그 역시 `<a>`로 구성되어 있어 그 영향을 받는다. 그래서 이 태그의 스타일을 메인페이지처럼 box-shadow도 설정하고 hover와 active도 설정해보자.
+
+<br />
+
+자. 왜 메인 페이지의 태그에 적용된 scss 속성이 포스트 페이지에는 적용되지 않은 것일까? 태그의 클래스가 달라서 scss 속성이 적용되지 않기 때문일 것이다.
+
+실제로 개발자 도구를 통해 확인해본 결과, 실컷 scss 속성을 부여한 메인 페이지의 태그는 `page__taxonomy-item-tag`이고, 포스트 페이지의 태그는 `page__taxonomy-item`이다. 때문에 문제가 되는 태그의 클래스명을 바꿔주면 동일하게 scss 속성이 적용될 것이다.
+
+<br />
+
+### 클래스명 변경
+
+물론 위치와 적용되는 크기가 다르기 때문에 메인 페이지에는 어울리는 scss 속성이 포스트 페이지에서는 어울리지 않을 수 있다. 하지만 적용되서 좋다면 그대로 쓰면 되기 때문에 일단 한 번 바꿔보겠다.
+
+<br />
+
+📃tag-list.html
+
+```liquid
+{%- raw -%}
+<!-- 태그 아이콘과 함께 태그를 나타낼 때 사용 -->
+<!-- 태그 아이콘 + 태그: 는 기본으로 설정-->
+{% case site.tag_archive.type %}
+  {% when "liquid" %}
+    {% assign path_type = "#" %}
+  {% when "jekyll-archives" %}
+    {% assign path_type = nil %}
+{% endcase %}
+
+{% if site.tag_archive.path %}
+  {% assign tags_sorted = page.tags | sort_natural %}
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].tags_label | default: "Tags:" }} </strong>
+    <span itemprop="keywords">
+    {% for tag_word in tags_sorted %}
+      <a href="{{ tag_word | slugify | prepend: path_type | prepend: site.tag_archive.path | relative_url }}" class="page__taxonomy-item-tag" rel="tag">{{ tag_word }}</a>{% unless forloop.last %}<span class="sep">, </span>{% endunless %}
+    {% endfor %}
+    </span>
+  </p>
+{% endif %}
+{% endraw -%}
+```
+
+위의 코드는 📁_includes 폴더 내에 있는 📃tag-list.html 코드이다. 📁_include 폴더에 있는 html 문서들은 다른 layout html 문서에서 상황에 따라 선택해서 끌고 오게 되는데, 📃tag-list.html 문서는 포스트 페이지의 태그를 담당하는 📁_include html 파일인 것이다. 이때 아래쪽의 `page__taxonomy-item` 클래스에 의해 태그의 스타일이 정해지는데, 앞서 열심히 스타일링한 클래스는 `page__taxonomy-item-tag` 이므로 이대로 바꿔주자.
+
+그리고 이는 📃tag-list.html 파일은 태그만 관리하기 때문에 카테고리를 관리하는 📃category-list.html의 `page__taxonomy-item` 클래스도 `page__taxonomy-item-tag`로 클래스를 바꿔 적용하자. 나중에 카테고리에 해당하는 버튼은 태그와 구분되는 디자인으로 바꾸보려 하는데, 이는 나중의 일이고 당장은 이렇게 바꾼다.
+
+추후에 카테고리 버튼만 스타일을 바꾸려면 📃category-list.html 파일의 클래스를 `page__taxonomy-item-tag` 에서 `page__taxonomy-item-category` 로 바꾸고 이에 해당하는 scss 속성을 부여해주면 되겠다.
+
+<br />
+
+### 결과 화면
+
+`![image](https://user-images.githubusercontent.com/86189596/150527701-7147a49f-c44e-49f7-9a46-3ff30a53bdc2.png)`
+
+버튼 스타일이 잘 적용이 된 것 같다.
+
+<br />
+
+## 2. 제목 스타일링
+
+`![image](https://user-images.githubusercontent.com/86189596/150527701-7147a49f-c44e-49f7-9a46-3ff30a53bdc2.png)`
+
+음 제목이 조금 다른 색이었으면 좋겠다. 이왕이면 블로그 primary-color?
+
+<br />
+
+### 📃single.html
+
+포스트 페이지를 관할하는 📃single.html 파일을 살펴보면 역시 특별한 요소인만큼 `#page-title` id로 지정되어있다. 이 id에 속성을 부여해보겠다.
+
+📃_page.scss 파일에 입력한다.
+
+```scss
+#page-title {
+  padding: 0.5em 0 0.7em 0.3em;
+  color: $primary-color;
+  text-shadow: 0.1em 0.1em 0.2em black;
+}
+```
+
+개발자 모드에서 적절한 정도로 조절해서 코드를 입력했다. 기능은 많이 설명했으니 생략한다.
+
+<br />
+
+### 결과 화면
+
+`![image](https://user-images.githubusercontent.com/86189596/150557065-d36f6ea6-1347-4f56-9e88-cb21b74b8c67.png)`
+
+사진을 날려먹어서 밑에 3번 과정 이후의 사진을 캡쳐해서 다소 깔끔한 모양이다. 2번 과정에서 제목과 border-bottom을 지정해서 깔끔한 가로 구분선을 디자인했다. 원하던대로 잘 나온 것 같다.
+
+<br />
+
+### 문제 발견
+
+`![image](https://user-images.githubusercontent.com/86189596/150562505-fc2efd92-fc67-4321-b6b2-4906bd8acabb.png)`
+
+어..? 메인 화면으로 나가니 제목에 흰 줄이 생겼다. 알고보니 `archive__subtitle` 위에 `#page-title`이 있었다. 음 아쉽게도 위의 scss에서 border-bottom 을 빼고 다른 방식을 생각해 보아야겠다.
+
+<br />
+
+### 문제 해결
+
+제목인 `#page-title`과 작성일자인 `.page__meta` 사이에 가로선 html을 추가하고 그 html에 id를 부여해서 scss를 부여해야겠다.
+
+<br />
+
+📃single.html 파일의 제목과 page\_\_meta 코드 사이에 아래의 코드를 끼워넣는다.
+
+```html
+<!-- 포스트 제목과 가로선 -->
+<div id="horizontal_line"></div>
+```
+
+<br />
+
+그리고 📃_page.scss의 `#page-title` scss 속성 아래의 아래의 코드를 추가하였다.
+
+```scss
+#horizontal_line {
+  border-bottom: 0.1em solid $text-color;
+}
+```
+
+div 영역이라서 bo
+
+<br />
+
+이로써 포스트 페이지에서 가로선은 구현했다. 하지만 `.page__meta` 클래스에 margin-top 속성이 2em이나 부여되어 있어서 이를 1em로 줄여준다.
+
+<br />
+
+## 3. 제목 하단 작성일자/업데이트 일자
+
+`![image](https://user-images.githubusercontent.com/86189596/150527701-7147a49f-c44e-49f7-9a46-3ff30a53bdc2.png)`
+
+~~사진을 날려먹어서 위에서 썼던 제목 수정 이전의 사진을 가져왔다.😂😂~~ 제목 하단의 작성일자/업데이트가 조금 이상함이 느껴지지 않는가. 사실상 왼쪽이 작성일자, 오른쪽이 최종 수정일자여야 한다. 그럼 뭐가 잘못되었는지 코드를 살펴보자.
+
+### 📃single.html
+
+```liquid
+{%- raw -%}
+          <!-- 1. 포스트 수정일자와 작성일자가 있는 경우 -->
+          {% if page.last_modified_at and page.date %}
+            <p> class="page__meta"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong> <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>&nbsp&nbsp&nbsp<strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ "Updated:" }}</strong> <time datetime="{{ page.last_modified_at | date: date_to_xmlschema }}">{{ page.last_modified_at | date: "%Y.%m.%d" }}</time></p>
+
+          <!-- 2. 포스트 작성일자만 있는 경우 -->
+          {% elsif page.date %}
+            <p class="page__meta"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong> <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time></p>
+
+          <!-- 3. 포스트 수정일자만 있는 경우 -->
+          {% elsif page.last_modified_at %}
+            <p class="page__meta"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ "Updated:" }}</strong> <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time></p>
+
+          <!-- 4. 작성일자 수정일자가 모두 없는 경우 -->
+          {% endif %}
+{% endraw -%}
+```
+
+나는 보통 작성일자(date)와 수정일자(last_modified_at)을 모두 작성하기 때문에 1번의 경우를 살펴보자. 여기에서 코드가 잘못된 것이 있을 것이다. 이 코드만 따로 빼보자.
+
+<br />
+
+```liquid
+{%- raw -%}
+<!-- 1. 포스트 수정일자와 작성일자가 있는 경우 -->
+{% if page.last_modified_at and page.date %}
+  <p class="page__meta">
+      <span><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}</strong></span>
+      <span><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>&nbsp&nbsp&nbsp</span>
+      <span><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ "Updated:" }}</strong></span>
+      <span><time datetime="{{ page.last_modified_at | date: date_to_xmlschema }}">{{ page.last_modified_at | date: "%Y.%m.%d" }}</time></span>
+  </p>
+{% endraw -%}
+```
+
+<br />
+
+그리고 이를 이렇게 바꿨다.
+
+```liquid
+{%- raw -%}
+<!-- 1. 포스트 수정일자와 작성일자가 있는 경우 -->
+{% if page.last_modified_at and page.date %}
+  <p class="page__meta">
+    <!-- 작성일자 -->
+    <p>
+      <span><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{"작성: "}}<!--{{ site.data.ui-text[site.locale].date_label | default: "Updated:" }}--></span>
+      <span><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>&nbsp&nbsp&nbsp</span>
+    </p>
+    <!-- 수정일자 -->
+    <p>
+    <span><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> {{ "업데이트:" }}</span>
+    <span><time datetime="{{ page.last_modified_at | date: date_to_xmlschema }}">{{ page.last_modified_at | date: "%Y.%m.%d" }}</time></span>
+    </p>
+  </p>
+{% endraw -%}
+```
+
+뭐가 달라졌는지 살펴보자.
+
+- 코드가 한 줄이 너무 길어 가독성이 좋지 않기에 `<p>` 내부를 `<p>`와 `<span>`으로 나누어 정리하였다.
+- 첫번째 `<p>`는 작성일자에 대한 코드, 두번째 `<p>`는 수정일자에 대한 코드이다.
+- p 태그를 사용한 이유는 작성일자와 수정일자를 한 줄씩 구분하고 싶었기 때문이다.
+- 아이콘을 옅게 하고 싶어서 `<strong>`태그를 제거하였다.
+- 날짜 앞의 텍스트를 그냥 하드코딩해서 넣었다.
+
+<br />
+
+### 결과 화면
+
+`![image](https://user-images.githubusercontent.com/86189596/150548140-e9ccdedb-900a-4872-a88a-09315a54d896.png)`
+
+<br />
+
+## 4. 페이지 하단 태그/카테고리/업데이트
+
+위와 태그와 카테고리, 그리고 작성일자와 업데이트 일자가 없어졌으면 좋겠다. 문제의 footer 영역이다.
+
+<br />
+
+### 📃single.html
+
+```liquid
+{%- raw -%}
+<footer class="page__meta">
+  {% if site.data.ui-text[site.locale].meta_label %}
+    <h4 class="page__meta-title">{{ site.data.ui-text[site.locale].meta_label }}</h4>
+  {% endif %}
+  {% include page__taxonomy.html %}
+  {% include page__date.html %}
+</footer>
+{% endraw -%}
+```
+
+그냥 footer 부분을 송두리째 날려버렸다.

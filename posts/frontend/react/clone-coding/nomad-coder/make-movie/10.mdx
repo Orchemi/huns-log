@@ -1,0 +1,294 @@
+---
+title: "[ReactJS] React로 영화 서비스 만들기 : 9. API JSON 가공, async-await, component화"
+
+categories:
+  - ReactJS CloneCoding
+
+tags:
+  - [SPA, ReactJS, ReactJSCloneCoding]
+
+date: 2022-04-08T02:00
+last_modified_at: 2022-04-08T02:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 영화 정보 요약 페이지
+
+> 영화 정보 API를 호출해 요약 페이지를 만들어보자
+
+<br />
+
+### 영화 리스트 API 호출
+
+- `<https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year>`
+- query
+  - minimum_rating=8.5: 최소평점 8.5 이상인 영화
+  - sort_by=year: 연도별로 정렬
+
+```js
+import { useEffect, useState } from "react";
+
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    fetch(
+      "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year"
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        setMovies(json.data.movies);
+        setLoading(false);
+      });
+  }, []);
+  return <div>{loading ? <h1>Loading...</h1> : null}</div>;
+}
+
+export default App;
+```
+
+- 앞선 Coin Tracker처럼 **API 호출 대기**동안 'Loading...'을 화면에 render
+- 이후 호출이 완료되고, **json 형태로 가공 처리**되어 **movies에 저장**
+- 이후 **loading을 false로** 바꿈
+
+<br />
+
+### async-await
+
+> async와 await 방식으로 then을 대체해보자
+
+```js
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const response = await fetch(
+      "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year"
+    );
+    const json = await response.json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
+  useEffect(() => {
+    getMovies();
+  }, []);
+  return <div>{loading ? <h1>Loading...</h1> : null}</div>;
+}
+```
+
+- 기존에 useEffect에 모두 넣어 어떤 코드 이후 then, then으로 비동기식으로 처리
+- 이제는 **getMovies** 함수를 만들어 useEffect에 함수로 지정
+
+<br />
+
+> 문법
+
+- 기존 arrow function : const funcName = () => {}
+- async-await 함수    : const funcName = **async** () => {}
+
+- 응답을 기다려야 하는 경우 기다려야 하는 실행 코드(비동기 코드) 앞에 **await**
+- 이를 const에 넣어준다.
+
+<br />
+
+> 더 짧게?
+
+위의 코드를 아래처럼 줄일 수 있다.
+
+```js
+// 기존 코드
+const getMovies = async () => {
+  const response = await fetch(
+    "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year"
+  );
+  const json = await response.json();
+  ...
+}
+
+// shortcut 코드
+const getMovies = async () => {
+  const json = await (
+    await fetch(
+    "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year"
+    )
+  ).json();
+  ...
+}
+```
+
+<br />
+
+### movies의 활용
+
+```js
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const response = await fetch(
+      "https://yts.mx/api/v2/list_movies.json?minimum_rating=8.5$sort_by=year"
+    );
+    const json = await response.json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
+  useEffect(() => {
+    getMovies();
+  }, []);
+  return (
+    <div>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <div>
+          {movies.map((movie) => (
+            <div key={movie.id}>
+              <h2>{movie.title}</h2>
+              <img src={movie.medium_cover_image} />
+              <p>{movie.summary}</p>
+              {/* 장르는 array에 담겨 있으므로 map 함수로 component화 */}
+              <ul>
+                {movie.genres.map((g) => (
+                  // key를 genre 그 자체로 넣어주는 방식
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
+              <br />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+- json 데이터 형식으로 처리하여 movies의 각 요소인 movie들을 map 함수로 component화
+- json 내부의 정보를 보며 jsx 문법으로 다양하게 js와 결합해 데이터 활용
+- **key가 특별히 없는 경우 고유한 값 그 자체를 사용 가능**
+
+<br />
+
+### component 분리
+
+> movie의 map함수가 너무 커져서 더러운데요?
+
+<br />
+
+> 가. Movie.js
+
+App.js와 같은 경로에 Movie.js를 만들고 아래와 같이 작성한다.
+
+```js
+// props를 이용해 부모 컴포넌트(App.js)로 부터 movie 정보를 받아옴
+function Movie({ title, coverImg, summary, genres }) {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <img src={coverImg} alt={title} />
+      <p>{summary}</p>
+      {/* 장르는 array에 담겨 있으므로 map 함수로 component화 */}
+      <ul>
+        {genres.map((g) => (
+          // key를 genre 그 자체로 넣어주는 방식
+          <li key={g}>{g}</li>
+        ))}
+      </ul>
+      <br />
+    </div>
+  );
+}
+
+export default Movie;
+```
+
+- props를 이용해 App.js로부터 movie 정보를 받아온다.
+- medium_cover_image의 경우 너무 길어서 **coverImg**라는 컴포넌트명으로 받아올 것이다.
+- argument로 props를 처리해주고, **movie.**를 제거
+- **key가 필요하지 않음** → 생략
+
+<br />
+
+> 나. App.js
+
+```js
+import Movie from "./Movie";
+```
+
+Movie 컴포넌트 모듈을 App.js에 import 해주는 것을 잊지 않는다.
+
+<br />
+
+```js
+return (
+    <div>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <div>
+          {movies.map((movie) => (
+            <Movie
+              // props를 이용해 component 내로 데이터 전달
+              key={movie.id}
+              title={movie.title}
+              // coverImg로 이름 별도 지정 가능
+              coverImg={movie.medium_cover_image}
+              summary={movie.summary}
+              genres={movie.genres}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+```
+
+- App component의 return 부분이다.
+- movies 내부의 movie마다 **Movie 컴포넌트**를 호출한다.
+- **props를 컴포넌트 내부로 전달**해준다.
+
+<br />
+
+### PropType 확인
+
+> props가 너무 많아서 헷갈리는데요?
+
+<br />
+
+📃 Movie.js 상단에 prop-types를 import
+
+```js
+// Movie.js
+import PropTypes from "prop-types";
+```
+
+<br />
+
+`export default Movie;` 상단에 위의 propType 정보를 명시
+
+```js
+Movie.propTypes = {
+  coverImg: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  // string을 담은 array 형식
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+```
+
+<br />
+
+### components 폴더 생성
+
+> component가 너무 많아지면 어떡하죠?
+
+- **src** 폴더 내에 **components** 폴더를 생성 후, component를 모은다.
+- 경로 : 📂BASE_DIR 📂src 📂components 📃Movie.js
+- Movie.js를 import하는 App.js 등의 **상위 폴더의 import 경로를 수정**한다.
+- VSC는 자동 경로 수정을 지원
