@@ -1,0 +1,174 @@
+---
+title: "[TS] Union 타입과 Intersection 타입"
+
+categories:
+  - Effective TS
+
+tags:
+  - [FE Language, TS, Effective TS]
+
+author_profile: true
+
+date: 2023-10-04T23:00
+last_modified_at: 2023-10-04T23:00
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+> 본 포스트는 이펙티브 타입스크립트를 보며 정리한 내용입니다.
+
+<br />
+
+## 타입은 할당 가능한 값들의 집합
+
+> never
+
+- 가장 작은 집합은 아무 값도 포함하지 않는 공집합
+- never 타입으로 선언된 변수는 어떤 값도 할당할 수 없다.
+
+<br />
+
+> unit (literal type)
+
+- 한 가지 값만 포함하는 타입
+
+```ts
+type A = 'A';
+type B = 'B';
+type Twelve = 12;
+```
+
+<br />
+
+> Union Type
+
+- 두 개 혹은 세 개의 타입을 묶는 타입
+- 값 집합들의 합집합
+
+```ts
+type AB = 'A' | 'B';
+type AB12 = 'A' | 'B' | 12;
+```
+
+<br />
+
+## Intersection과 Union
+
+### Intersection
+
+> intersection을 교집합, union을 합집합이라고 생각해보자.
+
+```ts
+interface Person {
+  name: string;
+}
+
+interface Lifespan {
+  birth: Date;
+  death?: Date;
+}
+
+type PersonSpan = Person & Lifespan;
+```
+
+- PersonSpan 타입은 Person과 Lifespan의 교집합이다.
+- Person과 Lifespan은 공통으로 가지는 속성이 없기 때문에 공집합(never타입)으로 생각하기 쉽다.
+- 하지만 타입 연산자는 인터페이스의 속성이 아닌, 값의 집합(타입의 범위)에 적용된다. 그리고 추가적인 속성을 가지는 값도 여전히 그 타입에 속하게 된다.
+- **때문에 person과 Lifespan을 둘 다 가지는 값은 Intersection 타입에 속하게 된다.**
+
+```ts
+const person: PersonSpan = {
+  name: 'Alan Turing',
+  birth: new Date('1912/06/23'),
+  death: new Date('1954/06/07'),
+}; // OK
+```
+
+- 다시 말하면 Intersection 타입은 두 타입의 교집합이므로, 두 타입의 모든 속성을 가져야 한다.
+
+<br />
+
+### Union 타입
+
+```ts
+type K = keyof (Person | Lifespan); // type이 never
+```
+
+- 두 interface의 속성 중 겹치는 것이 없기 때문에 K 타입은 never 타입이 된다.
+- 이를 수식으로 표현하면 이와 같다.
+
+```ts
+keyof (A&B) = keyof A | keyof B
+keyof (A|B) = keyof A & keyof B
+```
+
+<br />
+
+> 보다 세밀한 예시를 살펴보자.
+
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+interface Developer {
+  name: string;
+  skill: string;
+}
+function introduce(someone: Person | Developer) {
+  someone.name; // O 정상 동작
+  someone.age; // X 타입 오류
+  someone.skill; // X 타입 오류
+}
+```
+
+- 타입스크립트 관점에서는 `introduce()` 함수를 호출하는 시점에 `Person` 타입이 올지 `Developer` 타입이 올지 알 수가 없기 때문에 어느 타입이 들어오든 간에 오류가 안 나는 방향으로 타입을 추론하게 된다.
+- 때문에 `Union` 타입이라고 완전히 넓은 범위로 활용할 수 있을 것이라 생각하면 안 된다.
+- 기본적으로는 `Person`과 `Developer` 두 타입에 공통적으로 들어있는 속성인 name만 접근할 수 있게 된다.
+
+<br />
+
+### Union Type의 장점
+
+> Union 타입을 사용하였을 때의 장점이 뭘까?
+
+```ts
+// any를 사용하는 경우
+function getAge(age: any) {
+  age.toFixed(); // 에러 발생
+  return age;
+}
+```
+
+- 위의 경우 any 타입을 사용하였기 때문에 age의 타입이 any로 추론된다. 따라서 숫자 관련된 API를 사용할 때 코드가 자동 완성되지 않는다.
+- 이를 Union 타입과 `Type Guard`를 활용하여 해결할 수 있다.
+
+<br />
+
+```ts
+// 유니온 타입을 사용하는 경우
+function getAge(age: number | string) {
+  if (typeof age === 'number') {
+    age.toFixed(); // 정상 동작
+    return age;
+  }
+  if (typeof age === 'string') {
+    return age;
+  }
+  return new TypeError('age must be number or string');
+}
+```
+
+- 함수의 인자는 `number`와 `string`으로 유연하게 받을 수 있게 설정하였다.
+- `typeof`를 통해 `number`와 `string`을 구분하고, 각각의 타입에 맞는 API를 사용할 수 있다.
+- age의 타입이 `number`인 경우 숫자 관련된 API를 쉽게 자동완성 할 수 있다.
+
+<br />
+
+## References
+
+- 타입이 값들의 집합이라고 생각하기[38p]
+- `[타입스크립트 핸드북 - UnionType](https://joshua1988.github.io/ts/guide/operator.html#union-type)`
