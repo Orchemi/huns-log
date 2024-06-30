@@ -1,0 +1,159 @@
+---
+title: "[CSS] CSS3에 등장한 신조어 'transition'"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-07T23:24
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## transition 속성
+
+- 특정 조건에 따라 상태가 변하는 것
+- 색상이나 크기 등과 같은 속성이 특정 조건에 따라 변화하는 과정
+- 특정 조건 ex) 마우스 포인터를 올렸을 때
+
+<br />
+
+---
+
+```html
+*html 파일
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>transition 속성</title>
+    <link ref="stylesheet" href="CSS문서명.css" />
+  </head>
+
+  <body>
+    <div id="transition"></div>
+  </body>
+</html>
+```
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  background-color: yellow;
+  transition-property: width;
+  transition-duration: 3s;
+  transition-timing-function: ease;
+  transition-delay: 1s;
+}
+
+#transition:hover {
+  width: 600px;
+}
+```
+
+<br />  
+
+### 가. transition-property
+
+- 변화를 주려는 속성
+- 속성을 쉼표(,)로 구분하여 여러 개 지정 가능
+- 변화를 주는 속성이 많을 때는 all을 속성값으로 입력
+
+<br />  
+
+### 나. transtion-duration
+
+- 변화가 일어나는 시간
+- 기본값은 0s
+- <strong>transition- 속성을 적용하기 위해 꼭 명시해야 함!</strong>
+
+<br />  
+
+### 다. transition-timing-function
+
+- 변화하는 속도를 어떻게 가속시키고 감속시킬지
+  > linear : 시작~종료, 같은 속도로 변화  
+  > ease : 초반은 느리게, 중반을 빠르게, 종반은 느리게  
+  > ease-in : 초반은 느리게  
+  > ease-out : 후반은 느리게  
+  > ease-in-out : 시작, 종료 지점의 변화가 느리게
+
+<br />
+
+### 라. transition-delay
+
+- 변화가 시작되는 시간을 지연시킬 때 사용
+- 기본값은 0s
+
+<br />
+
+### 마. transition:hover
+
+- **transition 영역에 마우스 포인터를 올렸을 때**
+- :hover 는 마우스 포인터를 올렸을 때 라는 의미를 담은 가상 클래스
+
+<br />
+
+### + 주석과 함께 한 번에 표현하면?
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  background-color: yellow;
+
+  /* 변화 과정을 보여 주고자 하는 속성은 width */
+  transition-property: width;
+
+  /* width 300px->600px 변화하는 데 걸리는 시간은 3초 */
+  transition-duration: 3s;
+
+  /* 느리게, 빠르게, 느리게 진행 */
+  transition-timing-function: ease;
+
+  /* 마우스 포인터를 올렸을 때 1초 후에 변화 시작 */
+  transition-delay: 1s;
+}
+
+/* #transition에 마우스 포인터를 올렸을 때
+        width 속성값이 600px로 변화 */
+#transition:hover {
+  width: 600px;
+}
+```
+
+<br />
+
+### + 한 줄로 할 때에는?
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  transition-property: width;
+  transition-duration: 3s;
+  transition-timing-function: ease;
+  transition-delay: 1s;
+}
+```
+
+위의 transition 표현은 아래 표현처럼 한 줄로 표현할 수 있다.
+
+```css
+*css파일 #transition {
+  width: 300px;
+  height: 300px;
+  transition: width 3s ease 1s;
+}
+```
+
+먼저 나오는 숫자(3s)는 duration, 나중에 나오는 숫자(1s)는 delay를 의미

@@ -1,0 +1,130 @@
+---
+title: "[CSS] 선택자(Selector)의 유형"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS]
+
+date: 2022-02-13T16:34
+last_modified_at: 2022-02-13T17:03
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 참고 내용
+
+이전에 CSS Selector에 관한 포스트(`[링크](https://orchemi.github.io/css%20basic/CSS-DAY-4_2/)`)를 작성했는데, 보충할 내용이 있어 추가 컨텐츠를 다룬다.
+
+<br />
+
+## 선택자
+
+### 기본 선택자
+
+- 전체 선택자, 요소 선택자
+- class, id, element
+- id 선택자는 여러 번 사용해도 동작하지만, 하나만 사용하는 것을 권장
+
+<br />
+
+### 결합자(Combinators)
+
+#### 자손 결합자
+
+selectorA 하위의 모든 selectorB 요소
+
+```css
+div span {
+  color: red;
+}
+```
+
+div 태그 내의 모든 span 태그에 대해 적용
+
+<br />
+
+#### 자식 결합자
+
+- selectorA 바로 아래의 selectorB 요소
+- 바로 한 단계에만 적용
+
+```css
+div > span {
+  color: red;
+}
+```
+
+div 태그의 바로 자식 태그들 중 span 태그에만 적용
+
+<br />
+
+#### 일반 형제 결합자
+
+- `A ~ B {}` 의 형식으로 사용
+- A의 형제 요소 중 B인 요소를 모두 선택
+
+```css
+p ~ span {
+  color: red;
+}
+```
+
+이럴 경우 p 태그를 발견하면 이와 형제 태그중 span 태그에만 `color: red;` 적용
+
+<br />
+
+#### 인접 형제 결합자
+
+- `A + B {}` 의 형식으로 사용
+- A의 바로 다음 형제가 B라면 속성 적용(인접)
+
+```css
+p + span {
+  color: red;
+}
+```
+
+이럴 경우 p 태그 직후의 형제 태그가 span이라면 `color: red;`를 적용
+
+<br />
+
+### 의사 클래스/요소(Pseudo Class)
+
+- 링크, 동적 의사 클래스
+- 구조적 의사 클래스, 기타 의사 클래스, 의사 엘리먼트, 속성 선택자
+
+<br />
+
+### 적용 우선순위(Cascading Order)
+
+```
+1. 중요도(Importance) : !important
+- 되도록 사용을 권하지 않는다.
+
+2. 우선 순위(Specificity)
+- 인라인 > id > class,속성,pseudo-class > 요소, pseudo-element
+
+3. CSS 파일 로딩 순서(external)
+```
+
+<br />
+
+### CSS 상속
+
+- 상속 되는 것
+- 일반적으로 Text 관련 요소이다.
+- font, color, text-align, opacity, visibility
+
+<br />
+
+- 상속 되지 않는 것
+- 일반적으로 레이아웃과 관련되어있다.
+- Box model 관련 요소 : width, height, margin, padding, border, display
+- position 관련 요소 : position, top/right/bottom/left, z-index

@@ -1,0 +1,124 @@
+---
+title: "[CSS] CSS와 적용방법의 종류"
+
+categories:
+  - CSS
+
+tags:
+  - [FE Language, CSS, 모두의HTML5&CSS3]
+
+date: 2021-07-05T23:10
+last_modified_at: 2022-02-07T23:20
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## CSS란?
+
+- Cascading Style Sheet의 약자
+- 디자인 영역을 담당하는 언어
+
+<br />
+
+---
+
+## CSS 구성 요소
+
+```css
+디자인을 적용할 HTML 영역 {
+  속성: 영역값;
+}
+```
+
+- 디자인을 적용할 HTML 영역을 선택하고 중괄호({}) 안에 어떤 디자인을
+  적용할지 속성과 속성값을 지정한 후 세미콜론(;)으로 마무리
+- 세미콜론(;)은 CSS 문장에서 마침표 역할
+- 예시
+
+```css
+가방 {
+  너비: 30cm;
+  높이: 20cm;
+  색상: 빨간색;
+}
+```
+
+<br />
+
+---
+
+## HTML 문서에서 CSS 디자인 효과를 적용
+
+### 가. 인터널 방식
+
+- HTML 문서 안에 `<style>` 태그를 사용하여 적용하는 방식
+
+```html
+<head>
+  <title>인터널 방식의 CSS</title>
+  <!--<head> 태그 안에 <style> 태그를 추가하여 디자인-->
+
+  <style>
+    h1 {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello World</h1>
+</body>
+```
+
+<br />
+
+### 나. 인라인 방식
+
+- HTML 태그에 직접 style 속성을 추가하여 적용하는 방식
+
+```html
+<head>
+  <title>인터널 방식의 CSS</title>
+</head>
+<body>
+  <!--HTML 태그 안에 style 속성을 추가하여 적용하는 방식-->
+  <h1 style="background-color: yellow;">Hello World</h1>
+</body>
+```
+
+<br />
+
+### 다. 익스터널 방식
+
+- 인터널/인라인 방식은 HTML과 CSS 언어가 섞여쓰여서 가독성이 떨어짐
+- 이 문제를 해결하기 위해 **HTML 문서와 CSS 문서를 따로 분리하고 이를 연동하는 방식**
+- 유지 보수 작업을 고려한다면 익스터널 방식으로 웹 사이트를 제작하는 것이 좋음
+
+<br />
+
+- HTML 문서와 CSS 문서를 연동하려면 **`<head>` 태그 안에 `<link>` 태그 작성**
+- `<link>` 태그의 href 속성값에는 CSS문서명.css 문서의 경로를 입력  
+  ※ 같은 폴더 안에 있다면 문서명.확장자 만 적어주면 됨
+
+```html
+<head>
+  <title>익스터널 방식의 활용</title>
+  <!--<link> 태그를 사용하여 외부 CSS 파일을 연동하는 방식-->
+  <link rel="stylesheet" href="CSS문서명.css" />
+</head>
+```
+
+이후 아래와 같은 CSS문서를 제작하면,
+
+```css
+ex) CSS문서명.css
+h1 {
+  font-style: italic;
+}
+```
+
+html 문서의 `<h1>` 태그 속의 문장이 이탤릭체로 바뀜
