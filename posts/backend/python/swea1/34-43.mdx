@@ -1,0 +1,490 @@
+---
+title: "[Python] 함수의 기초 - 연습문제 1~10"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-01T18:04
+last-modified-at: 2022-01-01T18:04
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #34 ~ #43](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 반목문을 이용해 단어의 순서를 거꾸로 해 반환하는 함수를 작성하고
+그 함수를 이용해 회문(앞뒤 어느 쪽에서도 같은 단어, 말) 여부를 판단하는 코드를 작성하십시오.
+
+입력
+
+```python
+eye
+```
+
+출력
+
+```python
+eye
+입력하신 단어는 회문(Palindrome)입니다.
+```
+
+### Sol
+
+```python
+word = input()
+result = ""
+
+for i in word:
+    result = i + result
+
+print(result)
+
+if word == result:
+    print("입력하신 단어는 회문(Palindrome)입니다.")
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147844768-1feb55b7-856e-49c6-8138-977e8c163166.png)`
+
+<br />
+
+## 연습문제 #2
+
+다음과 같이 사용자 2명으로부터 가위, 바위, 보를 입력 받아
+가위, 바위, 보 규칙이 정의된 함수를 이용해 승패를 결정하는 코드를 작성하십시오.
+
+### 문제
+
+입력
+
+```python
+홍길동
+이순신
+가위
+바위
+```
+
+출력
+
+```python
+바위가 이겼습니다!
+```
+
+### Sol
+
+가위바위보 매커니즘을 하드코딩이 아닌 논리적으로 구현할 수 있는 방법이 없을까 다시 고민해보았지만, 명쾌한 해답은 찾을 수 없었다.
+
+```python
+def 가위바위보(man1, man2):
+    if man1 == man2:
+        print("비겼습니다!")
+    elif man1 == "가위":
+        if man2 == "바위":
+            print("바위가 이겼습니다!")
+        elif man2 == "보":
+            print("가위가 이겼습니다!")
+    elif man1 == "바위":
+        if man2 == "가위":
+            print("바위가 이겼습니다!")
+        elif man2 == "보":
+            print("보가 이겼습니다!")
+    elif man1 == "보":
+        if man2 == "바위":
+            print("보가 이겼습니다!")
+        elif man2 == "가위":
+            print("가위가 이겼습니다!")
+
+player1 = input()
+player2 = input()
+man1 = input()
+man2 = input()
+
+가위바위보(man1, man2)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147844868-9f272334-87cb-414f-b6be-615d1852c069.png)`
+
+<br />
+
+## 연습문제 #3
+
+### 문제
+
+소수를 검사하는 함수를 정의하고, 다음의 결과와 같이 사용자가 입력한 숫자가
+소수인지를 판단하는 프로그램을 작성하십시오.
+소수일 경우 "소수입니다." 출력, 아닐 경우 "소수가 아닙니다." 출력
+
+입력
+
+```python
+13
+```
+
+출력
+
+```python
+소수입니다.
+```
+
+### Sol
+
+```python
+num = int(input())
+
+def IsPrimeNumber(number):
+    cnt = 0
+
+    for i in range(1, number + 1):
+        if number % i == 0:
+            cnt += 1
+
+    if cnt == 2:
+        print("소수입니다.")
+    else:
+        print("소수가 아닙니다.")
+
+IsPrimeNumber(num)
+```
+
+논리 자체는 모두 앞선 강의들의 연습문제에서 고안했던 것이다. 이를 함수에 담아 출력하는지의 여부가 이전 연습문제 섹터에서와의 차이이다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147844959-cf02a539-632b-448f-836a-7d9752d41527.png)`
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+다음의 결과와 같이 피보나치 수열의 결과를 생성하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+10
+```
+
+출력
+
+```python
+[1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+```
+
+### Sol
+
+피보나치 수열은 n[i+2] = n[i] + n[i+1]의 규칙을 따른다. 때문에 초기화한 리스트에 3개의 변수를 이용해 값을 옮겨담으며 진행하면 되겠다.
+
+```python
+a = 1
+b = 0
+c = 0
+iteration = int(input())
+lst = []
+
+for i in range(0, iteration):
+    c = a + b
+    a = b
+    b = c
+    lst.append(c)
+
+print(lst)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147845175-24edb535-8d6c-448f-9fd7-a4d9f2ae4aef.png)`
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+리스트의 항목 중 유일한 값으로만 구성된 리스트를 반환하는 함수를 정의하고
+이 함수를 이용해 리스트의 중복 항목을 제거하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+[1, 2, 3, 4, 3, 2, 1]
+[1, 2, 3, 4]
+```
+
+### Sol
+
+```python
+lst_result = []
+lst_target = [1, 2, 3, 4, 3, 2, 1]
+
+
+def DuplicationRemove():
+    for i in lst_target:
+        if not (i in lst_result):
+            lst_result.append(i)
+
+    print(lst_result)
+
+
+print(lst_target)
+DuplicationRemove()
+```
+
+대상 list(lst_target)에서 원소를 하나씩 뽑아서 출력 리스트(lst_result)에 넣으면 될 것 같다. 이때 최초 lst_result는 초기화하여 빈 리스트로 만들고 조건문을 활용해서 리스트에 원소를 하나씩 넣다가 이미 있는 원소라면 넣는 작업을 하지 않고 넘어가는 것이다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147845319-13966297-acbd-488b-bb03-2a212c51ee1a.png)`
+
+<br />
+
+## 연습문제 #6
+
+### 문제
+
+정렬된 숫자를 가진 리스트에서 특정 숫자를 찾는 함수를 정의하고,
+이 함수를 이용해 임의의 숫자의 포함 여부를 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+[2, 4, 6, 8, 10]
+5 => False
+10 => True
+```
+
+### Sol
+
+```python
+num1 = 5
+num2 = 10
+lst = [2, 4, 6, 8, 10]
+
+
+def IsInList(num):
+    isIn = False
+
+    for i in lst:
+        if num == i:
+            isIn = True
+            break
+
+    print(str(num) + " => " + str(isIn))
+
+print(lst)
+IsInList(num1)
+IsInList(num2)
+```
+
+제시된 리스트는 lst라는 리스트형 변수에 참조하고, 조사하고 싶은 수를 num1, num2 변수에 넣어 리스트의 각각의 원소들과 대조해본다. isIn 이라는 bool형 변수를 하나 만들었다. 기본값은 False로 두고, 리스트의 각 원소들과 조사하는 수를 계속 대조하다가 일치한다면 isIn 변수를 True로 바꿔주는 것이다.
+
+for문을 모두 반복한 뒤에는 원하는 양식대로 출력해준다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147845428-dd5faacf-cfc5-4cb4-b4e6-a7d52ee77e02.png)`
+
+전부터 자꾸 출력에 list를 넣어야 한다는 걸 잊고 코드를 통해 도출한 출력값만 넣어서 어이 없이 fail을 한 번씩 한다. 조심 또 조심하자!
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+다음과 같이 팩토리얼을 구하는 함수를 정의해 입력된 숫자에 대한
+팩토리얼 값을 구하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+5
+```
+
+출력
+
+```python
+120
+```
+
+### Sol
+
+```python
+num = int(input())
+
+
+def Factorial(a):
+    result = 1
+
+    while a >= 1:
+        result *= a
+        a -= 1
+
+    print(result)
+
+
+Factorial(num)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147845546-de25adc1-b4ae-4644-9ffd-0edf12363fe1.png)`
+
+<br />
+
+## 연습문제 #8
+
+### 문제
+
+숫자에 대해 제곱을 구하는 함수를 정의히고, 다음과 같이 숫자를 콤마(,)로 구분해 입력하면
+정의한 함수를 이용해 제곱 값을 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+2, 3
+```
+
+출력
+
+```python
+square(2) => 4
+square(3) => 9
+```
+
+", " 을 기준으로 잘라내 리스트에 저장하는 `.split()` 함수를 사용한다.
+
+### Sol
+
+```python
+data = input()
+data_list = data.split(", ")
+
+
+def square(num):
+    print("square({0}) => {1}".format(num, num ** 2))
+
+
+for i in data_list:
+    i_num = int(i)
+    square(i_num)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147847253-18f92bc8-f4ec-4b27-af51-d0043be81e31.png)`
+
+<br />
+
+## 연습문제 #9
+
+### 문제
+
+인자로 전달된 두 개의 문자열 중 길이가 더 긴 문자열을 출력하는 함수를 정의하고
+결과를 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+one, three
+```
+
+출력
+
+```python
+three
+```
+
+### Sol
+
+```python
+data = input()
+data_list = data.split(", ")
+
+
+def LongString(lst):
+
+    max_length = 0
+    temp = ""
+
+    for i in lst:
+        if max_length < len(i):
+            max_length = len(i)
+            temp = i
+
+    print(temp)
+
+
+LongString(data_list)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147847382-fb253306-fcce-41f9-a094-e4c7b4de9b7d.png)`
+
+<br />
+
+## 연습문제 #10
+
+### 문제
+
+인자로 전달된 숫자를 이용해 카운트다운하는 함수 countdown을 정의하고,
+이 함수를 이용하여 countdown(0), countdown(10)을 순서대로 실행하십시오.
+0보다 작거나 같은 인자가 전달되었을 경우 "카운트다운을 하려면 0보다 큰 입력이 필요합니다."를 출력하십시오.
+
+출력
+
+```python
+카운트다운을 하려면 0보다 큰 입력이 필요합니다.
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+```
+
+### Sol
+
+```python
+def countdown(sec):
+    if sec <= 0:
+        print("카운트다운을 하려면 0보다 큰 입력이 필요합니다.")
+    else:
+        while sec >= 1:
+            print(sec)
+            sec -= 1
+
+
+countdown(0)
+countdown(10)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147847475-f8d2765d-8129-4f0b-9d2e-78eb5c9fee41.png)`

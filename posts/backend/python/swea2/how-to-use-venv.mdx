@@ -1,0 +1,94 @@
+---
+title: "[Python] 파이썬 가상환경 venv 사용법"
+excerpt: "파이썬 가상환경 사용법 및 협업 방법에 대해 알아보자."
+
+categories:
+  - Python SWEA2
+
+tags:
+  - [BE Language, Python Lang, Python SWEA2, venv]
+
+author_profile: true
+
+date: 2022-01-19T17:45
+last-modified-at: 2022-01-19T17:45
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 파이썬 가상환경 폴더
+
+### 가상환경 폴더 제작
+
+가상환경과 관련된 정보를 담을 폴더를 만들고, 해당 폴더까지 git bash의 경로를 이동시킨다. 혹은 해당 폴더를 우클릭한 뒤 바로 git bash를 실행시켜도 된다.
+
+이후 아래의 명령어를 입력한다.
+
+```
+$ python -m venv venv
+```
+
+첫 번째 `venv`는 가상환경을 만드는 명령어이기 때문에 꼭 써야하지만, 두 번째 `venv`는 그냥 가상환경 폴더 이름이다. 하지만 관용적으로 venv를 사용하니 그냥 venv를 쓰면 된다.
+
+위의 명령어를 입력하면 가상환경 폴더 내에 venv 폴더가 생기고, 그 폴더 내에 `Include`, `Lib`, `Scripts` 폴더가 생긴다.
+
+<br />
+
+### 가상환경 활성화
+
+아래의 명령어를 git bash 창에 입력하여 활성화하면 git bash prompt에 (venv) 표시를 확인할 수 있다.
+
+```
+$source venv/Scripts/activate
+```
+
+<br />
+
+### 가상환경 비활성화
+
+가상환경에서의 작업을 끝내려면 아래의 명령어를 입력하면 된다.
+
+```
+$ deactivate
+```
+
+<br />
+
+## pip 정보 공유를 통한 협업 방법
+
+협업을 할 때 pip의 버전이 다르면 한 PC에서는 되던 기능이 다른 PC에서는 되지 않는 등 여러 고난을 겪을 수 있다. 때문에 협업을 하는 경우 해당 프로젝트에 대한 가상환경 폴더를 신설한 뒤, pip 버전 정보를 통일해주는 것이 좋다.
+
+<br />
+
+### pip 정보 확인
+
+```
+$ pip freeze
+```
+
+현재 설치된 pip 이름과 버전 정보를 출력한다.
+
+<br />
+
+### pip 정보 저장
+
+```
+$ pip freeze > requirements.txt
+```
+
+pip freeze를 통해 터미널에 출력되었던 pip 목록들을 txt 파일에 저장한다.
+
+`>`에 대해 간단히 설명하면 `$pip freeze` 를 통해 화면에 출력되어야 하는 내용을 `> requirements.txt` 를 덧붙임으로써 requirements.txt라는 문서에 저장하는 것이다.
+
+<br />
+
+### requirements.txt 설치
+
+동료 협업자가 pip 정보가 담긴 requirements.txt를 사용하는 방법은 다음과 같다. 역시 가상환경 폴더 경로의 git bash에서 아래의 명령어를 입력하면 된다.
+
+```
+$ python -m pip install -r requirements.txt
+```

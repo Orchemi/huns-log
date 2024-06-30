@@ -1,0 +1,676 @@
+---
+title: "[Django] REST API 2 - N:M"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-04-22T12:00
+last_modified_at: 2022-04-22T12:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+
+```python
+# articles/models.py
+
+class Card(models.Model):
+    articles = models.ManyToManyField(Article, related_name='cards')
+    name = models.CharField(max_length=100)
+```
+
+<br />
+
+### serializers 분리
+
+```python
+class ArticleListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Article
+        fields = ('id', 'title',)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('article',)
+
+
+class ArticleSerializer(serializers.ModelSerializer):
+    # comment_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comment_set = CommentSerializer(many=True, read_only=True)
+    comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
+
+    class Meta:
+        model = Article
+        fields = '__all__'
+```
+
+- serializer directory를 만들어 모델별 각각의 python file로 나누고, serializer를 모델마다 옮기기
+- serializer의 model 경로와 view의 serializer 경로 재설정에 주의
+- 같은 파일 내에 있던 serializer를 다른 serializer 내에서 사용했던 경우 import를 통해 가져와서 사용
+
+```python
+# articles/views.py
+
+# from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer
+from .serializers.article import ArticleListSerializer, ArticleSerializer
+from .serializers.comment import CommentSerializer
+from .serializers.card import CardSerializer
+from .models import Article, Comment, Card
+```
+
+<br />
+
+```python
+# articles/views.py
+@api_view(['GET'])
+def card_list(request):
+    cards = get_list_or_404(Card)
+    serializer = CardSerializer(cards, many=True)
+    return Response(serializer.data)
+```
+
+<br />
+
+```python
+# articles/serializers/article.py
+from .comment import CommentSerializer
+from .card import CardSerializer
+
+class ArticleSerializer(serializers.ModelSerializer):
+    # comment_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comment_set = CommentSerializer(many=True, read_only=True)
+    comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
+    cards = CardSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Article
+        fields = '__all__'
+```
+
+<br />
+
+```python
+# articles/serializers/card.py
+
+from rest_framework import serializers
+from ..models import Card
+
+
+class CardSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Card3
+        fields = '__all__'
+```
+
+<br />
+
+```python
+# articles/urls.py
+from django.urls import path
+from . import views
+
+
+urlpatterns = [
+    path('articles/', views.article_list),
+    path('articles/<int:article_pk>/', views.article_detail),
+    path('articles/<int:article_pk>/comments/', views.comment_create),
+    path('comments/', views.comment_list),
+    path('comments/<int:comment_pk>/', views.comment_detail),
+    path('cards/', views.card_list),
+    path('cards/<int:card_pk>/', views.card_detail),
+    path('<int:card_pk>/register/<int:article_pk>/', views.register),
+]
+
+```
+
+```python
+# articles/views.py
+@api_view(['GET', 'DELETE', 'PUT'])
+def card_detail(request, card_pk):
+    card = get_object_or_404(Card, pk=card_pk)
+    
+    if request.method == 'GET':
+        serializer = CardSerializer(card)
+        return Response(serializer.data) 
+
+    elif request.method == 'DELETE':
+        pass
+
+    elif request.method == 'PUT':
+        pass
+
+
+@api_view(['POST'])
+def register(request, card_pk, article_pk):
+    
+    card = get_object_or_404(Card, pk=card_pk)
+    article = get_object_or_404(Article, pk=article_pk)
+    
+    if card.articles.filter(pk=article_pk).exists():
+        card.articles.remove(article)
+    else:
+        card.articles.add(article)
+    serializer = CardSerializer(card)
+    return Response(serializer.data)
+```
+
+card에 article 추가/삭제
+
+<br />
+
+
+## drf-yasg 라이브러리
+
+- Yet another Swagger generator
+- API 설계를 도와주는 라이브러리
+
+```bash
+$ pip install -U drf-yasg
+```
+
+<br />
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    ...
+    'django.contrib.staticfiles',
+    'drf_yasg',
+]
+```
+
+<br />
+
+```python
+# articles/views.py
+...
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API", # 출력되는 부분의 제목
+        default_version='v1',
+
+        # 여기부터는 선택 인자. 없어도 출력
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
+
+urlpatterns = [
+    ...
+    path('swagger/', schema_view.with_ui('swagger')),
+]
+```
+
+<br />
+
+## Fixtures
+
+### How to provide initial data for models
+
+- 앱을 처음 설정할 때 미리 준비된 데이터로 DB를 미리 채우는 것이 필요한 상황이 있음
+- 마이그레이션 또는 fixtures와 함께 초기 데이터 제공
+
+<br />
+
+### fixtures
+
+- DB의 serialized된 내용을 포함하는 파일 모음
+- django가 fixtures 파일을 찾는 경로 : **app/fixtures/**
+
+<br />
+
+### dumpdata
+
+- 응용 프로그램과 관련된 데이터베이스의 모든 데이터를 표준 출력으로 출력
+
+> DB 모델마다 fixture json으로 저장
+
+```bash
+$ python manage.py dumpdata --indent 4 articles.article > articles.json
+$ python manage.py dumpdata --indent 4 articles.comment > comments.json
+$ python manage.py dumpdata --indent 4 accounts.user > users.json
+```
+
+- indent option을 쓰지 않으면 json이 한 줄로 만들어져서 해석이 어려워짐
+- 임의로 바꾸면 안 된다!
+
+<br />
+
+> 받아와서 DB 반영
+
+```bash
+$ python manage.py loaddata users.json
+
+$ python manage.py loaddata accounts/users.json articles/comments.json articles/articles.json
+```
+
+- 한 번에 여러 개도 가능
+- 경로는 상관 없음
+- fixtures 폴더 따로 만들고 하위 app_name으로 폴더에 넣으면 namespace 따로 설정 가능
+- django는 fixtures 폴더까지 인식
+
+<br />
+
+## Improve query
+
+### querysets are lazy
+
+- 쿼리셋은 게으르다.
+- 쿼리셋을 만드는 작업에는 DB 작업이 포함되지 않음
+- 하루종일 필터를 함께 쌓을 수 있으며(stack filters), Django는 쿼리셋이 **평가(evaluate)** 될 때까지 쿼리를 실행하지 않음
+- DB에 쿼리를 전달하는 일이 웹 App을 느려지게 하는 주범
+
+<br />
+
+```python
+articles = Article.objects.filter(title__startswith='What')
+articles = articles.filter(created_at__lte=datetime.date.today())
+articles = articles.exclude(content__icontains='food')
+print(articles)
+```
+
+print(articles)에서 단 한 번 전달
+
+<br />
+
+### 평가(evaluated)
+
+- 쿼리셋에 해당하는 DB의 레코드들을 실제로 가져오는 것
+- == hit, access, Queryies database
+- 평가된 모델들은 쿼리셋의 내장 캐시(cache)에 저장
+- 덕분에 우리가 쿼리셋을 다시 순회하더라도 똑같은 쿼리를 DB에 다시 전달하지 않음
+
+<br />
+
+### 캐시(cache)
+
+- 데이터나 값을 미리 복사해 놓는 임시 장소
+- 사용
+  - 캐시의 접근 시간에 비해 "원래 데이터를 접근하는 시간이 오래 걸리는 경우"
+  - "값을 다시 계산하는 시간을 절약하고 싶은 경우"
+- 캐시에 데이터를 미리 복사해놓으면 계산이나 접근 시간 없이 더 빠른 속도로 데이터에 접근
+- 시스템의 효율성을 위해 여러 분야에서 두루 사용
+
+<br />
+
+### 쿼리셋이 평가되는 시점
+
+> Iteration
+
+- QuerySet은 반복 가능하며 처음 반복 할 때 DB 쿼리 실행
+
+```python
+for article in Article.objects.all():
+    print(article.title)
+```
+
+- 쿼리셋이 한 번 계산되면 어딘가에 저장한 뒤, 그걸 돌리는 거
+
+<br />
+
+> bool()
+
+- bool() 또는 if문 사용과 같은 bool 컨텍스트에서 QuerySet 테스트
+- 결과가 하나 이상 존재하는지 확인하기만 한다면 .exist() 사용이 효율적
+
+```python
+if Article.objects.filter(title='Test'):
+    print('hello')
+```
+
+<br />
+
+> 기타
+
+- Pickling/Caching, Slicing, repr(), len(), list() 등
+
+<br />
+
+### 캐시와 쿼리셋
+
+- 각 쿼리셋에는 DB 엑세스를 최소화하는 '캐시'가 포함
+
+1. 새로운 쿼리셋이 만들어지면 캐시는 비어있음
+2. 쿼리셋이 처음으로 평가되면 DB 쿼리가 발생
+  - Django는 쿼리 결과를 쿼리셋의 캐시에 저장하고 명시적으로 요청된 결과 반환
+  - 이후 쿼리셋 평가는 캐시된 결과를 재사용
+
+<br />
+
+```python
+# 나쁜 예
+print([article.title for article in Article.objects.all()])
+print([article.content for article in Article.objects.all()])
+
+# 좋은 예
+queryset = Article.objects.all()
+print([article.title for article in queryset])
+print([article.content for article in queryset])
+```
+
+<br />
+
+> 쿼리셋이 캐시되지 않는 경우
+
+쿼리셋 객체에서 특정 인덱스를 반복적으로 가져오면 매번 DB를 쿼리
+
+```python
+# Bad examples
+queryset = Article.objects.all()
+print(queryset[5]) # Queries the database
+print(queryset[5]) # Queries the database again
+
+
+# Good examples : 쿼리셋이 이미 평가
+[article for article in queryset] # Queries the database
+print(queryset[5]) # Uses cache
+print(queryset[5]) # Uses cache
+```
+
+<br />
+
+### 쿼리셋 캐시 관련
+
+> with 템플릿 태그
+
+- 쿼리셋의 캐싱 동작을 사용하여 더 간단한 이름으로 복잡한 변수를 캐시
+
+```html
+{% with followers=person.followers.all followings=person.followings.all %}
+  <div>
+    팔로워 : {{ followers|length }} / 팔로우 : {{ followings|length }}
+  </div>
+{% endwith %}
+```
+
+<br />
+
+> iterator() 사용
+
+- 객체가 많을 때 쿼리셋의 캐싱 동작으로 인해 많은 양의 메모리가 사용될 때 사용
+
+<br />
+
+## 필요하지 않은 것을 검색하지 않기
+
+> .count()
+
+- 카운트만 원하는 경우
+- len(queryset) 대신 QuerySet.count() 사용
+
+<br />
+
+> .exist()
+
+- 최소한 하나의 결과가 존재하는지 확인
+- if queryset 대신 QuerySet.exists() 사용
+- 캐시된 커리셋을 사용하므로 DB에서 실행하지 않는다.
+
+<br />
+
+> 어 쿼리셋이 너무 크면 캐시 자체가 문제되는 거 아닌가요?
+
+<br />
+
+### iterator()
+
+- 데이터 캐싱을 한 번에 메모리에 올리는 것이 아님
+- 데이터를 작은 덩어리로 쪼개어 가져오고
+- 사용한 레코드는 메모리에서 지움
+
+<br />
+
+> 쿼리셋이 엄청나게 큰 경우 if문 자체도 문제가 될 수 있다.
+
+안일한 최적화에 주의
+
+<br />
+
+### Annotate
+
+> 개선 전
+
+```python
+# articles/views.py
+
+def index_1(request):
+    articles = Article.objects.order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_1.html', context)
+```
+
+```html
+<!-- articles/index-1.html -->
+{% for article in articles %}
+  <p>제목 : {{ article.title }}</p>
+  <p>댓글개수 : {{ article.comment_set.count }}</p>
+  <hr>
+{% endfor %}
+```
+
+- article마다 실행하는 것
+
+<br />
+
+> 개선 후
+
+```python
+from django.db.models import Count
+
+def index_1(request):
+    # articles = Article.objects.order_by('-pk')
+    articles = Article.objects.annotate(Count('comment')).order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_1.html', context)
+```
+
+```html
+<!-- articles/index-1.html -->
+{% for article in articles %}
+  <p>제목 : {{ article.title }}</p>
+  <!-- <p>댓글개수 : {{ article.comment_set.count }}</p> -->
+  <p>댓글개수 : {{ article.comment__count }}</p>
+  <hr>
+{% endfor %}
+```
+
+<br />
+
+## 한 번에 모든 것을 검색(1:N, M:N)
+
+> select_related()
+
+- 1:1 또는 1:N 참조 관계에서 사용
+- DB에서 INNER JOIN을 활용
+
+<br />
+
+> prefetch_related()
+
+- M:N 또는 1:N 역참조 관계에서 사용
+- DB가 아닌 Python을 통한 JOIN
+
+<br />
+
+### select_related()
+
+- SQL의 INNER JOIN을 실행하여 테이블의 일부를 가져오고, SELECT FROM에서 관련된 필드들을 가져옴
+- 단, single-valued relationships 관계(foreign key and one-to-one)에서만 사용 가능
+- 게시글의 사용자 이름까지 출력해보기
+
+<br />
+
+> 개선 전
+
+```python
+def index_2(request):
+    articles = Article.objects.order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_2.html', context)
+```
+
+```html
+<!-- articles/index-2.html -->
+{% for article in articles %}
+  <h3>작성자 : {{ article.user.username }}</h3>
+  <p>제목 : {{ article.title }}</p>
+  <hr>
+{% endfor %}
+```
+
+username을 찍어보며 query를 계속 반복하며 재평가
+
+<br />
+
+> 개선 후
+
+```python
+# articles/views.py
+
+def index_2(request):
+    # articles = Article.objects.order_by('-pk')
+    articles = Article.objects.select_related('user').order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_2.html', context)
+```
+
+for 문에서 한 번에 평가가 되고, 평가될 때 article.user가 포함
+
+<br />
+
+### prefetch_related()
+
+- selected_related와 달리 SQL의 JOIN을 실행하지 않고, python에서 joining을 실행
+- selected_related가 지원하는 single-valued relationships 관계에 더해, selected_related를 사용하여 수행할 수 없는 M:N and 1:N 역참조 관계에서 사용 가능
+
+> 댓글 목록을 모두 출력해보자
+
+<br />
+
+> 개선 전
+
+```python
+# articles/views.py
+def index_3(request):
+    articles = Article.objects.order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_3.html', context)
+```
+
+```html
+<!-- articles/index-3.html -->
+{% for article in articles %}
+  <p>제목 : {{ article.title }}</p>
+  <p>댓글 목록</p>
+  {% for comment in article.comment_set.all %}
+    <p>{{ comment.content }}</p>
+  {% endfor %}
+  <hr>
+{% endfor %}
+```
+
+<br />
+
+> 개선 후
+
+```python
+# articles/views.py
+def index_3(request):
+    # articles = Article.objects.order_by('-pk')
+    articles = Article.objects.prefetch_related('comment_set').order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_3.html', context)
+```
+
+article을 조회하며 comment_set까지 한 번에 조회한다.
+
+<br />
+
+### 복합활용
+
+> 댓글과 해당 댓글을 작성한 사용자 이름 출력
+
+N:1의 참조, 1:N의 역참조를 반복문 안에서 계속 반복
+
+<br />
+
+> 개선 전
+
+```python
+def index_4(request):
+    articles = Article.objects.order_by('-pk')
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_4.html', context)
+```
+
+```html
+<!-- articles/index-4.html -->
+{% for article in articles %}
+  <p>제목 : {{ article.title }}</p>
+  <p>댓글 목록</p>
+  {% for comment in article.comment_set.all %}
+    <p>{{ comment.user.username }} : {{ comment.content }}</p>
+  {% endfor %}
+  <hr>
+{% endfor %}
+```
+
+<br />
+
+> 개선 후
+
+```python
+from django.db.models import Prefetch
+
+def index_4(request):
+    # articles = Article.objects.order_by('-pk')
+    articles = Article.objects.prefetch_related('comment_set').order_by('-pk')
+    articles = Article.objects.prefetch_related(
+        Prefetch('comment_set', queryset=Comment.objects.select_related('user'))
+    ).order_by('-pk')
+    
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index_4.html', context)
+```
+
+재평가 없이 한 번에 가져오는 것

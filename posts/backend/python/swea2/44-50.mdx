@@ -1,0 +1,398 @@
+---
+title: "[Python] 객체지향 - 연습문제 1~7"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-08T15:42
+last-modified-at: 2022-01-08T15:42
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #44 ~ #50](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 국어, 영어, 수학 점수를 입력받아 합계를 구하는 객체지향 코드를 작성하십시오.
+이 때 학생 클래스의 객체는 객체 생성 시 국어, 영어, 수학 점수를 저장하며, 총점을 구하는 메서드를 제공합니다.
+
+입력
+
+```python
+89, 90, 100
+```
+
+출력
+
+```python
+국어, 영어, 수학의 총점: 279
+```
+
+### Sol
+
+```python
+class Student:
+
+    total = 0
+    scores = []
+    scores_dict = {}
+
+    def __init__(self):
+        scores = [int(i) for i in input().split(", ")]
+
+        self.kor = scores[0]
+        self.eng = scores[1]
+        self.mat = scores[2]
+
+    def sum_score(self):
+        total = self.kor + self.eng + self.mat
+        print("국어, 영어, 수학의 총점: {0}".format(total))
+
+
+a = Student()
+a.sum_score()
+```
+
+엄청나게 간단해보이는데 꽤나 애를 먹었다. 문제의 조건처럼 객체가 생성 시 점수를 저장하게 하기 위해서, input()과 관련된 코드를 class의 `__init__(self)`에 넣었고, self 이외의 다른 매개변수를 안 넣게 하는 코드를 생각하기가 어려웠다.
+
+또한 점수의 input() 값이 리스트가 아니라 텍스트로 들어오기 때문에 split() 함수를 이용해서 점수를 리스트화하여 구분했으며, 이 각각을 점수 변수에 넣고 합계를 구하는 sum_score() 메서드에서 이를 더하는 코드를 작성하여 출력까지 하였다.
+
+매개변수를 안 넣게 하는 것이 어려웠다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148632619-ca6979ce-4c4f-4162-8ae8-eeaaf03d00eb.png)`
+
+<br />
+
+## 연습문제 #2
+
+### 문제
+
+국적을 출력하는 printNationality 정적 메서드를 갖는 Korean 클래스를 정의하고
+메서드를 호출하는 코드를 작성해봅시다.
+
+출력
+
+```python
+대한민국
+대한민국
+```
+
+### Sol
+
+```python
+class Korean:
+    def __init__(self):
+        self.nationality = "대한민국"
+
+    def printNationality(self):
+        print("{0}".format(self.nationality))
+        print("{0}".format(self.nationality))
+
+
+a = Korean()
+a.printNationality()
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148632792-2e818e28-09d9-4b09-a26d-4d1c227244fe.png)`
+
+왜 대한민국을 두 번 출력하게 했는지 알 수 없는 출력이었다. 심지어 출제 오류인가 싶었다. 입력을 "대한민국"으로 하면 출력도 "대한민국"이 되게 하는 그런... 뭐 쨋든 클래스 내에서 정의한 함수로 클래스 외부에서 함수를 사용하였으니 이를 메서드라고 알고 있고, 그렇다면 문제에서 요구하는대로 수행한 것 같다.
+
+<br />
+
+## 연습문제 #3
+
+### 문제
+
+name 프로퍼티를 가진 Student를 부모 클래스로 major 프로퍼티를 가진
+GraduateStudent 자식 클래스를 정의하고 이 클래스의 객체를
+다음과 같이 문자열로 출력하는 코드를 작성하십시오.
+
+출력
+
+```python
+이름: 홍길동
+이름: 이순신, 전공: 컴퓨터
+```
+
+### Sol
+
+```python
+# # 연습문제 1
+# class Student:
+
+#     total = 0
+#     scores = []
+#     scores_dict = {}
+
+#     def __init__(self):
+#         scores = [int(i) for i in input().split(", ")]
+
+#         self.kor = scores[0]
+#         self.eng = scores[1]
+#         self.mat = scores[2]
+
+#     def sum_score(self):
+#         total = self.kor + self.eng + self.mat
+#         print("국어, 영어, 수학의 총점: {0}".format(total))
+
+
+# a = Student()
+# a.sum_score()
+
+
+# # 연습문제 2
+# class Korean:
+#     def __init__(self):
+#         self.nationality = "대한민국"
+
+#     def printNationality(self):
+#         print("{0}".format(self.nationality))
+#         print("{0}".format(self.nationality))
+
+
+# a = Korean()
+# a.printNationality()
+
+
+# 연습문제 3
+class Student:
+    def __init__(self, name):
+        self.__name = name
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        if type(name) != str:
+            raise TypeError
+        self.__name = name
+
+
+class GraduateStudent(Student):
+    def __init__(self, name, major):
+        Student.__init__(self, name)
+        self.__major = major
+
+    @property
+    def major(self):
+        return self.__major
+
+    @major.setter
+    def major(self, major):
+        if type(major) != str:
+            raise TypeError
+
+        self.__major = major
+
+
+p1 = Student("홍길동")
+print("이름: {0}".format(p1.name))
+
+p2 = GraduateStudent("이순신", "컴퓨터")
+print("이름: {0}, 전공: {1}".format(p2.name, p2.major))
+```
+
+private field로 지정하고, property를 추가하라길래 내친김에 @method명.setter 를 이용해 type이 str이 아닌 경우에 수정이 안되게끔 코드를 짰다. 어렵다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148633543-2bd4bf00-c955-4917-ae6a-da6a1625bb9d.png)`
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+반지름 정보를 갖고, 원의 면적을 계산하는 메서드를 갖는 Circle 클래스를 정의하고,
+생성한 객체의 원의 면적을 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+원의 면적: 12.56
+```
+
+### Sol
+
+```python
+class Circle:
+    def __init__(self, r):
+        self.r = r
+
+    def calcArea(self):
+        print("원의 면적: {0}".format(self.r ** 2 * pi))
+
+
+pi = 3.14
+c1 = Circle(2)
+c1.calcArea()
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148633964-cbfcc4b3-5bd4-4f41-9ed0-78f6f3b24ef3.png)`
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+가로, 세로 정보을 갖고, 사각형의 면적을 계산하는 메서드를 갖는 Rectangle 클래스를 정의하고,
+생성한 객체의 사각형의 면적을 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+사각형의 면적: 20
+```
+
+### Sol
+
+임의로 두 변의 길이가 4와 5인 직사각형이라고 가정하자.
+
+```python
+class Rectangle:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def calcArea(self):
+        print("사각형의 면적: {0}".format(self.a * self.b))
+
+
+r1 = Rectangle(4, 5)
+r1.calcArea()
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148634052-deffe002-01ed-4919-8643-27bd2497a27e.png)`
+
+<br />
+
+## 연습문제 #6
+
+### 문제
+
+Shape를 부모 클래스로 Square 자식 클래스를 정의하는 코드를 작성하십시오.
+Square 클래스는 length 필드를 가지며, 0을 반환하는 Shape 클래스의 area 메서드를
+length \* length 값을 반환하는 메서드로 오버라이딩합니다.
+
+출력
+
+```python
+정사각형의 면적: 9
+```
+
+### Sol
+
+```python
+class Shape:
+    def __init__(self, length):
+        self.length = length
+
+    def area(self):
+        return 0
+
+
+class Square(Shape):
+    def __init__(self, length):
+        super().__init__(self)
+
+        self.length = length
+
+    def area(self):
+        return self.length ** 2
+
+
+s1 = Square(3)
+print("정사각형의 면적: {0}".format(s1.area()))
+```
+
+<u>주의📣</u>부모 클래스에서 상속해온 항목들(ex. length)은 자식 클래스의 **init** 함수 내에서 다시 self.항목 = 항목 으로 재정의해주어야 한다.
+ 
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148634431-b2663657-1649-4eb6-b1ac-336deef0d046.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+Person를 부모 클래스로 Male, Female 자식 클래스를 정의하는 코드를 작성하십시오.
+"Unknown"을 반환하는 Person 클래스의 getGender 메서드를 Male 클래스와 Female 클래스는
+"Male", "Female" 값을 반환하는 메서드로 오버라이딩합니다.
+
+출력
+
+```python
+Male
+Female
+```
+
+### Sol
+
+```python
+class Person:
+    def __init__(self):
+        pass
+
+    def getGender(self):
+        return "Unknown"
+
+
+class Male(Person):
+    def __init__(self):
+        Person.__init__(self)
+
+    def getGender(self):
+        return "Male"
+
+
+class Female(Person):
+    def __init__(self):
+        Person.__init__(self)
+
+    def getGender(self):
+        return "Female"
+
+
+p1 = Male()
+print(p1.getGender())
+
+p2 = Female()
+print(p2.getGender())
+```
+
+특별히 어려울 것이 없었다. 어떠한 인자도 필요없어서 부모 클래스인 Person의 `__init__`을 지정할 때에는 pass만 적어넣었고, 자식클래스인 Male과 Female 모두 부모 클래스를 상속만 한 뒤, 같은 이름의 메서드를 각자의 return 값으로 수정하는 오버라이딩만 진행하였다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148634595-27314af3-10f7-4eec-b4ef-2774a1c5d46c.png)`

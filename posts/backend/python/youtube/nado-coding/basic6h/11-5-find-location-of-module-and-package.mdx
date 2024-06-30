@@ -1,0 +1,57 @@
+---
+title: "[Python] 패키지, 모듈 위치 확인, 'Inspect'"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-20T00:00
+last_modified_at: 2021-07-20T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 패키지, 모듈 위치 확인 'Inspect'
+
+- 지금까지는 같은 디렉토리나 같은 파이썬 라이브러리에 있는 모듈을 참조하였는데,
+  이 모듈이나 패키지의 위치를 확인할 수 있는 방법을 알아보자.
+
+```python
+from travel import *
+
+trip_to = thailand.ThailandPackage()
+trip_to.detail()
+```
+
+```python
+import inspect
+import random
+
+print(inspect.getfile(random))
+print(inspect.getfile(thailand))
+```
+
+출력값은 다음과 같다.
+
+```markdown
+# random file의 위치
+
+C:\Users\(내 이름)\AppData\Local\Programs\Python\Python39\lib\random.py
+
+# thailand file의 위치
+
+C:\Intellij\python\나도코딩\기본편(6H)\travel\thailand.py
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

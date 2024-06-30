@@ -1,0 +1,1019 @@
+---
+title: "[Django] M:N 모델링"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-04-18T18:00
+last_modified_at: 2022-04-18T18:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 예시
+
+> 병원 진료 기록 시스템을 예시로, N:M 모델링을 살펴보자
+
+<br />
+
+- 한 환자가 여러 의사에게 진료를 받고, 한 의사가 여러 환자를 진료한다.
+- 즉, 환자와 의사의 관계는 서로 대등하며, N:M의 관계이다.
+
+<br />
+
+### 방식 A : 1:N 방식
+
+> 기존의 ForeignKey 방식으로 model을 정의해보자.
+
+```python
+# hospitals/models.py
+from django.db import models
+
+class Doctor(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 의사 {self.name}'
+
+
+class Patient(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 환자 {self.name}'
+```
+
+<br />
+
+> 의사 2명과 환자 2명 생성
+
+```bash
+In [1]: doctor1 = Doctor.objects.create(name='justin')
+
+In [2]: doctor2 = Doctor.objects.create(name='eric')
+
+In [3]: patient1 = Patient.objects.create(name='tony', doctor=doctor1)
+
+In [4]: patient2 = Patient.objects.create(name='harry', doctor=doctor2)
+
+In [5]: doctor1
+Out[5]: <Doctor: 1번 의사 justin>
+
+In [6]: doctor2
+Out[6]: <Doctor: 2번 의사 tony>
+
+In [7]: patient1
+Out[7]: <Patient: 1번 환자 tony>
+
+In [8]: patient2
+Out[8]: <Patient: 2번 환자 harry>
+
+In [9]: patient3 = Patient.objects.create(name='james', doctor=doctor1, doctor2)
+
+SyntaxError: postitional argument follows keyword argument
+```
+
+- 한 환자(patient3)가 doctor1, doctor2의 여러 의사들에게 진료를 받아야 한다.
+- 하지만, 외래키는 2개의 데이터를 넣을 수 없기 때문에 에러 발생
+- **1:N의 한계!**
+
+<br />
+
+### 방식 B : 중개 모델
+
+```python
+from django.db import models
+
+
+class Doctor(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 의사 {self.name}'
+
+
+# 외래키 삭제
+class Patient(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 환자 {self.name}'
+
+# 중개모델 작성
+class Reservation(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.doctor_id}번 의사의 {self.patient_id}번 환자'
+```
+
+- 각 모델을 1:N 참조하는 Reservation 모델 생성
+- Patient 모델의 외래키가 사라지고, Reservation 모델의 외래키가 2개
+- 즉, 각 모델을 1로 하고, 자신은 N으로 하여 예약과 관련된 정보들을 모두 모으는 중개 모델 Reservation
+
+migration 실시
+
+
+<br />
+
+중개 테이블을 통한 예약
+
+```bash
+# 의사와 환자가 각각 생성
+In [1]: doctor1 = Doctor.objects.create(name='justin')
+
+In [2]: patient1 = Patient.objects.create(name='tony')
+
+# 중개 테이블에 예약 레코드 추가
+In [3]: Reservation.objects.create(doctor=doctor1, patient=patient1)
+Out[3]: <Reservation: 1번 의사의 1번 환자>
+
+
+# 의사와 환자 각각에 대한 역참조
+In [4]: doctor1.reservation_set.all()
+Out[4]: <QuerySet [<Reservation: 1번 의사의 1번 환자>]>
+
+In [5]: patient1.reservation_set.all()
+Out[5]: <QuerySet [<Reservation: 1번 의사의 1번 환자>]>
+
+
+# 새 환자 생성 및 예약 추가
+In [6]: patient2 = Patient.objects.create(name='harry')
+
+In [7]: Reservation.objects.create(doctor=doctor1, patient=patient2)
+Out[7]: <Reservation: 1번 의사의 2번 환자>
+
+
+# 의사와 환자 각각에 대한 역참조
+In [8]: doctor1.reservation_set.all()
+Out[8]: <QuerySet [<Reservation: 1번 의사의 1번 환자>, <Reservation: 1번 의사의 2번 
+환자>]>
+
+In [9]: patient2.reservation_set.all()
+Out[9]: <QuerySet [<Reservation: 1번 의사의 2번 환자>]>
+```
+
+<br />
+
+### 방식 C : ManyToManyField
+
+- 다대다 관계(M:N) 설정 시 사용하는 모델 필드
+- 하나의 필수 위치인자(M:N 관례로 설정할 모델 클래스) 필요
+- 작성 위치는 Doctor 또는 Patient 모두 작성 가능
+
+<br />
+
+```python
+# hospital/models.py
+from django.db import models
+
+
+class Doctor(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 의사 {self.name}'
+
+
+class Patient(models.Model):
+    # ManyToManyField 작성
+    doctors = models.ManyToManyField(Doctor)
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 환자 {self.name}'
+```
+
+<br />
+
+> 무슨 차이가 생긴거죠?
+
+- 중개 모델(Reservation)이 삭제
+- ManyToManyField가 환자 쪽에 작성
+- M과 N 그 자체에는 차이가 없다. ForeignKey도 없다. **Field 하나가 중개 테이블 하나를 만든다!**
+
+<br />
+
+> ManyToManyField가 Doctor에 있으면 어떻게 되나요?
+
+- 1:N은 종속 관계이기 때문에 ForeignKey Field는 확실히 N쪽에 있어야 한다.
+- M:N은 대등한 관계이기 때문에 괜찮다.
+- M과 N 자체의 변화는 없다.
+- 테이블 이름이 바뀔 것이다. 하지만 의미는 없다.
+- 다만 **참조와 역참조의 입장이 바뀌긴 할 것**
+  - ManyToMany Field가 있는 model이 상대 model을 참조, 반대는 역참조
+  - 1:N에서도 ForeignKey가 있는 쪽이 없는 쪽을 참조, 반대는 역참조
+
+<br />
+
+```bash
+# 의사와 환자 정보 생성
+In [1]: doctor1 = Doctor.objects.create(name='justin')
+
+In [2]: patient1 = Patient.objects.create(name='tony')
+
+In [3]: patient2 = Patient.objects.create(name='harry')
+
+
+# 1번 환자 입장에서 1번 의사 추가
+In [4]: patient1.doctors.add(doctor1)
+
+# 1번 환자 입장에서 의사 확인(참조)
+In [5]: patient1.doctors.all()
+Out[5]: <QuerySet [<Doctor: 1번 의사 justin>]>
+
+# 1번 의사 입장에서 환자 확인(역참조)
+In [6]: doctor1.patient_set.all()
+Out[6]: <QuerySet [<Patient: 1번 환자 tony>]>
+
+
+# 1번 의사 입장에서 2번 환자 추가
+In [7]: doctor1.patient_set.add(patient2)
+
+In [8]: doctor1.patient_set.all()
+Out[8]: <QuerySet [<Patient: 1번 환자 tony>, <Patient: 2번 환자 harry>]>
+
+In [9]: patient2.doctors.all()
+Out[9]: <QuerySet [<Doctor: 1번 의사 justin>]>
+
+In [10]: patient1.doctors.all()
+Out[10]: <QuerySet [<Doctor: 1번 의사 justin>]>
+
+
+# 1번 의사가 1번 환자에 대한 예약 취소
+In [11]: doctor1.patient_set.remove(patient1)
+
+In [12]: doctor1.patient_set.all()
+Out[12]: <QuerySet [<Patient: 2번 환자 harry>]>
+
+In [13]: patient1.doctors.all()
+Out[13]: <QuerySet []>
+
+# 2번 환자가 1번 의사에 대한 예약 취소
+In [15]: patient2.doctors.remove(doctor1)
+
+In [16]: patient2.doctors.all()
+Out[16]: <QuerySet []>
+
+In [17]: doctor1.patient_set.all()
+Out[17]: <QuerySet []>
+```
+
+- 어느 입장에서 중개 테이블의 데이터를 삭제해도 상관이 없다.
+- add, remove() 등 set에서 사용되는 메소드 모두 사용 가능
+
+<br />
+
+### releated_name 사용
+
+> doctor_set, patient_set 불편합니다!
+
+- **releated_name을 활용**한다.
+- 1:N에서 지양했던 이유는 M:N에서 활용하기 위함이었음
+- 1:N과 M:N을 구분하는 큰 지표
+
+<br />
+
+- **target model**(관계 필드를 가지지 않은 모델; Doctor)이 **source model**(관계 필드를 가진 모델; 환자)을 참조, 즉 **역참조할 때 사용할 manager의 이름을 설정**
+
+- patients, doctors 처럼 **복수형으로 사용**
+
+<br />
+
+```python
+from django.db import models
+
+
+class Doctor(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 의사 {self.name}'
+
+
+class Patient(models.Model):
+    # ManyToManyField - related_name 작성
+    doctors = models.ManyToManyField(Doctor, related_name='patients') 🔅
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 환자 {self.name}'
+```
+
+<br />
+
+```bash
+In [1]: doctor1 = Doctor.objects.get(pk=1)
+
+In [2]: doctor1
+Out[2]: <Doctor: 1번 의사 justin>
+
+In [3]: doctor1.patient_set.all()
+AttributeError: 'Doctor' object has no attribute 'patient_set'
+
+In [4]: doctor1.patients.all()
+Out[4]: <QuerySet []>
+```
+
+- 기본적으로 사용하던 역참조 manager인 patient_set은 사용 불가
+- related_name인 'patients'를 사용
+
+<br />
+
+### django M:N에서 중개 테이블 작성
+
+- django는 ManyToManyField를 통해 중개 테이블을 자동 생성
+
+<br />
+
+> 중개 테이블을 직접 작성할 수는 없을까?
+
+- **through 옵션** 사용
+- 중개 테이블에 **추가 데이터를 사용**하는 경우 사용
+
+<br />
+
+## ManyToManyField
+
+- 다대다(M:N, many-to-many) 관계 설정 시 사용하는 모델 필드
+- 하나의 필수 위치인자(M:N 관계로 설정할 모델 클래스) 필요
+- 모델 필드의 RelatedManager를 사용하여 관련 개체를 추가(add), 제거(remove) 가능
+
+<br />
+
+### Arguments
+
+> related_name
+
+- 역참조시 사용할 manager의 이름 설정
+- ForeignKey의 related_name과 동일
+
+<br />
+
+> through
+
+- 중개 테이블을 직접 작성하는 경우, 중개 테이블을 나타내는 Django 모델을 지정 가능
+- 중개 테이블에 추가 데이터를 사용하는 다대다 관계와 연결하는 경우 사용
+
+<br />
+
+> symmetrical
+
+- 연결된 모델 인스턴스끼리의 참조를 동기화하는 것
+- 기본값은 True (동기화를 한다는 것)
+- 후술
+
+<br />
+
+### Related Manager
+
+- 1:N 또는 M:N 관련 context에서 사용되는 manager
+- 같은 이름의 메서드여도 각 관계에 따라 다르게 사용 및 동작
+  - 1:N : **target 모델 인스턴스만 사용 가능**
+  - M:N : **두 객체 모두 사용 가능**
+- add(), remove(), create(), clear(), set() 등이 있음
+
+<br />
+
+> add()
+
+- 지정된 객체를 관련 객체 집합에 추가
+- **이미 존재하는 관계에 사용 시 복제 X**
+- 모델 인스턴스, 필드 값(PK)을 인자로 허용
+
+<br />
+
+> remove()
+
+- 관련 객체 집합에서 지정된 모델 객체 제거
+- 내부적으로 **QuerySet.delete()**를 사용하여 관계 삭제
+- 모델 인스턴스, 필드 값(PK)을 인자로 허용
+
+<br />
+
+### through
+
+```python
+from django.db import models
+
+
+class Doctor(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 의사 {self.name}'
+
+
+class Patient(models.Model):
+    doctors = models.ManyToManyField(Doctor, through='Reservation') 🔅
+    name = models.TextField()
+
+    def __str__(self):
+        return f'{self.pk}번 환자 {self.name}'
+
+
+class Reservation(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    symptom = models.TextField() 🔅
+    reserved_at = models.DateTimeField(auto_now_add=True) 🔅
+
+    def __str__(self):
+        return f'{self.doctor.pk}번 의사의 {self.patient.pk}번 환자'
+```
+
+- model들에 정의된 속성들 외의 ****추가 필드를 사용하고 싶은 경우**
+- symptom(증상), reserved_at(예약 시간) 필드를 추가
+
+<br />
+
+```bash
+# 의사 및 환자 정보 생성 및 저장
+In [1]: doctor1 = Doctor.objects.create(name='justin')
+
+In [2]: patient1 = Patient.objects.create(name='tony')
+
+In [3]: patient2 = Patient.objects.create(name='harry')
+
+
+# reservation 인스턴스 생성
+In [4]: reservation1 = Reservation(doctor=doctor1, patient=patient1, symptom='headache') 🔅
+
+In [5]: reservation1
+Out[5]: <Reservation: 1번 의사의 1번 환자>
+
+# reservation 인스턴스 저장
+In [6]: reservation1.save()
+
+# 예약 확인
+In [7]: doctor1.patient_set.all()
+Out[7]: <QuerySet [<Patient: 1번 환자 tony>]>
+
+In [8]: patient1.doctors.all()
+Out[8]: <QuerySet [<Doctor: 1번 의사 justin>]>
+
+
+# 환자에 의한 예약 추가
+In [9]: patient2.doctors.add(doctor1, through_defaults={'symptom': 'flu'}) ⭐
+
+In [10]: doctor1.patient_set.all()
+Out[10]: <QuerySet [<Patient: 1번 환자 tony>, <Patient: 2번 환자 harry>]>
+
+In [11]: patient2.doctors.all()
+Out[11]: <QuerySet [<Doctor: 1번 의사 justin>]>
+```
+
+- through_defaults 옵션
+
+<br />
+
+### 중개 테이블의 필드 생성 규칙
+
+> source model 및 target model 모델이 다른 경우
+
+- id
+- `<containing_model>_id`
+- `<other_model>_id`
+
+<br />
+
+> ManyToManyField가 동일한 모델을 가리키는 경우
+
+- id
+- `from_<model>_id`
+- `to_<model>_id`
+
+<br />
+
+## Like 기능
+
+```python
+from django.db import models
+from django.conf import settings
+
+# Create your models here.
+class Article(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles') ⭐
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.content
+```
+
+- like_users 필드 생성 시 자동으로 역참조는 .article_set 매니저를 생성
+- 이전 1:N(User:Article) 관계에서 **이미 해당 매니저를 사용중이어서 migration 에러**
+- User와 관계된 ForeignKey 또는 ManyToManyField 중 하나에 **related_name 추가** 필요
+- 'like_articles'로 이름 재지정
+
+<br />
+
+### 현재 User-Article간 사용 가능한 DB API
+
+> article.user
+
+게시글을 작성한 유저 - 1:N
+
+<br />
+
+> article.like_users
+
+게시글을 좋아요한 유저 - M:N
+
+<br />
+
+> user.article_set
+
+유저가 작성한 게시글(역참조) - 1:N
+
+<br />
+
+> users.like_articles
+
+유저가 좋아요한 게시글(역참조) - M:N
+
+<br />
+
+<br />
+
+```python
+# articles/urls.py
+from django.urls import path
+from . import views
+
+
+app_name = 'articles'
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('create/', views.create, name='create'),
+    path('<int:pk>/', views.detail, name='detail'),
+    path('<int:pk>/delete/', views.delete, name='delete'),
+    path('<int:pk>/update/', views.update, name='update'),
+    path('<int:pk>/comments/', views.comment_create, name='comment_create'),
+    path('<int:article_pk>/comments/<int:comment_pk>/delete/', views.comment_delete, name='comment_delete'),
+    path('<int:article_pk>/likes/', views.likes, name='likes'), 🔅
+]
+```
+
+<br />
+
+> 좋아요를 눌렀다면 좋아요 취소, 아니라면 좋아요
+
+> 가. 좋아요/취소 기능에 충실한 코드
+
+```python
+# articles/views.py
+def likes(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    
+    # 이 게시글의 좋아요를 누른 유저 목록에 현재 요청한 유저가 있다면, 좋아요 취소
+    if request.user in article.like_users.all():
+        article.like_users.remove(request.user)
+    
+    # 이전에 좋아요를 누르지 않은 경우
+    else:
+        article.like_users.add(request.user)
+    return redirect('articles:index')
+```
+
+- variable routing을 통해 전달받은 article_pk를 이용해 article 조회
+- article에 좋아요를 누른 user들 queryset 중에 request.user가 있는지 확인
+- 있다면 좋아요 취소이므로 article의 like_users queryset에서 request.user 제거(remove)
+- 아니라면 article의 like_users queryset에 request.user 추가(add)
+
+<br />
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Articles</h1>
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'articles:create' %}">CREATE</a>
+  {% else %}
+    <a href="{% url 'accounts:login' %}">[새 글을 작성하려면 로그인 하세요]</a>
+  {% endif %}
+  <hr>
+  {% for article in articles %}
+    <p>작성자: {{ article.user }}</p>
+    <p>글 번호: {{ article.pk }}</p>  
+    <p>글 제목: {{ article.title }}</p>
+    <p>글 내용: {{ article.content }}</p>
+    <div>
+      <form action="{% url 'articles:likes' article.pk %}" method="POST"> 🔅
+        {% csrf_token %}
+        <input type="submit" value="좋아요"> 🔅
+      </form>
+    </div>
+    <a href="{% url 'articles:detail' article.pk %}">DETAIL</a>
+    <hr>
+  {% endfor %}
+{% endblock content %}
+{% endraw -%}
+```
+
+좋아요 버튼 form 추가
+
+<br />
+
+> 문제점 발견
+
+`![image](https://user-images.githubusercontent.com/86189596/163759343-5b41bd5f-79ae-4e16-b465-bb992324ff11.png)`
+
+- Article 생성에 사용된 ArticleForm에 like_users 추가
+- model을 Article을 참조하는데, Article에 like_users가 정의되었기 때문
+- 이를 조정해보자.
+
+<br />
+
+> ArticleForm 수정
+
+```python
+# articles/forms.py
+from django import forms
+from .models import Article, Comment
+
+class ArticleForm(forms.ModelForm):
+
+    class Meta:
+        model = Article
+        exclude = ('user', 'like_users',) 🔅
+```
+
+exclude에 like_users를 추가해 rendering에서 제외한다.
+
+<br />
+
+> 좋아요 취소 기능 추가
+
+```html
+{%- raw -%}
+<!-- articles/index.html -->
+...
+<form action="{% url 'articles:likes' article.pk %}" method="POST">
+  {% csrf_token %}
+  {% if user in article.like_users.all %}
+    <input type="submit" value="좋아요 취소">
+  {% else %}
+    <input type="submit" value="좋아요">
+  {% endif %}
+</form>
+{% endraw -%}
+```
+
+- article.like_users.all queryset API를 이용
+- template에서 if else문 사용으로 버튼의 value 표시 다르게 하기
+
+<br />
+
+### QuerySet API : exist()
+
+- QuerySet에 결과가 포함되어 있으면 True 반환, 그렇지 않으면 False 반환
+- 규모가 큰 QuerySet의 컨텍스트에서 특정 개체 존재 여부와 관련된 검색에 유용
+- 고유한 필드(ex. primary key)가 있는 모델이 QuerySet의 구성원인지 여부를 찾는 가장 효율적인 방법
+
+<br />
+
+> 위의 vieww 함수를 exist()를 활용해 개선해보자
+
+```python
+# articles/views.py
+def likes(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    
+    # 이 게시글의 좋아요를 누른 유저 목록에 현재 요청한 유저가 있다면, 좋아요 취소
+    # if request.user in article.like_users.all():
+    if article.like_users.filter(pk=request.user.pk).exists(): 🔅
+        article.like_users.remove(request.user)
+    
+    # 이전에 좋아요를 누르지 않은 경우
+    else:
+        article.like_users.add(request.user)
+    return render('articles/index.html')
+```
+
+<br />
+
+## Profile Page
+
+> urls
+
+```python
+# accounts/urls.py
+from django.urls import path
+from . import views
+
+app_name = 'accounts'
+urlpatterns = [
+    ...
+    # ⭐ 문자열로 시작하는 variable routing이므로 위치에 신경 쓰기
+    path('<username>/', views.profile, name='profile'),
+]
+```
+
+- string variable routing으로 각 유저에 대한 profile 페이지 url 정의
+
+<br />
+
+> views
+
+```python
+# accounts/views.py
+from django.contrib.auth import get_user_model
+
+def profile(request, username):
+    person = get_object_or_404(get_user_model(), username=username)
+    context = {
+        'person': person,
+    }
+    return render(request, 'accounts/profile.html', context)
+```
+
+- user의 이름을 variable routing으로 받아 함수 내로 전달
+- 이 username을 이용해 DB에서 특정 user를 찾아 person에 저장
+
+<br />
+
+> templates
+
+```html
+{%- raw -%}
+<!-- accounts/profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ person.username }}님의 프로필</h1>
+  <hr>
+
+  {% comment %} 이 사람이 작성한 게시글 목록 {% endcomment %}
+  <h2>{{ person.username }}님이 작성한 게시글 목록</h2>
+
+  {% for article in person.article_set.all %}
+    <p>{{ article.title }}</p>
+  {% endfor %}
+
+  {% comment %} 이 사람이 작성한 게시글 댓글 목록 {% endcomment %}
+  <h2>{{ person.username }}님이 작성한 게시글 댓글 목록</h2>
+  {% for comment in person.comment_set.all %}
+    <p>{{ comment.content }}</p>
+  {% endfor %}
+
+  {% comment %} 이 사람이 좋아요를 누른 게시글 목록 {% endcomment %}
+  <h2>{{ person.username }}님이 좋아요를 누른 게시글 목록</h2>
+
+  {% for article in person.like_articles.all %}
+    <p>{{ article.title }}</p>
+  {% endfor %}
+
+{% endblock content %}
+{% endraw -%}
+```
+
+- person이 가지고 있는 article_set, comment_set, like_articles queryset에서 각각의 article, comment, article 들을 추출
+
+<br />
+
+## Follow
+
+User와 User간 참조이기 때문에 **ManyToManyField에 self를 참조**
+
+```python
+# accounts/models.py
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+# Create your models here.
+class User(AbstractUser):
+    followings = models.ManyToManyField('self', symmetrical=False, related_name='followers')
+```
+
+<br />
+
+### symmetrical
+
+- ManyToManyField가 동일한 모델(on self)을 가리키는 정의에서만 사용
+- symmetrical=True(기본값)일 경우 Django는 person_set 매니저를 추가하지 않음
+- 한 쪽에서 추가되면 상대적인 쪽도 추가되므로 역참조가 필요가 없어진다.
+
+- source 모델의 인스턴스가 target 모델의 인스턴스를 참조하면, target 모델 인스턴스도 source 모델 인스턴스를 자동으로 참조하도록 함
+
+- 내가 당신의 친구라면, 당신도 내 친구가 되는 것
+- 대칭을 원치 않는다면 symmetrical 옵션을 False로 설정
+
+<br />
+
+> migration 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/163763884-0d3b978a-6dc6-428b-9a9c-f5dc7b989e9f.png)`
+
+자기 자신을 참조할 때에는 필드명을 from과 to로 지정
+
+<br />
+
+> urls
+
+```python
+# accounts/urls.py
+from django.urls import path
+from . import views
+
+app_name = 'accounts'
+urlpatterns = [
+    ...
+    path('<int:user_pk>/follow/', views.follow, name='follow'),
+]
+```
+
+<br />
+
+> views : follow/unfollow 기능
+
+```python
+# accounts/views.py
+def follow(request, user_pk):
+    # person은 상대방
+    you = get_object_or_404(get_user_model(), pk=user_pk)
+    me = request.user
+    
+    # unfollow
+    if me in you.followers.all():
+        you.followers.remove(me)
+        
+    else:
+        you.followers.add(me)
+    return redirect('accounts:profile', you.username)
+```
+
+<br />
+
+> templates
+
+```html
+{%- raw -%}
+<!-- accounts/profile.py -->
+...
+<div>
+  <form action="accounts:follow" person.pk method="POST">
+    {% csrf_token %}
+    {% if user in person.followers.all %}
+      <input type="submit" value="언팔로우">
+    {% else %}
+      <input type="submit" value="팔로우">
+    {% endif %}
+  </form>
+</div>
+...
+{% endraw -%}
+```
+
+<br />
+
+> 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/163765066-3b4374d0-ecfd-4ef8-a0f8-f5bf3311439c.png)`
+
+<br />
+
+> 코드 개선 : 내가 나를 팔로우하지 못하게!
+
+```html
+{%- raw -%}
+<!-- accounts/profile.py -->
+...
+<div>
+  {% if user != person %} 🔅
+    <form action="accounts:follow" person.pk method="POST">
+      {% csrf_token %}
+      {% if user in person.followers.all %}
+        <input type="submit" value="언팔로우">
+      {% else %}
+        <input type="submit" value="팔로우">
+      {% endif %}
+    </form>
+  {% endif %}
+</div>
+...
+{% endraw -%}
+```
+
+- 내꺼는 팔로우 못하도록, user(request.user)가 person(대상 user)이 아닌 경우에만 팔로우/언팔로우 form이 보이도록 한다.
+
+<br />
+
+### 최종 코드
+
+> likes view 함수
+
+```python
+# articles/views.py
+@require_POST
+def likes(request, article_pk):
+    if request.user.is_authenticated:
+        article = get_object_or_404(Article, pk=article_pk)
+        
+        # 이 게시글의 좋아요를 누른 유저 목록에 현재 요청한 유저가 있다면, 좋아요 취소
+        # if request.user in article.like_users.all():
+        if article.like_users.filter(pk=request.user.pk).exists():
+            article.like_users.remove(request.user)
+        
+        # 이전에 좋아요를 누르지 않은 경우
+        else:
+            article.like_users.add(request.user)
+        return redirect('articles:index')
+    return redirect('accounts:login')
+```
+
+<br />
+
+> follow view 함수
+
+```python
+# accounts/views.py
+@require_POST
+def follow(request, user_pk):
+    if request.user.is_authenticated:
+        you = get_object_or_404(get_user_model(), pk=user_pk)
+        me = request.user
+        
+        if me != you:
+            # unfollow
+            # if me in you.followers.all():
+            if you.followers.filter(pk=me.pk).exists():
+                you.followers.remove(me)
+            else:
+                you.followers.add(me)
+        return redirect('accounts:profile', you.username)
+    return redirect('accounts:login')
+```
+
+<br />
+
+> profile html 코드
+
+```html
+{%- raw -%}
+<!-- accounts/profile.py -->
+<h1>{{ person.username }}님의 프로필</h1>
+
+<hr>
+<div>팔로워 : {{ person.followers.all|length }} / 팔로우 : {{ person.followings.all|length }}</div> 🔅
+
+<div>
+  {% if user != person %}
+    <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+      {% csrf_token %}
+      {% if user in person.followers.all %}
+        <input type="submit" value="언팔로우">
+      {% else %}
+        <input type="submit" value="팔로우">
+      {% endif %}
+    </form>
+  {% endif %}
+</div>
+
+{% comment %} 이 사람이 작성한 게시글 목록 {% endcomment %}
+<h2>{{ person.username }}님이 작성한 게시글 목록</h2>
+
+{% for article in person.article_set.all %}
+  <p>{{ article.title }}</p>
+{% endfor %}
+
+{% comment %} 이 사람이 작성한 게시글 댓글 목록 {% endcomment %}
+<h2>{{ person.username }}님이 작성한 게시글 댓글 목록</h2>
+{% for comment in person.comment_set.all %}
+  <p>{{ comment.content }}</p>
+{% endfor %}
+
+{% comment %} 이 사람이 좋아요를 누른 게시글 목록 {% endcomment %}
+<h2>{{ person.username }}님이 좋아요를 누른 게시글 목록</h2>
+
+{% for article in person.like_articles.all %}
+  <p>{{ article.title }}</p>
+{% endfor %}
+{% endraw -%}
+```

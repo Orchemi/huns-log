@@ -1,0 +1,420 @@
+---
+title: "[Django] Template"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-02T16:00
+last_modified_at: 2022-03-02T16:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Template
+
+- 데이터 표현을 제어하는 도구
+- **표현에 관련**된 로직
+- 사용하는 built-in system : DTL
+
+<br />
+
+## DTL : Django Template Language
+
+- Django template에서 사용하는 built-in template system
+- 조건, 반복, 변수 치환, 필터 등의 기능을 제공
+- 단순히 Python이 HTML에 포함된 것이 아니다. 프로그래밍적 로직이 아니라 **프레젠테이션을 표현하기 위한 것!!**
+
+<u>유의📢</u> Python처럼 일부 프로그래밍 구조(if, for 등)를 사용할 수 있지만, Python 코드로 실행되는 것이 아니다.
+ 
+
+<br />
+
+### Variable
+
+```
+{{ variable }}
+```
+
+- **render()**를 사용하여 views.py에서 정의한 변수를 template 파일로 넘겨 사용
+- dot(.)를 사용하여 변수 속성에 접근 가능
+- render()의 세번째 인자로 `{'key':value}`와 같이 딕셔너리 형태로 넘겨준다. **context**라고 한다. 여기서 정의한 **key에 해당하는 문자열이 template에서 사용 가능한 변수명**
+
+<br />
+
+```python
+# views.py
+
+def greeting(request):
+    return render(request, 'greeting.html', {'name': 'Alice', })
+```
+
+```python
+# templates/greeting.html
+
+...
+<h1>안녕하세요. 저는 {{ name }} 입니다.</h1>
+...
+```
+
+변수를 사용할 수 있다.
+
+<br />
+
+> 변수명 규칙
+
+- 영어, 숫자와 밑줄(\_)의 조합으로 구성
+- **밑줄**로는 시작 불가
+- **공백**이나 **구두점 문자** 또한 사용 불가
+
+<br />
+
+### context
+
+```python
+# views.py
+
+def greeting(request):
+    context = {
+        'name': 'Alice',
+    }
+    return render(request, 'greeting.html', context)
+```
+
+context 위치에 context 변수를 넣고 위에서 정의해주어도 된다.
+
+<br />
+
+### context 심화
+
+context에 필요한 자료의 양이 많아진다면 다음과 같이 사용할 수 있다.
+
+```python
+def greeting(request):
+    foods = ['apple', 'banana', 'coconut']
+    info = {
+        'name': 'Alice',
+    }
+    context = {
+        'foods': foods,
+        'info': info,
+    }
+    return render(request, 'greeting.html', context)
+```
+
+왼쪽은 key, 오른쪽은 value(배열이나 딕셔너리 변수들)을 사용한 것이다. context에서는 왼쪽의 key의 값을 사용하는 것이다.
+
+이 경우 info 안의 name을 사용하고 싶다면
+
+```python
+# templates/greeting.html
+
+...
+<h1>안녕하세요. 저는 {% raw %}{{ info.name }}{% endraw %} 입니다.</h1>
+...
+```
+
+<br />
+
+배열을 사용하고 싶다면 다음과 같이 한다.
+
+```
+<!-- templates/greeting.html -->
+
+...
+<p>안녕하세요. 저는 {{ info.name }} 입니다.</p>
+<p>제가 좋아하는 음식들은 {{ foods }} 입니다.</p>
+<p>제가 가장 좋아하는 음식은 {{ foods.0 }} 입니다.</p>
+```
+
+리스트의 0번 인덱스의 값을 가져올 때는 **array.0** 처럼 `array.idx` 방식으로 사용한다.
+
+<br />
+
+## Filters
+
+- 표시한 변수를 원하는 형식으로 수정할 때 사용
+- 60개의 built-in template filters 제공
+- chained 가능
+- 일부 필터는 인자를 받기도 한다.
+
+```python
+{{ variables|filter }}
+{{ name|lower }}
+{{ variable|truncatewords:30 }}
+```
+
+<br />
+
+> 예시
+
+```python
+# view.py
+import random
+
+def dinner(request):
+    foods = ['족발', '햄버거', '치킨', '초밥']
+    pick = random.choice(foods)
+    context = {
+        'foods': foods,
+        'pick': pick,
+    }
+    return render(request, 'dinner.html', context)
+```
+
+<br />
+
+```
+<!-- templates/dinner.html -->
+
+<h1>오늘 저녁은 {{ pick }}이다!!</h1>
+<p>{{ pick }}은 {{ pick|length }}글자</p>
+<p>{{ foods|join:", "}}</p>
+```
+
+<br />
+
+## Tags
+
+- 변수보다 복잡한 일들을 수행할 때 사용
+- 출력 텍스트를 만들거나, 반복 또는 논리를 수행하여 제어 흐름 제작
+- 일부 태그는 시작과 종료 태그 필요
+- 24개의 built-in template tags 제공
+
+```
+{% tag %}
+{% for %}{% endfor %}
+```
+
+<br />
+
+## Comments
+
+- Django template에서 라인의 주석을 표현하기 위해 사용
+
+```
+<!-- 한 줄 주석 -->
+{# ... #}
+
+<!-- 여러 줄 주석 -->
+{% comment %}
+<p>여러 줄</p>
+<p>주석</p>
+<p>주석</p>
+{% endcomment %}
+```
+
+<br />
+
+## 템플릿 상속
+
+- 템플릿 상속은 기본적으로 **코드의 재사용성**에 초점을 맞춤
+- 템플릿 상속을 사용하면 사이트의 모든 공통 요소를 포함
+- 하위 템플릿이 재정의(override)할 수 있는 블럭 정의
+- 기본 skeleton 템플릿(base.html)을 제작 가능
+
+<br />
+
+### block tag
+
+```
+{% block content %}
+{% endblock %}
+```
+
+- 하위 템플릿에서 재지정(override)할 수 있는 블럭을 정의
+- 즉, 하위 템플릿이 채울 수 있는 공간
+- 부모 템플릿에 block 태그로 공간을 비워두고 하위 템플릿에서 그 공간을 채운다.
+
+<br />
+
+### BASE_DIR
+
+- django는 app의 templates 내의 html 파일만 읽는다.
+- 그렇다고 templates 폴더 내에 base.html 파일을 두기에는 상위 파일같지 않다.
+- 상위 폴더는 독립적인 느낌을 주면 좋겠다.
+
+<br />
+
+> "Django야 나 추가 템플릿 경로 등록할래!"
+
+프로젝트, App과 같은 수준, 즉 최상위 폴더에 templates 폴더 만들고 이 경로를 pjt의 settings.py에 등록!!
+
+<br />
+
+```python
+# settings.py
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+<br />
+
+위의 코드에 DIRS의 빈 리스트 값에 아래처럼 채워넣는다.
+
+```python
+'DIRS': [BASE_DIR / 'templates', ],
+```
+
+<br />
+
+> BASE_DIR은 뭐길래 알아서 정의가 되고 오류가 생기지 않을까?
+
+- settings.py 파일의 위쪽에 선언되어 있다.
+- 장고 프로젝트를 가지고 있는 **최상단 폴더** 의미
+- Python의 객체지향적인 파일 경로 : 운영체제의 영향을 받지 않는다!
+
+<br />
+
+### base.html
+
+상위 html 파일, 즉 상속에서의 부모 템플릿이 되는 base.html이다.
+
+```
+<!-- firstpjt/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" cntent="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <a href="#" class="navbar-brand">Navbar</a>
+    </nav>
+    {% block content %}    ⭐
+    {% endblock content %} ⭐
+  </body>
+</html>
+```
+
+- Navbar를 위해 상위 html 템플릿에 Nav와 관련된 코드를 넣어준다.
+- block tag를 이용해 하위 템플릿에서 이를 extends하면 이 곳에 하위 템플릿의 html 코드를 넣어준다.
+- block tag에 **block ~~~** 에는 content 등 여러 block에서 이들을 구분하는 표시를 반드시 해준다.
+- endblock tag에는 넣어도 되고, 안 넣어도 된다. 선택이다.
+
+<br />
+
+### extends tag
+
+```
+{% extends 'base.html' %}
+```
+
+- 자식(하위) 템플릿이 부모 템플릿을 확장, 즉 상속한다는 것을 의미
+
+<u>주의📢</u> 반드시 템플릿 최상단에 작성
+ 
+
+<br />
+
+### 하위 템플릿 예시 : greeting.html
+
+component처럼 사용하는 하위 템플릿
+
+```
+<!-- greeting.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <p>안녕하세요. 저는 {{ info.name }} 입니다.</p>
+  <p>제가 좋아하는 음식들은 {{ foods }} 입니다.</p>
+  <p>제가 가장 좋아하는 음식은 {{ foods.0 }} 입니다.</p>
+{% endblock content %}
+```
+
+<br />
+
+### include
+
+- 템플릿을 로드하고 현재 페이지로 렌더링
+- 템플릿 내에 다른 템플릿을 포함(include)
+
+```html
+<!-- templates/_nav.html -->
+<nav class="navbar navbar-dark bg-dark">
+  <a href="#" class="navbar-brand">Navbar</a>
+</nav>
+```
+
+- templates/ 디렉토리에 \_nav.html 생성
+- 이후 base.html에 있던 `<nav>...</nav>` 잘라내기 후 붙여넣기
+- 해당 위치에 include tag로 **_nav.html** 삽입
+
+<br />
+
+```
+<!-- firstpjt/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" cntent="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    {% include '_nav.html' %} ⭐
+    {% block content %}
+    {% endblock content %}
+  </body>
+</html>
+```
+
+- **_(언더바)** 는 include되는 템플릿임을 의미
+- 하지만 특수한 기능이나 규칙은 포함하지 않는다.
+
+<br />
+
+## Template 설계 철학
+
+### 표현과 로직(view)을 분리
+
+- 표현을 제어하는 도구
+- 표현에 관련된 로직일 뿐
+- 템플릿 시스템은 **기본 목표를 넘어서는 기능을 지원하지 말아야 한다.**
+
+<br />
+
+### 중복을 배제
+
+- 대부분 header, footer, navbar 같은 사이트 공통 디자인을 갖는다.
+- 이러한 요소들의 중복 코드를 없애야 한다.
+- 이것이 상속의 기초가 되는 철학

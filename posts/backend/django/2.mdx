@@ -1,0 +1,304 @@
+---
+title: "[Django] Django의 설치와 시작"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-02T14:00
+last_modified_at: 2022-03-02T14:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Django 설치
+
+### 가상환경 생성
+
+- venv 사용
+- 전역환경에서 설치하지 않도록 주의한다.
+
+<br />
+
+> 사전 준비
+
+venv 폴더로 사용할 폴더를 만들고 해당 경로에서 git bash를 켠다.
+
+```bash
+# venv 폴더 이름 venv로 설정해서 생성
+$ python -m venv venv
+
+# venv 폴더 활성화 : 이후 (venv) 확인하기
+$ source venv/Scripts/activate
+
+# venv 폴더인지 재확인 : pip 개수가 적으면 venv 성공
+$ pip list
+
+# + 일반적으로 협업 시 pip 상태를 freeze
+$ pip freeze > requirements.txt
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/156272285-7993e036-7f39-44de-a882-cfddd29f84d7.png)`
+
+freeze해서 만든 pip requirements.txt를 이용해서 pip를 다운받는 코드는 아래와 같다.
+
+```bash
+$ pip install -r requirements.txt
+```
+
+<br />
+
+### Django 설치
+
+3.2버전을 다운 받는다. 최신 버전은 Django 4.0 버전이지만, LTS가 길지 않아서 2024~2025년 경까지 LTS를 보장받는 3.2.12 버전이 가장 적합
+
+```bash
+$ pip install django==3.2.12
+```
+
+<br />
+
+### Project 생성
+
+**django-admin startproject `<프로젝트명>` .** 의 명령으로 프로젝트 생성
+
+```bash
+$ django-admin startproject firstpjt .
+```
+
+<br />
+
+> 주의사항 ⭐
+
+- 말미에 `.` 을 붙여야 한다. 안 붙이면 top level에 폴더 단위를 만들고 수평하게 만든다. 작업이 번거로워진다.
+- 프로젝트 이름
+  - Python이나 Django에서 사용중인 키워드 금지
+  - django, text, class, django-test 등
+  - **-(하이픈) 사용 불가**
+
+<br />
+
+> 프로젝트 개발 외
+
+- .gitignore, README.md 파일을 만들어준다.
+- .gitignore에는 venv를 등록해서 venv는 commit&push되지 않도록 한다.
+
+<br />
+
+### 서버 활성화
+
+Django 서버 활성화
+
+```bash
+python manage.py runserver
+```
+
+비활성화는 **ctrl + c** 단축키로 종료할 수 있다.
+
+<br />
+
+## 프로젝트 구조
+
+### \_\_init\_\_.py 🚫
+
+- Python에게 이 디렉토리를 하나의 Python 패키지로 다루도록 지시
+
+<br />
+
+### asgi.py
+
+- Asynchronous Server Gateway Interface
+- django 애플리케이션이 비동기식 웹 서버와 연결 및 소통하는 것 도움
+
+<br />
+
+### settings.py ⭐
+
+- **애플리케이션의 모든 설정** 포함
+
+<br />
+
+### urls.py ⭐
+
+- 사이트의 url과 적절한 views의 연결을 지정
+- HTTP request를 처음으로 받는 파일
+
+<br />
+
+### wsgi.py
+
+- Web Server Gateway Interface
+- Django App이 웹서버와 연결 및 소통하는 것을 도움
+
+<br />
+
+### manage.py
+
+- server 켤 때 사용했던 파일
+- Django pjt와 다양한 방법으로 상호작용하는 **커맨드라인 유틸리티**
+
+```bash
+$python manage.py <command> [options]
+
+ex) $python manage.py runserver
+```
+
+<br />
+
+## Application 생성
+
+- Application명은 일반적으로 **복수형**으로 하는 것을 권장
+
+```bash
+$ python manage.py startapp articles
+```
+
+- articles는 어플리케이션의 이름 예시(필수 아님!!)
+- articles 폴더가 firstpjt와 동등한 위치에 생겼음을 알 수 있다.
+- articles 폴더는 빈 폴더가 아니라 여러 파일들이 있다.
+
+<br />
+
+## Application 구조
+
+### \_\_init\_\_.py 🚫
+
+Python에게 이 디렉토리를 하나의 Python 패키지로 다루도록 지시
+
+<br />
+
+### admin.py
+
+관리자용 페이지 설정
+
+<br />
+
+### apps.py 🚫
+
+- 앱의 정보가 작성된 곳
+- 수정하지 않을 것
+
+<br />
+
+### models.py ⭐
+
+앱에서 사용하는 Model을 정의
+
+<br />
+
+### tests.py
+
+프로젝트의 테스트 코드를 작성
+
+<br />
+
+### views.py ⭐
+
+view 함수들이 정의되는 곳
+
+<br />
+
+## Project와 Application 재정리
+
+### Project
+
+- Project는 **App의 집합**(collection of apps)
+- 프로젝트에는 여러 앱이 포함
+
+<br />
+
+### Application
+
+- **실제 요청을 처리, 페이지를 보여주는 등의 역할** 담당
+- 일반적으로 **하나의 역할 및 기능 단위로 작성**
+- 여러 프로젝트에 있을 수 있음
+
+<br />
+
+## App 등록
+
+- 프로젝트와 App은 같은 위치에 위치한다.
+- 때문에 프로젝트는 App의 존재를 모른다.
+- 프로젝트 소속 App의 정보를 프로젝트에 등록해주어야 한다!
+
+<br />
+
+### settings.py
+
+```python
+# settings.py
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
+기본적으로 django가 구동되기 위한 기본 app들이 있다.
+
+아래처럼 app을 기본 app 위쪽에 추가해준다.
+
+```python
+# settings.py
+# Application definition
+
+INSTALLED_APPS = [
+    'articles',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
+<u>주의📢</u> App은 반드시 생성 후 등록한다! INSTALLED_APPS에 먼저 등록하고 생성하려면 생성 안 된다.
+ 
+
+<br />
+
+### django 권장 app 등록 form
+
+```python
+INSTALLED_APPS = [
+    # Local apps
+    'articles',
+
+    # Third party apps
+    '???',
+
+    # Django apps
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+```
+
+advanced한 내용에 대비하기 위해 위와 같이 구분해서 작성한다.
+
+<br />
+
+## 전체 과정 정리
+
+1. 가상환경 생성 및 활성화
+2. django 설치
+3. 프로젝트 생성
+4. 서버 실행 후 로켓 확인
+5. 앱 생성
+6. 앱 등록

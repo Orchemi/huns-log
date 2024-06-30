@@ -1,0 +1,1220 @@
+---
+title: "[Django] 외래키와 댓글, 개인인증 커스터마이징"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-04-13T18:00
+last_modified_at: 2022-04-13T18:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Foreign Key
+
+### 정의
+
+- 외래 키(외부 키)
+- 관계형 DB에서 한 테이블의 필드 중 다른 테이블의 행을 식별할 수 있는 키
+- 참조하는 테이블에서 속성(필드, 세로)에 해당하고, 이는 참조하는 테이블의 기본 키(PK)를 가리킴
+- 참조하는 테이블의 외래 키는 참조되는 태이블 행 1개에 대응
+- 참조하는 테이블에서 참조되는 테이블의 **존재하지 않는 행을 참조 불가능**
+- **참조하는 테이블의 행 여러 개**가 **참조되는 테이블의 동일한 행을 참조 가능**
+
+- 1:N 관계에서 외래키는 N의 테이블이 가지고 있다.
+  - 1 : 참조되는 테이블(게시물)
+  - N : 참조하는 테이블(댓글)
+
+<br />
+
+### 특징
+
+- 키를 사용하여 **부모 테이블의 유일한 값**을 참조(참조 무결성)
+- **참조 무결성** : DB 관계 모델에서 관련된 2개의 테이블 간의 일관성
+- 외래 키의 값이 반드시 부모 테이블의 PK일 필요는 없지만 **유일한 값**이어야 함
+
+<br />
+
+### ForeignKey field
+
+- CharField, TextField 등과 달리 '-Field' 없이 ForeignKey 그 자체가 Field명
+- 2개의 위치인자 반드시 필요
+1. 참조하는 model class
+2. on delete 옵션
+
+- migrate 작업 시 필드 이름에 _id를 추가하여 DB 열 이름 생성
+
+```python
+models.ForeignKey('self', on_delete=models.CASCADE)
+```
+
+<br />
+
+> comment 모델 정의
+
+```python
+# articles/models.py
+
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE) ⭐# 소문자 단수형
+    content = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.article
+```
+
+- migration 하면 필드 이름에 _id를 붙여 FK 필드 추가
+- 필드명을 article로 하였으므로 **articles_comment 테이블**에 **article_id**로 생성
+- 소문자 단수형으로 쓴 이유
+  - 누구를 참조하는지
+  - 다른 모델 관계와 헷갈리지 않을 수 있음(N:M 관계와 구분)
+
+<br />
+
+### ForeignKey arguments : on_delete
+
+- 외래 키를 참조하는 객체가 사라졌을 때, 외래 키를 가진 객체를 어떻게 처리할 것인지 정의
+- DB Integrity(데이터 무결성)을 위해서 매우 중요
+- on_delete 옵션에 사용 가능한 값들
+  - CASCADE ⭐ : 부모 객체(참조된 객체)와 함께 삭제
+  - PROTECT
+  - SET_NULL
+  - SET_DEFAULT
+  - SET()
+  - DO_NOTHING
+  - RESTRICT
+
+<br />
+
+### 데이터 무결성
+
+- 데이터의 정확성과 일관성을 유지하고 보증
+
+<br />
+
+> 개체 무결성(Entity integrity)
+
+- PK의 개념과 관련
+- 모든 테이블이 PK를 가지고, PK로 선택된 열은 고유한 값
+- PK는 빈 값을 허용 X
+
+<br />
+
+> 참조 무결성(Referential integrity) ⭐
+
+- FK의 개념과 관련
+- FK 값이 DB의 특정 테이블의 PK 값을 참조
+
+<br />
+
+> 범위(도메인) 무결성(Domain integrity)
+
+- 정의된 형식(범위)에서 관계형 DB의 모든 컬럼이 선언되도록 규정
+
+<br />
+
+### shell_plus 실습
+
+> 가. 생성, 내용추가, 저장 별도
+
+```bash
+$ python manage.py shell_plus
+
+In [1]: comment = Comment()
+
+In [2]: comment.content = 'first comment'
+
+In [3]: comment.save()
+
+IntegrityError: NOT NULL constraint failed: articles_comment.article_id
+# 어떤 게시물을 참조하는지에 대한 정보가 없어서 에러 발생
+
+# 참조 게시물 생성
+In [4]: article = Article.objects.create(title='title', content='content')
+
+In [5]: article.pk
+Out[5]: 1
+
+# 위에서 정의한 comment
+In [6]: comment.content
+Out[6]: 'first comment'
+
+# comment에 참조하는 article 객체는 위에서 생성한 1번 article 인스턴스
+In [7]: comment.article = article
+
+In [8]: comment.save()
+
+# comment가 잘 저장, 참조 객체도 확인 가능
+In [9]: comment.pk
+Out[9]: 1
+
+# 참조 객체의 정보(속성값)도 확인 가능
+In [10]: comment.article
+Out[10]: <Article: title>
+
+In [11]: comment.article.title
+Out[11]: 'title'
+```
+
+- 필드 참조 : comment.article_id = article.pk
+- 객체 참조(권장) : comment.article = article
+
+<br />
+
+> 나. 생성-내용, 저장
+
+```bash
+In [12]: comment = Comment(content='second comment', article=article)
+
+In [13]: comment.save()
+
+In [14]: comment.pk
+Out[14]: 2
+
+In [15]: comment.article.pk
+Out[15]: 1
+
+In [16]: comment.article_id
+Out[16]: 1
+```
+
+- **comment.article.pk**와 **comment.article_id**를 혼동하지 않도록 주의
+  - comment.article.pk : 현재 comment가 참조하는 article 인스턴스에서 가져오는 pk
+  - comment.article_id : comment 생성시 article_id 필드에 저장되는 article 인스턴스의 pk
+  - 같은 개념이지만 comment.article_pk 처럼 작성하지 않도록 주의
+
+<br />
+
+### 역참조 : comment_set
+
+> comment가 article을 참조하는데, article이 comment를 찾을 방법이 없나요?
+
+외래키가 참조하는 모델의 인스턴스 + **comment_set**을 이용해 참조할 수 있다.
+
+```bash
+article.comment_set
+```
+
+- **article.comment_set** manager 생성
+- 게시글에 몇 개의 댓글이 작성되었는지 ORM이 보장 불가능
+  - article에는 comment가 없을 수도, 많을 수도 있음
+  - 실제로 Article 클래스에는 Comment와의 어떠한 관계도 작성되어 있지 않음
+
+<br />
+
+```bash
+In [1]: article = Article.objects.get(pk=1)
+
+In [2]: article
+Out[2]: <Article: title>
+
+In [3]: article.comment_set.all()
+Out[3]: <QuerySet [<Comment: first comment>, <Comment: second comment>]>
+
+# 1번 article 인스턴스를 참조하는 댓글 queryset을 comments에 저장
+In [4]: comments = article.comment_set.all()
+
+# queryset의 각 comment의 content를 출력
+In [5]: for comment in comments:
+   ...:     print(comment.content)
+   ...: 
+first comment
+second comment
+```
+
+<br />
+
+> 게시글에서 댓글의 개수가 왜 중요하죠?
+
+- 참조의 경우, comment의 존재를 위해 article이 무조건 필요
+- **comment.article 방식**으로 조회가 가능
+- 반대의 경우, 이것이 불가능하므로 역참조 manager 생성
+
+<br />
+
+> comment_set manager가 너무 길어요. 재정의할 수 있나요?
+
+**related_name** 속성을 이용해 재정의할 수 있다.
+
+```python
+# models.py / class Comment
+article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+```
+
+<br />
+
+> 주의사항
+
+- migration을 다시 해야 함
+- 과거에 있던 comment_set의 model manager를 사용 불가
+- django의 1:N 관계에서는 related_name을 사용하지 않는 것을 권장
+  - M:N에서는 related_name을 사용해야 하는 경우가 있음
+  - 1:N에서는 _set 방식을 사용해서 구분하기 용이
+
+<br />
+
+## Comment CREATE
+
+### 코드
+
+> CommentForm 작성
+
+```python
+# articles/forms.py
+from .models import Article, Comment
+
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comment
+        fields = '__all__'
+```
+
+- CommentForm : Comment model을 참조하는 ModelForm 정의
+
+<br />
+
+> detail view 함수 수정
+
+```python
+# articles/views.py
+from .forms import ArticleForm, CommentForm
+
+@require_safe
+def detail(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    comment_form = CommentForm()
+    context = {
+        'article': article,
+        'comment_form': comment_form,
+    }
+    return render(request, 'articles/detail.html', context)
+```
+
+- CommentForm을 import
+- comment_form의 빈 폼을 만들어 context로 template에 전달
+
+<br />
+
+> detail template 수정
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+{% block content %}
+  ...
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{ comment_form }}
+    <input type="submit">
+  </form>
+{% endblock content %}
+{% endraw -%}
+```
+
+- 댓글 폼을 표시하는 폼 태그 추가
+
+<br />
+
+> 문제상황 : ForeignKeyField를 직접 작성해야 되게 됐는데요?
+
+`![image](https://user-images.githubusercontent.com/86189596/163081294-21150863-4325-452b-9772-17c849d1e709.png)`
+
+<br />
+
+CommentForm의 field에서 외래 키 출력을 제외한다.
+
+```python
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comment
+        # fields = '__all__'
+        exclude = ('article', )
+```
+
+<br />
+
+### 댓글 생성 로직
+
+> urls
+
+```python
+# articles/urls.py
+app_name = 'articles'
+urlpatterns = [
+    ...
+    path('<int:pk>/comments/', views.comments_create, name='comments_create'),
+]
+```
+
+<br />
+
+> template
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<form action="{% url 'articles:comments_create' article.pk %}" method="POST">
+  {% csrf_token %}
+  {{ comment_form }}
+  <input type="submit">
+</form>
+{% endraw -%}
+```
+
+- action의 URL을 채워준다.
+- 댓글폼이 채워지면 comments_create view 함수를 POST method로 호출
+
+<br />
+
+> view
+
+- pk로부터 게시물을 받아와 저장
+- 폼 작성 데이터 기반으로 comment_form 인스턴스 생성
+- 유효하다면 저장
+
+```python
+# articles/views.py
+def comments_create(request, pk):
+    article = Article.objects.get(pk=pk)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+        comment_form.save()
+    return redirect('articles:detail', article.pk)
+```
+
+이렇게 하면 되지 않을까?
+
+<br />
+
+> IntegrityError가 발생하는데요?
+
+앞서 ForeignKey field를 form에서 숨겨서 **ForeignKey에 대한 정보가 없기 때문!**
+
+<br />
+
+### save() method : commit=False
+
+- **DB에 저장되지 않은 인스턴스를 반환**
+- **저장 전 객체에 대한 사용자 지정 처리를 수행할 때** 필요
+- commit의 default는 True
+
+```python
+# articles/views.py
+def comments_create(request, pk):
+    article = Article.objects.get(pk=pk)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+        # commit False는 DB에 저장 없이 인스턴스만 반환해 comment에 저장
+        comment = comment_form.save(commit=False)
+        # 앞서 조회한 article 객체를 comment의 객체로 지정
+        comment.article = article
+        comment.save()
+    return redirect('articles:detail', article.pk)
+```
+
+<br />
+
+## Comment READ
+
+> view
+
+특정 article에 있는 모든 댓글을 가져온 후 context에 추가
+
+```python
+# articles/detail.py
+
+@require_safe
+def detail(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    comment_form = CommentForm()
+    comments = article.comment_set.all() 🔅
+    context = {
+        'article': article,
+        'comment_form': comment_form,
+        'comments': comments, 🔅
+    }
+    return render(request, 'articles/detail.html', context)
+```
+
+<br />
+
+> template
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+{% endblock content %}
+  ...
+  <a href="{% url 'articles:index' %}">back</a>
+  <hr>
+  <h4>댓글 목록</h4>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.content }}</li>
+    {% endfor %}
+  </ul>
+  ...
+{% endblock content %}
+{% endraw -%}
+```
+
+- for문을 이용해 comments queryset의 comment마다 content를 추가
+
+<br />
+
+## Comment DELETE
+
+> url
+
+```python
+# articles/urls.py
+
+app_name = 'articles'
+urlpatterns = [
+    ...
+    path('<int:article_pk>/comments/<int:comment_pk>/delete/', views.comments_delete, name='comments_delete'),
+]
+```
+
+- view에서 인스턴스 메서드를 통해 article_pk를 찾을 수 있다.
+- 하지만 variable routing을 이용해 article의 pk와 comment의 pk를 받는다.
+- **urls.py의 일관성**과 **REST API의 규칙**을 위해 위 방식 선택
+
+<br />
+
+> view
+
+```python
+# articles/views.py
+
+def comments_delete(request, article_pk, comment_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    comment.delete()
+    return redirect('articles:detail', article_pk)
+```
+
+<br />
+
+> template
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<li>
+  {{ comment.content }}
+  <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="삭제">
+  </form>
+</li>
+{% endraw -%}
+```
+
+- li 태그, 즉 댓글마다 삭제 버튼 추가
+- action URL에 article.pk, comment.pk variable 함께 전달
+
+<br />
+
+> view 코드 최종
+
+```python
+@require_POST
+def comments_create(request, pk):
+    if request.user.is_authenticated:
+        article = get_object_or_404(Article, pk=pk)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.article = article
+            comment.save()
+        return redirect('articles:detail', article.pk)
+    return redirect('accounts:login')
+
+
+@require_POST
+def comments_delete(request, article_pk, comment_pk):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk=comment_pk)
+        comment.delete()
+    return redirect('articles:detail', article_pk)
+```
+
+- is_authenticated 및 POST method 등에 대한 shortcut 추가
+
+<br />
+
+## Customizing authentication in Django
+
+### User 모델 대체
+
+> Substituting a custom User model
+
+- 특정 프로젝트에서는 Django의 **내장 User 모델이 제공하는 인증 요구사항이 적절하지 않을 수 있다.**
+- ex) username 대신 email을 식별 토큰으로 사용하는 것이 더 적합한 사이트
+
+- Django는 User를 참조하는데 사용하는 **AUTH_USER_MODEL** 값을 제공하여, default user model을 **재정의(override)**할 수 있도록 함
+
+- Django는 새 프로젝트를 시작하는 경우 기본 사용자 모델이 충분하더라도, **커스텀 유저 모델을 설정하는 것을 강력하게 권장(highly recommended)** ⭐
+- 단, **프로젝트의 모든 migrations 혹은 첫 migrate를 실행하기 전에 이 작업을 마쳐야 함**
+
+> "쓰든 안 쓰든 사람 일 모르니까 프로젝트 첫 마이그레이션 전에 커스텀 User 모델로 꼭 대체를 하고 시작해라!! 마이그레이션 하면 나중에 못 바꾼다!!"
+
+<br />
+
+### AUTH_USER_MODEL
+
+- User를 나타내는 데에 사용되는 모델
+- **프로젝트가 진행되는동안 변경할 수 없음**
+- 프로젝트 시작 시 설정하기 위한 것
+- 참조하는 모델은 첫 번째 마이그레이션에서 사용할 수 있어야 함
+- **기본 값: auth.User** (auth 앱의 User 모델)
+
+<br />
+
+> 프로젝트 중간(mid-project)에 AUTH_USER_MODEL 변경
+
+- 정확히는 절대 불가능은 아니다.
+- 모델 관계에 영향을 미치기 때문에 불가능에 가까운 훨씬 더 어려운 작업을 요한다.
+
+<br />
+
+### Custom User 모델 정의
+
+> 가. 새 User 모델 정의
+
+완전한 User 모델을 구현하는 기본 클래스인 **AbstractUser를 상속받아 새로운 User 모델 작성**
+
+```python
+# accounts/models.py
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    pass
+```
+
+<br />
+
+> 나. settings-AUTH_USER_MODEL 추가
+
+- Django가 사용하는 User모델
+  - 기존 : auth 앱의 User 모델
+  - 대체 : accounts 앱의 User 모델
+
+- 기본적으로 내장된 경로이므로 settings.py에 새로 넣어주어 덮어씌우면 된다.
+
+```python
+# settings.py
+
+AUTH_USER_MODEL = 'accounts.User'
+```
+
+<br />
+
+> admin site에 Custom User 모델 등록
+
+```python
+# accounts/admin.py
+
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from .models import User
+
+admin.site.register(User, UserAdmin)
+```
+
+새 User 모델을 정의하며 admin 페이지에서 사라진 **사용자(들) 탭**을 다시 추가하는 코드
+
+<br />
+
+> DB 초기화 및 마이그레이션
+
+프로젝트 중간에 진행했기 때문에 제거 후 마이그레이션
+
+- db.sqlite3 파일 삭제
+- migrations 파일 모두 삭제(**파일명에 숫자가 붙은 파일만 삭제**, 폴더 지우면 안 됨)
+
+```bash
+$ python manage.py makemigrations
+
+$ python manage.py migrate
+```
+
+<br />
+
+## Custom user & Built-in auth forms
+
+> 바뀐 User 모델에 의해 발생한 문제들을 해결해보자
+
+<br />
+
+### 가. 회원가입 오류
+
+> 문제점 : 회원가입이 안 됩니다
+
+- 회원가입에서 UserCreationForm(ModelForm)을 사용하기 때문
+- ModelForm의 class Meta에 model이 기존 내장 User 모델을 사용하기 때문
+
+1. 커스텀 ModelForm을 만들고 기존 Built-in Form을 상속
+2. model을 재정의
+3. 커스텀 ModelForm으로 기존 ModelForm 대체
+
+<br />
+
+> forms.py
+
+```python
+# accounts/forms.py
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+
+class CustomUserCreationForm(UserCreationForm):
+    
+    class Meta:
+        # 현재 django에서 활성화된 User 모델 가져옴
+        model = get_user_model()
+        # 상속하는 부모 클래스의 Meta class 내 fields, 그리고 내가 원하는 fields 추가
+        fields = UserCreationForm.Meta.fields + ('email',)
+```
+
+<br />
+
+> views.py
+
+```python
+# accounts/views.py
+from .forms import CustomUserCreationForm
+
+@require_http_methods(['GET', 'POST'])
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect('articles:index')
+
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect('articles:index')
+    else:
+        form = CustomUserCreationForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/signup.html', context)
+```
+
+<br />
+
+### 나. 회원정보 수정 오류
+
+> 문제 : 회원정보 수정이 안 됩니다
+
+- 위와 같은 이유
+- UserChangeForm를 상속하는 CustomUserChangeForm을 정의 후 overriding
+
+<br />
+
+### get_user_model()
+
+- **현재 프로젝트에서 활성화된 사용자 모델**(active user model)을 반환
+- User 모델을 커스터마이징한 상황에서는 Custom User 모델을 반환
+
+- 이 때문에 Django는 User 클래스를 **직접 참조하는 대신 django.contrib.auth.get_user_model()을 사용하여 참조해야 한다고 강조**
+- User를 직접 참조하면, User를 바꾸는 경우 기존 User 모델이 비활성화되며 문제 발생
+- 항상 활성화된 User 모델을 참조하는 get_user_model()을 사용하자!
+
+<br />
+
+## 1:N 관계 설정
+
+### User-Article(1:N)
+
+> Article model class에 user에 대한 정보를 설정해보자
+
+```python
+# articles/models.py
+from django.conf import settings
+
+class Article(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 🔅
+    title = models.CharField(max_length=10)
+    ...
+```
+
+- model에서의 user model 참조는 함수로 하지 않는다.
+  - django.conf.settings import
+  - **settings.AUTH_USER_MODEL** 인자 사용
+
+<br />
+
+### User 모델 참조 인자 및 함수 ⭐
+
+> settings.AUTH_USER_MODEL
+
+- **User 모델에 대한 외래키 또는 다대다 관계를 정의**할 때 사용
+- return이 str
+- **models.py에서 User 모델을 참조할 때 사용**
+
+<br />
+
+> get_user_model()
+
+- 현재 활성화(active)된 User 모델을 반환
+- return이 object
+- **models.py가 아닌 다른 모든 곳에서 User 모델을 참조할 때 사용**
+
+<br />
+
+> Django에서 App이 실행되는 순서
+
+1. INSTALLED_APP에서 순차적으로 APP IMPORT
+2. 각 App의 models를 import
+
+- User 정의한 app의 models를 지나기 이전의 app들의 models에서 user를 사용하는 경우
+- 객체를 return하면 위험하고 str로 return해야 안전하기 때문에
+- settings.AUTH_USER_MODEL을 사용하여 str로 user model 참조
+
+<br />
+
+> 요점 ⭐
+
+User 모델 참조시
+
+- models.py일 때 : settings.AUTH_USER_MODEL
+- models.py가 아닐 때 : get_user_model()
+
+<br />
+
+### migration
+
+> models.py가 바뀌었으므로 migration해보자
+
+- 경고 오류 발생
+- null 값을 허용하지 않는 user_id 필드가 별도 값 없이 article에 추가되어서
+
+- 1 : 현재 화면에서 기본 값을 설정하겠다.
+- 2 : 일단 중단하고 default 정의하고 오겠다.
+- 1을 선택 후 그냥 admin user 번호인 1로 설정한다.
+
+<br />
+
+> user 선택?
+
+`![image](https://user-images.githubusercontent.com/86189596/163112362-2d4fe973-3b00-4dd1-b240-e0c19b06d171.png)`
+
+- user, 즉 작성자를 선택하게끔 나오고 있다.
+- forms.py에서 이를 수정해보자.
+
+<br />
+
+> forms.py
+
+```python
+# articles/forms.py
+
+class ArticleForm(forms.ModelForm):
+
+    class Meta:
+        model = Article
+        # fields = '__all__'
+        fields = ('title', 'content',)
+```
+
+<br />
+
+> Integrity 에러 생기는데요?
+
+- 게시글 작성 시 작성자 정보(article.user)가 누락되었기 때문
+- 위에서 외래키 선택을 Form에서 제거했을 때 상황과 같다.
+- create 함수에 로직을 추가
+
+<br />
+
+> view 기존 코드
+
+```python
+# articles/views.py
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def create(request):
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            article = form.save()
+            return redirect('articles:detail', article.pk)
+    else:
+        form = ArticleForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'articles/create.html', context)
+```
+
+<br />
+
+> view 수정 코드
+
+```python
+# articles/views.py
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def create(request):
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            article = form.save(commit=False) 🔅
+            article.user = request.user 🔅
+            article.save() 🔅
+            return redirect('articles:detail', article.pk)
+    else:
+        form = ArticleForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'articles/create.html', context)
+```
+
+작성자 정보 추가 및 저장
+
+<br />
+
+### Delete
+
+> 자신이 작성한 게시물만 삭제 가능하도록 설정
+
+> 기존 코드
+
+```python
+# articles/views.py
+
+@require_POST
+def delete(request, pk):
+    if request.user.is_authticated:
+        article = get_object_or_404(Article, pk=pk)
+        article.delete()
+    return redirect('articles:index')
+```
+
+<br />
+
+> 수정 코드
+
+```python
+# articles/views.py
+
+@require_POST
+def delete(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    if request.user.is_authticated:
+        if request.user == article.user:
+            article.delete()
+            return redirect('articles:index')
+    return redirect('articles:detail', article.pk)
+```
+
+<br />
+
+### Update
+
+> 자신이 작성한 게시물만 수정 가능하도록 설정
+
+> 기존 코드
+
+```python
+# articles/views.py
+@login_required
+@require_http_methods(['GET', 'POST'])
+def update(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            article = form.save()
+            return redirect('articles:detail', article.pk)
+    else:
+        form = ArticleForm(instance=article)
+    context = {
+        'article': article,
+        'form': form,
+    }
+    return render(request, 'articles/update.html', context)
+```
+
+<br />
+
+> 수정 코드
+
+```python
+# articles/views.py
+@login_required
+@require_http_methods(['GET', 'POST'])
+def update(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    if request.user == article.user: 🔅
+        if request.method == 'POST':
+            form = ArticleForm(request.POST, instance=article)
+            if form.is_valid():
+                article = form.save()
+                return redirect('articles:detail', article.pk)
+        else:
+            form = ArticleForm(instance=article)
+    else: 🔅
+        return redirect('articles:index')
+    context = {
+        'article': article,
+        'form': form,
+    }
+    return render(request, 'articles/update.html', context)
+```
+
+<br />
+
+### READ
+
+> 게시글 작성 user가 누구인지 index.html에서 출력해보자
+
+```html
+{%- raw -%}
+<!-- articles/index.html -->
+
+{% for article in articles %}
+  <p><b>작성자 : {{ article.user }}</b></p> 🔅
+  <p>글 번호: {{ article.pk }}</p>  
+  <p>글 제목: {{ article.title }}</p>
+  <p>글 내용: {{ article.content }}</p>
+  <a href="{% url 'articles:detail' article.pk %}">DETAIL</a>
+  <hr>
+{% endfor %}
+{% endraw -%}
+```
+
+<br />
+
+> 해당 게시글의 작성자가 아니라면, 수정/삭제 버튼을 출력하지 않도록 해보자
+
+> 기존 코드
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<hr>
+<p>제목 : {{ article.title }}</p>
+<p>내용 : {{ article.content }}</p>
+<p>작성 시각 : {{ article.created_at }}</p>
+<p>수정 시각 : {{ article.updated_at }}</p>
+<hr>
+<a href="{% url 'articles:update' article.pk %}">수정</a>
+<form action="{% url 'articles:delete' article.pk %}" method="POST">
+  {% csrf_token %}
+  <input type="submit" value="삭제">
+</form>
+<a href="{% url 'articles:index' %}">back</a>
+{% endraw -%}
+```
+
+<br />
+
+> 수정 코드
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<hr>
+<p>제목 : {{ article.title }}</p>
+<p>내용 : {{ article.content }}</p>
+<p>작성 시각 : {{ article.created_at }}</p>
+<p>수정 시각 : {{ article.updated_at }}</p>
+<hr>
+{% if user == article.user %} 🔅
+  <a href="{% url 'articles:update' article.pk %}">수정</a>
+  <form action="{% url 'articles:delete' article.pk %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="삭제">
+  </form>
+{% endif %}
+<a href="{% url 'articles:index' %}">back</a>
+{% endraw -%}
+```
+
+<br />
+
+## User-Comment(1:N)
+
+> models.py
+
+```python
+# articles/models.py
+
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 🔅
+    content = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.content
+```
+
+- models를 바꿔주므로 migration을 실시
+
+<br />
+
+> user 선택
+
+`![image](https://user-images.githubusercontent.com/86189596/163114962-340a1614-099f-44ac-9125-1a703a267bc1.png)`
+
+<br />
+
+> forms.py
+
+user field 제외
+
+```python
+# articles/forms.py
+
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comment
+        # fields = '__all__'
+        exclude = ('article', 'user',)
+```
+
+<br />
+
+> user_id 없어서 추가
+
+
+```python
+# articles/views.py
+
+@require_POST
+def comments_create(request, pk):
+    if request.user.is_authenticated:
+        article = get_object_or_404(Article, pk=pk)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.article = article
+            comment.user = request.user 🔅
+            comment.save()
+        return redirect('articles:detail', article.pk)
+    return redirect('accounts:login')
+```
+
+FK를 2개 넣는 상황 : user_id, article_id
+
+<br />
+
+### 권한에 대한 작업
+
+#### 가. 비로그인 유저에게는 댓글 form 출력 숨기기
+
+> 기존 코드
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<form action="{% url 'articles:comments_create' article.pk %}" method="POST">
+  {% csrf_token %}
+  {{ comment_form }}
+  <input type="submit">
+</form>
+{% endraw -%}
+```
+
+<br />
+
+> 수정 코드
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+{% if request.user.is_authenticated %}
+  <form action="{% url 'articles:comments_create' article.pk %}" method="POST">
+    {% csrf_token %}
+    {{ comment_form }}
+    <input type="submit">
+  </form>
+{% else %}
+  <a href="{% url 'accounts:login' %}">[댓글을 작성하려면 로그인하세요.]</a>
+{% endif %}
+{% endraw -%}
+```
+
+<br />
+
+#### 나. 댓글 작성자 출력
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<h4>댓글 목록</h4>
+<ul>
+  {% for comment in comments %}
+    <li>
+      {{ comment.user }} - {{ comment.content }} 🔅
+      <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="삭제">
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+{% endraw -%}
+```
+
+<br />
+
+#### 다. 자신이 작성한 댓글만 삭제 버튼 보이기
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<h4>댓글 목록</h4>
+<ul>
+  {% for comment in comments %}
+    <li>
+      {{ comment.user }} - {{ comment.content }}
+      {% if user == comment.user %} 🔅
+        <form action="{% url 'articles:comments_delete' article.pk comment.pk %}" method="POST">
+          {% csrf_token %}
+          <input type="submit" value="삭제">
+        </form>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endraw -%}
+```
+
+<br />
+
+#### 라. 자신이 작성한 댓글만 삭제
+
+```python
+# articles/views.py
+
+@require_POST
+def comments_delete(request, article_pk, comment_pk):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk=comment_pk)
+        if request.user == comment.user: 🔅
+            comment.delete()
+    return redirect('articles:detail', article_pk)
+```
+

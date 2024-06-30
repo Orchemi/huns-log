@@ -1,0 +1,399 @@
+---
+title: "[Python] 흐름제어if - 연습문제 13~19"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2021-12-31T21:47
+last-modified-at: 2022-01-02T03:02
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #13 ~ #19](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 임의의 양의 정수를 입력받아 그 정수의 모든 약수를 구하십시오
+입력
+
+```python
+9
+```
+
+출력
+
+```python
+1(은)는 9의 약수입니다.
+3(은)는 9의 약수입니다.
+9(은)는 9의 약수입니다.
+```
+
+### Sol
+
+```python
+A = int(input())
+
+for B in range(1, A + 1):
+  if (A % B) == 0:
+    print("{0}(은)는 {1}의 약수입니다.".format(B, A))
+```
+
+어떤 정수 A가 어떤 정수 B의 약수이기 위해서는 B를 A로 나눈 나머지가 0이어야 한다. 즉, B % A = 0 이면 된다. 1부터 input() 값까지 모든 경우의 수에 대해 약수를 따져줘야 하므로, for문을 사용한다. ~~강의 진도상 아직 반복문은 안했지만 나는 이미 알고 있어.~~
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147809608-050d5aa4-ebfe-4af5-88dc-9294e5a2e2d9.png)`
+
+<br />
+
+## 연습문제 #2
+
+### 문제
+
+다음의 결과와 같이 임의의 양의 정수를 입력받아 그 정수의 모든 약수를 구하십시오
+(단, 약수가 2개일 경우 소수임을 나타내십시오)
+
+입력
+
+```python
+5
+```
+
+출력
+
+```python
+1(은)는 5의 약수입니다.
+5(은)는 5의 약수입니다.
+5(은)는 1과 5로만 나눌 수 있는 소수입니다.
+```
+
+### Sol
+
+약수를 구하는 과정은 연습문제 #1과 같다. 소수를 구분하기 위해서는 다음의 과정을 거친다.
+
+모든 수는 1과 자신으로 나눌 수 있다. 때문에 소수이기 위해서는 1과 자신을 제외한 약수가 있으면 안되며, 이는 약수임을 표시하는 print문이 2번 발생함을 의미한다.
+
+때문에 print문 이전 행에 약수의 개수를 의미하는 변수의 값을 하나 높이고, 전체 for문이 다 돌았을 때, 해당 변수의 값이 2이면 소수임을 출력하는 if문을 하나 더 놓으면 될 것 같다.
+
+```python
+num_ys = 0
+A = int(input())
+
+for B in range(1, A + 1):
+    if (A % B) == 0:
+        num_ys += 1
+        print("{0}(은)는 {1}의 약수입니다.".format(B, A))
+
+if num_ys == 2:
+    print("{0}(은)는 1과 {0}로만 나눌 수 있는 소수입니다.".format(A))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147810079-619bf0f9-d72c-4ae0-a638-285c53ee7bd2.png)`
+
+출력문에 (은) 을 넣지 않아서 fail이 떴다. 출력 양식을 잘 확인하자. 아니면 출력문을 그대로 긁어서 해당 숫자 부분에 인자만 바꿔넣는 식으로 하던가ㅠㅠ
+
+<br />
+
+## 연습문제 #3
+
+### 문제
+
+다음의 결과와 같이 입력된 영어 알파벳 문자에 대해 대소문자를 구분하는 코드를 작성하십시오.
+
+입력
+
+```python
+b
+```
+
+출력
+
+```python
+b 는 소문자 입니다.
+```
+
+### Sol
+
+ASCII 코드의 비트 수를 계산하는 함수인 ord() 함수를 쓰면 될 것 같다. 영어 대문자 A ~ Z는 65에서 90, 소문자 a ~ z는 97에서 122이다.
+
+```python
+alpha = input()
+alpha_num = ord(alpha)
+
+if 65 <= alpha_num <= 90:
+    print("{0} 는 대문자 입니다.".format(alpha))
+elif 97 <= alpha_num <= 122:
+    print("{0} 는 소문자 입니다.".format(alpha))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147811149-afae4c1f-ef73-420a-ad53-d8869c84738c.png)`
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+다음의 결과와 같이 가상의 두 사람이 가위 바위 보 중 하나를 내서 승패를 가르는 가위 바위 보 게임을 작성하십시오.
+
+이 때 ["가위", "바위", "보"] 리스트를 활용합니다.
+
+- 입력
+
+  - 두 줄에 ["가위", "바위", "보"] 중 하나가 차례로 주어진다.
+
+- 출력
+  - 첫 번째 사람은 Man1, 두 번째 사람은 Man2라고 하고, 이긴 사람의 결과를 출력한다.
+  - 예를 들어, Man1이 이겼을 경우 Result : Man1 Win! 이라고 출력한다.
+  - 단, 비긴 경우는 Result : Draw 라고 출력한다.
+
+입력
+
+```python
+바위
+가위
+```
+
+출력
+
+```python
+Result : Man1 Win!
+```
+
+### Sol
+
+`A in lst` 를 사용해 "가위", "바위", "보" 가 아닌 (lst의 항목들이 아닌) input()의 경우 "Result = 입력 오류" 의 메세지를 출력하게 하였다.
+
+```python
+lst = ["가위", "바위", "보"]
+Man1 = input()
+Man2 = input()
+
+if not ((Man1 in lst) and (Man2 in lst)):
+    Result = "입력 오류"
+elif Man1 == Man2:
+    Result = "Draw"
+elif Man1 == lst[0]:
+
+    if Man2 == lst[1]:
+        Result = "Man2 Win!"
+    elif Man2 == lst[2]:
+        Result = "Man1 Win!"
+elif Man1 == lst[1]:
+
+    if Man2 == lst[0]:
+        Result = "Man1 Win!"
+    elif Man2 == lst[2]:
+        Result = "Man2 Win!"
+elif Man2 == lst[2]:
+
+    if Man2 == lst[0]:
+        Result = "Man1 Win!"
+    elif Man2 == lst[1]:
+        Result = "Man2 Win!"
+
+print("Result : " + Result)
+```
+
+lst를 활용해야 했기 때문에 하드코딩했는데, 조금 더 효율적인 방법이 없을까 생각해보았지만, 생각이 들지 않았다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147812731-c3f0f205-396f-49ff-8ce0-5e98812806e9.png)`
+
+Pass는 했지만 다소 아쉬움이 남는 풀이였다.
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+다음의 결과와 같이 입력된 문자가 대문자일 경우 소문자로, 소문자일 경우 대문자로 변경하고,
+알파벳이 아닐 경우엔 그냥 출력하는 코드를 작성하십시오.
+출력 시 아스키코드를 함께 출력합니다.
+
+입력
+
+```python
+c
+```
+
+출력
+
+```python
+c(ASCII: 99) => C(ASCII: 67)
+```
+
+### Sol A
+
+우선 대문자 A는 65, 소문자 a는 97로 대문자와 소문자의 ASCII코드 숫자의 간격은 32이다. 이를 이용해보자.
+
+```python
+alpha = input()
+
+if len(alpha) == 1:
+    alpha_num = ord(alpha)
+else:
+    alpha_num = 0
+
+# 소문자 -> 대문자
+if 97 <= alpha_num <= 122:
+    print("%c(ASCII: %d) = > %c(ASCII: %d)" %
+          (alpha, alpha_num, alpha_num - 32, alpha_num - 32))
+# 대문자 -> 소문자
+elif 65 <= alpha_num <= 90:
+    print("%c(ASCII: %d) = > %c(ASCII: %d)" %
+          (alpha, alpha_num, alpha_num + 32, alpha_num + 32))
+# 기타
+else:
+    print(alpha)
+```
+
+Terminal에서 결과는 원하는대로 나왔는데, 자꾸 fail이 나왔다. 뭐가 잘못된건지 모르겠다.
+
+### Sol B
+
+대문자와 소문자로 만들어주는 upper() 함수와 lower() 함수, 그리고 이들이 대문자인지 소문자인지를 확인하는 isupper() 함수와 islower()함수를 활용해보자.
+
+```python
+alpha = input()
+
+if len(alpha) > 1:
+    print(alpha)
+elif alpha.islower():
+    print("%c(ASCII: %d) = > %c(ASCII: %d)" %
+          (alpha, ord(alpha), alpha.upper(), ord(alpha.upper())))
+elif alpha.isupper():
+    print("%c(ASCII: %d) = > %c(ASCII: %d)" %
+          (alpha, ord(alpha), alpha.lower(), ord(alpha.lower())))
+else:
+    print(alpha)
+```
+
+### 제출결과
+
+이번에도 fail이 떴다. %c 를 %s 로도 바꿔보고 다 해봤고, 결과도 문제에서 요구하는대로 나오는데 왜 안 될까 싶다.
+
+### Sol C (22.01.02.)
+
+```python
+alpha = input()
+
+if 'a' <= alpha <= 'z':     # alpha가 소문자일 경우
+    print("{0}(ASCII: {1}) => {2}(ASCII: {3})".format(
+        alpha, ord(alpha), alpha.upper(), ord(alpha.upper())))
+elif 'A' <= alpha <= 'Z':  # alpha가 대문자일 경우
+    print("{0}(ASCII: {1}) => {2}(ASCII: {3})".format(
+        alpha, ord(alpha), alpha.lower(), ord(alpha.lower())))
+else:   # alpha가 소문자/대문자 가 아닌 경우
+    print(alpha)
+```
+
+범위를 나누고 입력값인 alpha를 'a'와 'z' 사이, 즉 아스키코드 숫자로 비교하는 식으로 작성하였다. islower(), isupper() 함수보다 훨씬 쉬운 것 같다. str.fotmat()을 이용해 해당하는 자리에 .upper(), .lower() 함수를 이용했다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147857084-14bd6b6b-4b0c-4d7c-9eb9-baa7d50f92a4.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+1~200 사이의 정수 가운데 7의 배수이면서 5의 배수는 아닌 모든 숫자들을 찾아
+콤마(,)로 구분된 문자열을 구성해 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+7,14,21,28,42,49,56,63,77,84,91,98,112,119,126,133,147,154,161,168,182,189,196
+```
+
+### Sol
+
+논리곱으로 선별하면 될 것 같다. 만약 입력한 수를 num이라고 한다면,
+
+1. num % 7 == 0
+2. num % 5 != 0
+
+인 것이다.
+
+처음엔 list에 각 요소들을 .append() 함수를 이용해 넣어서 한 번에 출력하려 했는데, list의 대괄호가 출력에 같이 나오게 되어 새롭게 짤 필요가 있었다.
+
+%- formating와 문자열 접합을 이용할 것이다.
+
+```python
+result = ""
+
+for i in range(1, 200):
+    if ((i % 7 == 0) and (i % 5 != 0)):
+        result += "%d," % i
+
+print(result[0:len(result)-1])
+```
+
+맨 뒤의 반점을 제거하기 위해서 len(result)로 전체 길이를 확인하고, 이 길이보다 하나 모자르게 출력했다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147819393-a6e89157-4b8d-4c7d-b553-43bfa8621bd0.png)`
+
+<br />
+
+## 연습문제 #8
+
+### 문제
+
+100~300 사이의 숫자에서 각각의 자리 숫자가 짝수인 숫자를 찾아 콤마(,)로 구분해 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+200,202,204,206,208,220,222,224,226,228,240,242,244,246,248,260,262,264,266,268,280,282,284,286,288
+```
+
+### Sol
+
+Python의 Slicing을 이용해보자. Slicing은 문자열을 index를 이용해 잘라내는 것이다.
+
+```python
+result = ""
+
+for i in range(100, 300):
+    i_s = str(i)
+    if((int(i_s[0]) % 2 == 0) and (int(i_s[1]) % 2 == 0) and (int(i_s[2]) % 2 == 0)):
+        # result += "%d," % i
+        result += "%d," % i
+
+print(result[0:len(result)-1])
+```
+
+- 각각의 i를 str()에 넣어 슬라이싱이 가능한 문자형으로 바꾸어준다.
+- i_s[0] 등 index로 슬라이싱한 각각은 문자형이므로 int() 안에 넣어 숫자형으로 바꿔 % 2 연산이 가능하게 한다.
+- 초기화한 result에 각각의 값을 넣은 뒤, len과 index로 맨 뒤의 반점을 제외하여 출력한다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147824173-48f642e2-60da-475c-83ec-c7fc508b2b41.png)`

@@ -1,0 +1,509 @@
+---
+title: "[Python] 자료구조 - 셋, 딕셔너리 - 연습문제 1~10"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-06T23:54
+last-modified-at: 2022-01-06T23:54
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #27 ~ #35](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #2
+
+### 문제
+
+다음과 같이 등록된 학생의 이름을 출력하고, 이름을 입력하면 전화번호를 출력해주는
+딕셔너리 객체를 이용한 전화번호부 프로그램을 작성하십시오.
+
+[등록된 학생]
+
+홍길동: 010-1111-1111
+이순신: 010-1111-2222
+강감찬: 010-1111-3333
+
+[프로그램]
+
+아래 학생들의 전화번호를 조회할 수 있습니다.
+홍길동
+이순신
+강감찬
+전화번호를 조회하고자 하는 학생의 이름을 입력하십시오.
+
+입력
+
+```python
+이순신
+```
+
+출력
+
+```python
+아래 학생들의 전화번호를 조회할 수 있습니다.
+홍길동
+이순신
+강감찬
+전화번호를 조회하고자 하는 학생의 이름을 입력하십시오.
+이순신의 전화번호는 010-1111-2222입니다.
+```
+
+### Sol
+
+등록된 학생을 딕셔너리 형태로 지정한 뒤, 각각의 이름(key)을 출력하고, 원하는 key를 입력했을 때, 해당 key의 value를 출력하면 될 것이다.
+
+```python
+students = {
+    "홍길동": "010-1111-1111",
+    "이순신": "010-1111-2222",
+    "강감찬": "010-1111-3333"
+}
+
+print("아래 학생들의 전화번호를 조회할 수 있습니다.")
+
+for key in students.keys():
+    print(key)
+
+print("전화번호를 조회하고자 하는 학생의 이름을 입력하십시오.")
+
+target = input()
+
+print("{0}의 전화번호는 {1}입니다.".format(target, students[target]))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148238683-5e75dfa9-f621-476e-ae7d-801bbaad3a4f.png)`
+
+<br />
+
+## 연습문제 #3
+
+### 문제
+
+아래의 상품 딕셔너리 데이터를 가격에 따라 내림차순으로 정렬하는 프로그램을 작성하십시오.
+
+"TV": 2000000,
+"냉장고": 1500000,
+"책상": 350000,
+"노트북": 1200000,
+"가스레인지": 200000,
+"세탁기": 1000000,
+
+출력
+
+```python
+TV: 2000000
+냉장고: 1500000
+노트북: 1200000
+세탁기: 1000000
+책상: 350000
+가스레인지: 200000
+```
+
+### Sol A - 실패
+
+```python
+data_dict = {
+    "TV": 2000000,
+    "냉장고": 1500000,
+    "책상": 350000,
+    "노트북": 1200000,
+    "가스레인지": 200000,
+    "세탁기": 1000000
+}
+
+value_list = [value for value in data_dict.values()]
+value_list.sort()       # 가격의 오름차순 정렬
+value_list.reverse()    # 가격의 내림차순 정렬
+```
+
+가격, 즉 각각의 value 값을 리스트로 추출하여 내림차순 정렬한 뒤, 해당하는 각각의 value를 가지는 key를 for문을 이용해 찾아 key: value 를 출력하면 될 것이라고 생각했다. 그래서 value의 내림차순 리스트까지 추출하였으나, 이 값을 가지는 key를 찾아 같이 출력하는 방법을 도저히 생각해낼 수 없어 인터넷 조사로 풀이를 마친다.
+
+### Sol B - 내 답이 아님!
+
+- operator 모듈을 import 한다.
+- operator.itemgetter()함수
+  - operator.itemgetter(0) : key를 기준으로 정렬
+  - operator.itemgetter(1) : value를 기준으로 정렬
+- default : 오름차순
+- 내림차순을 위해서는 reverse=True 속성을 추가한다.
+
+```python
+import operator
+
+dic = {
+    "TV": 2000000,
+    "냉장고": 1500000,
+    "책상": 350000,
+    "노트북": 1200000,
+    "가스레인지": 200000,
+    "세탁기": 1000000
+}
+
+dic = dict(sorted(dic.items(), key=operator.itemgetter(1), reverse=True))
+for key, value in dic.items():
+    print("{0}: {1}".format(key, value))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148244414-5ad3daef-4e1b-40d5-a6b2-30282e232cc6.png)`
+
+나로서는 너무 수준 높은 풀이였다... 아마 강의 내용에서 배운 수준으로 풀 수도 있었을 것인데, 내가 잘 익히지 못해 실패했을 수도 있다. 복습하면서 다시 한 번 도전해보자.
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+다음 두 딕셔너리 객체를 합쳐 중복된 메뉴가 없는 딕셔너리를 만들고
+가격이 3000원 이상인 메뉴를 아래와 같이 출력하는 프로그렘을 작성하십시오.
+중복된 메뉴의 가격이 다를 경우 딕셔너리 a의 가격을 사용하세요.
+
+a = {'아메리카노': 1900, '카페모카': 3300, '에스프레소': 1900, '카페라떼': 2500, '카푸치노': 2500, '바닐라라떼': 2900}
+b = {'헤이즐럿라떼': 2900, '카페모카': 3300, '밀크커피': 3300, '아메리카노': 1900, '샷크린티라떼': 3300}
+
+출력
+
+```python
+{('카페모카', 3300), ('밀크커피', 3300), ('샷크린티라떼', 3300)}
+```
+
+### Sol
+
+```python
+a = {
+    "아메리카노": 1900,
+    "카페모카": 3300,
+    "에스프레소": 1900,
+    "카페라떼": 2500,
+    "카푸치노": 2500,
+    "바닐라라떼": 2900,
+}
+b = {"헤이즐럿라떼": 2900, "카페모카": 3300, "밀크커피": 3300, "아메리카노": 1900, "샷크린티라떼": 3300}
+
+b.update(a)
+
+# for item in b.items():
+#     if item[1] >= 3000:
+#         print(item)
+
+result = {item for item in b.items() if item[1] >= 3000}
+print(result)
+```
+
+굉장히 애를 먹은 문제였다. 딕셔너리 내포를 사용해보고 싶었는데 너무 안 돼서 for문을 직접 만들어 구조화시킨 뒤, 이를 다시 내포를 이용해 구성해보았다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148392272-9bbe20a5-e9cc-4fbf-ba6f-04a6204e55c4.png)`
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+리스트의 원소를 키로 하고, 그 원소의 length를 값으로 갖는 딕셔너리 객체를 생성하는 코드를 작성해봅시다.
+이 때 딕셔너리 내포 기능을 사용하며, 원소의 공백은 제거합니다.
+리스트 fruit는 다음과 같습니다. fruit = [' apple ','banana',' melon']
+
+출력
+
+```python
+{'apple': 5, 'banana': 6, 'melon': 5}
+```
+
+### Sol A
+
+공백을 제거하라는데, 공백을 제거하는 함수를 모른다. 그래서 만들었다.
+
+```python
+fruit = [" apple ", "banana", " melon"]
+
+
+# 공백 제거 함수
+def KillEmpty(word):
+    target = list(word)
+    word_r = ""
+
+    for i in target:
+        if i != " ":
+            word_r += i
+
+    return word_r
+
+
+fruit_list = [KillEmpty(i) for i in fruit]
+
+
+fruit_dict = {key: len(key) for key in fruit_list}
+print(fruit_dict)
+```
+
+공백을 제거하는 KillEmpty() 함수를 만들고, 과일 리스트의 과일의 공백을 제거하는 리스트 내포를 이용해 리스트를 만든다. 이후 이 리스트를 키로 하고, 키와 키의 길이를 각각 key와 value로 하는 딕셔너리를 딕셔너리 내포를 이용해 만든 뒤 출력한다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148393614-f312d0dc-a0c0-4d6b-8ffd-c58f2adae36e.png)`
+
+### Sol B
+
+공백을 제거하는 함수가 분명히 있을 것이기 때문에 인터넷을 찾아보았다. 바로 `str.replace(" ","")` 이다. 즉, 공백을 정말 아무것도 없는 것으로 대체(replace)하는 것이다.
+
+```python
+fruit = [" apple ", "banana", " melon"]
+
+fruit_list = [i.replace(" ", "") for i in fruit]
+fruit_dict = {key: len(key) for key in fruit_list}
+print(fruit_dict)
+```
+
+정말 간결하게 해결할 수 있었다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148394541-4492e111-e71a-460b-a91b-202be4f3b47d.png)`
+
+## 연습문제 #6
+
+### 문제
+
+다음과 같이 정수 N을 입력받아서 1부터 N까지의 정수를 키로 하고,
+그 정수의 제곱을 값으로 하는 딕셔너리 객체를 만드는 코드를 작성하십시오.
+
+입력
+
+```python
+5
+```
+
+출력
+
+```python
+{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+```
+
+### Sol
+
+```python
+n = int(input())
+
+n_list = [i for i in range(1, n + 1)]
+result_dict = {n: n ** 2 for n in n_list}
+print(result_dict)
+```
+
+n을 입력받아 1부터 n까지 1씩 증가하는 항목을 담은 리스트를 내포를 이용해 만들고, 이 각각의 n으로부터 n: n\*\*2 를 항목으로 하는 딕셔너리를 내포를 이용해 만들어 출력한다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148394999-3d3da8a6-6ab3-4e0a-a4b5-208448f5d81a.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+다음과 같이 사용자가 입력한 문장에서 숫자와 문자를 구별해 각각의 개수를 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+hello world! 123
+```
+
+출력
+
+```python
+LETTERS 10
+DIGITS 3
+```
+
+### Sol
+
+무엇을 위해 셋과 딕셔너리 파트에서 나온 문제인지 알 수 없다. 그냥 replace() 함수로 공백을 제거한 뒤, try문나 if문으로 조건에 맞춰 LETTERS와 DIGITS의 수를 더하며 쉽게 풀어낼 수 있었다.
+
+```python
+LETTERS, DIGITS = 0, 0
+
+a = input()
+a.replace(" ", "")
+
+for i in a:
+    try:
+        int(i)
+    except:
+        if ("a" <= i <= "z") or ("A" <= i <= "Z"):
+            LETTERS += 1
+    else:
+        DIGITS += 1
+
+print("{0} {1}".format("LETTERS", LETTERS))
+print("{0} {1}".format("DIGITS", DIGITS))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148397074-7ddf99c4-d5d0-47e4-a3fa-11c24ccbe904.png)`
+<br />
+
+## 연습문제 #8
+
+### 문제
+
+다음과 같이 사용자가 입력한 문장에서 대소문를 구별해 각각의 갯수를 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+Hello World! 123
+```
+
+출력
+
+```python
+UPPER CASE 2
+LOWER CASE 8
+```
+
+### Sol
+
+7번과 같은 문제다. 오히려 더 간단하다.
+
+```python
+UC, LC = 0, 0
+
+a = input()
+
+for i in list(a):
+    if "a" <= i <= "z":
+        LC += 1
+    elif "A" <= i <= "Z":
+        UC += 1
+
+print("{0} {1}".format("UPPER CASE", UC))
+print("{0} {1}".format("LOWER CASE", LC))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148396925-5e093ef5-2ad8-4ec9-bea0-53848e15d23f.png)`
+
+<br />
+
+## 연습문제 #9
+
+### 문제
+
+다음과 같은 기존의 맥주 가격을 5% 인상하려고 할 경우
+딕셔너리 내포 기능을 이용한 코드를 작성하십시오.
+
+beer = {'하이트': 2000, '카스': 2100, '칭따오': 2500, '하이네켄': 4000, '버드와이저': 500}
+
+출력
+
+```python
+{'하이트': 2000, '카스': 2100, '칭따오': 2500, '하이네켄': 4000, '버드와이저': 500}            # 인상 전
+{'하이트': 2100.0, '카스': 2205.0, '칭따오': 2625.0, '하이네켄': 4200.0, '버드와이저': 525.0}  # 인상 후
+```
+
+### Sol
+
+```python
+beer = {"하이트": 2000, "카스": 2100, "칭따오": 2500, "하이네켄": 4000, "버드와이저": 500}
+beer_up = {item[0]: item[1] * 1.05 for item in beer.items()}
+
+# print("{0}{1}".format(beer, "            # 인상 전"))
+# print("{0}{1}".format(beer_up, "  # 인상 후"))
+
+print(beer)
+print(beer_up)
+```
+
+딕셔너리 내포를 이용하면 간단하게 풀 수 있는 문제였다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148398045-d1e853a3-8458-49dc-bd1c-8fbe12509e72.png)`
+
+출력에 주석이 있었는데, 이를 구현하려고 하다가 1 fail 당했다. 딕셔너리만 출력하니까 Pass를 받았다.
+
+<br />
+
+## 연습문제 #10
+
+### 문제
+
+다음의 결과와 같이 입력된 문자열의 문자 빈도수를 구하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+abcdefgabc
+```
+
+출력
+
+```python
+a,2
+b,2
+c,2
+d,1
+e,1
+f,1
+g,1
+```
+
+### Sol
+
+전처리는 다음의 과정을 진행하면 될 것 같다.
+
+1. input()을 set() 처리하여 중복 항목 제거
+2. list() 처리하여 sort 준비
+3. sorted() 처리하여 오름차순 정렬
+
+이후의 과정은 차차 해보는 걸로 하자. 기존에 단계의 흐름을 따라가기 위해 여러 행과 변수를 만들어 flow를 쉽게 보였지만, 전처리 과정을 제시하고 시작하므로 한 줄에 담겠다.
+
+```python
+word = input()
+input = sorted(list(set(word)))
+
+result_dict = {}
+
+# 각각의 요소들 세기
+for a in input:
+    cnt = 0
+
+    for word_sep in word:
+        if word_sep == a:
+            cnt += 1
+
+    result_dict[a] = cnt
+
+# 각각의 요소 출력
+for item in result_dict.items():
+    print("{0},{1}".format(item[0], item[1]))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148401793-79c7e84c-ac85-495f-a094-d550ace0c714.png)`

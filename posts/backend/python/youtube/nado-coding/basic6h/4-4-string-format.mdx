@@ -1,0 +1,92 @@
+---
+title: "[Python] 문자열 포맷"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-12T00:00
+last_modified_at: 2021-07-12T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 다양한 문자열 포맷 방법
+
+## 1. 기존 방법
+
+```python
+print("a" + "b")  # ab  (공백 없음)
+print("a", "b")   # a b (공백 있음)
+```
+
+<br />
+
+## 2. % 방법
+
+```python
+print("나는 %d살입니다." % 20)  # d : 정수
+print("나는 %s을 좋아해요." % "파이썬")  # s : string, 문자열
+print("Apple은 %c로 시작해요." % "A")  # c : character, 한 문자
+print("나는 %s색과 %s색을 좋아해요." % ("파란", "빨간"))  # 여러 문자열을 넣을 때에는 괄호 사용
+```
+
+<br />
+
+> %s 는 만능이다.
+
+```python
+print("나는 %s살입니다." % 20)
+print("나는 %s을 좋아해요." % "파이썬")
+print("Apple은 %s로 시작해요." % "A")
+```
+
+<br />
+
+## 3. {} 방법
+
+- .format() 내의 값을 중괄호 내에 삽입 후 출력
+
+```python
+print("나는 {}살입니다.".format(20))
+print("나는 {}색과 {}색을 좋아해요." .format("파란", "빨간"))
+
+print("나는 {0}색과 {1}색을 좋아해요." .format("파란", "빨간"))  # 나는 파란색과 빨간색을 좋아해요.
+print("나는 {1}색과 {0}색을 좋아해요." .format("파란", "빨간"))  # 나는 빨간색과 파란색을 좋아해요.
+```
+
+<br />
+
+## 4. `{변수}` 방법
+
+- 순서와 관계 없이 정의된 변수에 영향
+
+```python
+print("나는 {age}살이며, {color}색을 좋아해요.".format(age = 20, color = "빨간"))
+print("나는 {age}살이며, {color}색을 좋아해요.".format(color = "빨간", age = 20))
+```
+
+<br />
+
+## 5. 직접 변수 방법 (python v3.6 이상~)
+
+- f를 문자열 앞에 붙이면 문서 내 변수 호출해 사용 가능
+
+```python
+age = 20
+color = "빨간"
+print(f"나는 {age}살이며, {color}색을 좋아해요.")
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

@@ -1,0 +1,116 @@
+---
+title: "[Python] pip 모듈 에러 해결"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, WebCrawler, Error]
+
+date: 2021-10-19T00:00
+last_modified_at: 2021-10-19T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 오류의 발생
+
+앞선 파이썬 인스타그램 크롤러를 만드는 과정에서 모듈 오류가 발생했다.
+
+`![image](https://user-images.githubusercontent.com/86189596/137824258-4eb66f77-4298-4680-a9ad-88b32e355eca.png)`
+
+```python
+Traceback (most recent call last):
+  File "c:\Intellij\WalkingFestival\webCrawler\instagramImageDownload.py", line 3, in <module>
+    from bs4 import BeautifulSoup
+ModuleNotFoundError: No module named 'bs4'
+```
+
+디버깅 결과 **BeautifulSoup의 bs4 모듈이 없다는 것**이다. 이에 대해 해결하기 위해 아래와 같은 노력을 해보았다.
+
+<br />
+
+### 1. BeautifulSoup 버전을 업그레이드 한다.
+
+만약 버전이 낮아서 bs4 모듈이 없는 것이라면 업그레이드를 통해 문제를 해결할 수 있을 것 같았다. 아래 커맨드를 통해 beautifulsoup4의 버전을 업그레이드 할 수 있다.
+
+```python
+pip install --upgrade BeautifulSoup4
+```
+
+하지만 결과적으로 실패했다. 버전은 업그레이드 되었지만, bs4 모듈을 찾을 수 없다는 사실은 동일했다.
+
+<br />
+
+### 2. BeautifulSoup를 지웠다가 깔아본다.
+
+모듈에 이상이 생겨서 그렇다면 아예 BeautifulSoup을 싹 다 지웠다가 깔면 어떨까 싶었다. 아래 커맨드를 통해 지울 수 있다.
+
+```python
+pip uninstall BeautifulSoup4
+```
+
+설치할 때와 un의 차이만 있을 뿐이다. 그리고 다시 install 커맨드를 통해 설치했는데, 역시나 bs4 모듈이 없다는 식의 결과를 받을 수 있었다.
+
+<br />
+
+### 3. BeautifulSoup 모듈 직접 확인
+
+그래서 beautifulsoup 디렉토리로 직접 찾아가서 bs4 모듈을 확인해보기로 했다. 아래의 커맨드를 통해 특정 패키지, 여기에선 beautifulsoup4 pip의 세부내용을 확인할 수 있다.
+
+```python
+pip show BeautifulSoup4
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/137825607-1554dc90-7996-476b-a3f7-ff07553d9737.png)`
+
+터미널에서 pip의 세부 location을 확인할 수 있는데 이를 통해 디렉토리 경로를 추적해 최종 site-packages 디렉토리로 들어가보았다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/137825437-124ea2a1-921a-4124-b99b-9e8071748d14.png)`
+
+bs4 모듈이 있고, 그 안에는 BeautifulSoup이라는 것을 찾아볼 수 없었다. 아니 그렇다면 bs4 모듈 자체를 찾을 수 없다는 오류 메시지부터가 잘못된 것이 아닌가?
+
+<br />
+
+### 4. pip list 확인
+
+아래의 커맨드를 이용해 현재 설치되어있는 pip와 각각의 버전을 확인할 수 있다.
+
+```python
+pip list
+```
+
+그런데 이상한 점을 발견했다. **bs4와 beautifulsoup4가 pip list에서 함께 확인할 수 있었던 것**이다. 그렇다면 내가 무언가를 막 두드리고 있는 사이에 `pip install bs4` 커맨드를 쳤다거나, 이렇게 해서 bs4 pip가 만들어졌고, 그것이 beautifulsoup4 pip와 충돌해서 오류가 발생하진 않았을까 하는 생각이 들었다.
+
+`pip uninstall bs4` 커맨드를 이용해 bs4 pip를 제거하고 `pip list`를 이용해 pip 설치현황을 확인한 결과, bs4는 지워졌다. 뭐 역시 bs4 모듈 문제는 해결할 수 없었다.
+
+<br />
+
+### 5. bs4 디렉토리 확인
+
+`pip show bs4` 커맨드를 통해 직접 디렉토리로 들어가보았다. VSC를 통해 여러 파이썬 파일을 확인할 수 있었고, 2,000줄이 넘는 코드 속에서 내 실력으로는 뭐가 뭔지 모르겠다.
+
+<br />
+
+### 6. 뭐가 문제야ㅠㅠㅠ
+
+최고의 선생님. 구글 선생님께 여쭤보자.
+
+구글에서 여러 해결방법에 대해 찾아보았다. 나는 bs4 모듈에 대한 에러가 발생했고, 다시 보니 Selenium도 똑같이 모듈 문제를 겪고 있었기에 Selenium 모듈 에러로 재검색해서 서핑을 해보았다. 1시간 가량 고전한 끝에 나랑 같은 문제를 겪고 있는 어떤 블로거를 찾게 되었다. `[해당 블로그 게시물](https://shwank77.tistory.com/1588)`을 참고하여 문제를 해결하였다.
+
+`![image](https://user-images.githubusercontent.com/86189596/137828974-30f739ed-a5f4-454e-9c6a-ba4b1652a6e3.png)`
+
+**문제는 python 환경설정 때문이었다.** 기존의 python 3.9.6 64-bit(windows store) 환경이 추천 환경이어서 이대로 진행했는데, 블로거가 문제를 해결한 방식처럼 아래의 python 3.9.6 64-bit 환경으로 변경해서 설정하니, 기존에 문제가 된다고 표시되던 `from bs4 import BeautifulSoup`의 'bs4', `from selenium import webdriver`의 'selenium'의 노란 ~~거슬리는~~ 밑줄도 사라지고, 정상적으로 py파일이 동작하는 것을 확인하였다.
+
+<br />
+
+# REFERENCES
+
+- `[Selenium 모듈 에러 해결](https://shwank77.tistory.com/1588)`

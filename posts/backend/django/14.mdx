@@ -1,0 +1,114 @@
+---
+title: "[Django] CSRF와 보안"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-08T18:00
+last_modified_at: 2022-03-09T05:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## 사이트 간 요청 위조(CSRF)
+
+### CSRF : Cross-Site Request Forgery
+
+- 웹 App 취약점 중 하나
+- 사용자가 **자신의 의지와 무관**하게 공격자가 의도한 행동 수행
+- 특정 웹페이지를 보안에 취약하게 하거나 수정, 삭제 등의 작업을 하게 만든다.
+
+- Django는 CSRF에 대항하여 **middleware**와 **template tag**를 제공
+
+<br />
+
+### CSRF 공격 방어
+
+>  **Security Token** 사용 방식(CSRF Token)
+
+- 사용자의 데이터에 **임의의 난수 값** 부여
+- 매 요청마다 해당 난수 값을 포함시켜 전송
+- 서버에서 요청을 받을 때마다 **전달된 token값 유효성 검사**
+
+<br />
+
+> 적용 범위
+
+- 일반적으로 데이터 변경이 가능한 POST, PATCH, DELETE method
+- GET method는 제외
+
+<br />
+
+> Django와 CSRF
+
+- Django는 CSRF token 템플릿 태그 제공
+
+<br />
+
+### csrf_token template tag
+
+```html
+{%- raw -%}
+{% csrf_token %}
+{% endraw -%}
+```
+
+- CSRF 보호에 사용
+- **form 태그**에 작성
+- input type이 **hidden**으로 작성
+- value는 Django에서 생성한 hash값으로 설정
+- 해당 태그 없이 요청을 보내면 Django 서버는 **403 forbidden** 응답
+
+<br />
+
+> 활용 예시
+
+```html
+{%- raw -%}
+<form action="{% url 'articles:create' %}" method="POST">
+  {% csrf_token %}
+  <label for="title">제목 :</label>
+  ...
+</form>
+{% endraw -%}
+```
+
+<br />
+
+### CsrfViewMiddleware
+
+- CSRF 공격 관련 보안 설정 : settings.py-MIDDLEWARE에 작성되어있다.
+
+```python
+# settings.py
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+```
+
+- 요청 과정에서 urls.py 이전에 Middleware의 설정 사항들을 순차적으로 거친다.
+- 응답 과정은 반대로 하단에서 상단으로 Middleware 적용
+
+<br />
+
+### Middleware
+
+- **공통 서비스 및 기능을 App에 제공하는 SW**
+- 데이터 관리, App 서비스, 메시징, 인증 및 API 관리 등 처리
+- 개발자들이 **App을 보다 효율적으로 구축할 수 있도록 지원**
+- App, 데이터 및 사용자 사이를 연결하는 요소처럼 작동

@@ -1,0 +1,73 @@
+---
+title: "[Python] 튜플(Tuple)"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-14T00:00
+last_modified_at: 2021-07-14T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 튜플
+
+- 리스트와 달리 내용 변경/추가 불가능
+- 속도가 리스트보다 빠름  
+  → 변경되지 않는 목록에 튜플을 사용
+- 리스트 : {} / 튜플 : ()
+
+```python
+menu = ("돈까스", "치즈까스")
+print(menu[0])  # 출력값 : 돈까스
+print(menu[1])  # 출력값 : 생선까스
+```
+
+<br />
+
+## 1. 튜플은 .add 기능을 지원하지 않는다.
+
+```python
+menu.add("생선까스")
+# 출력값 : AttributeError : 'tuple' object has no attribute 'add'
+```
+
+<br />
+
+## 2. 튜플의 활용
+
+```python
+name = "김종국"
+age = 20
+hobby = "코딩"
+print(name, age, hobby)
+
+# 출력값 : 김종국 20 코딩
+```
+
+<br />
+
+## 3. Tuple의 한 줄 쓰기
+
+- 다음과 같이 한 번에 선언할 수 있다.
+
+```python
+(name, age, hobby) = ("김종국", 20, "코딩")
+print(name, age, hobby)
+
+# 출력값 : 김종국 20 코딩
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

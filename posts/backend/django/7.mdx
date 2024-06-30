@@ -1,0 +1,143 @@
+---
+title: "[Django] Static"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-04T11:00
+last_modified_at: 2022-03-04T11:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Static files
+
+### 웹 서버와 정적 파일
+
+- 웹 서버는 특정 위치(URL)에 있는 자원(resource)을 요청(HTTP request) 받아서 제공하는 응답(HTTP response)을 처리하는 것을 기본 동작으로 함
+- 이는 **자원과 접근 가능한 주소가 정적으로 연결된 관계**
+  - 예를 들어, 사진 파일은 자원이고 파일 경로는 웹 주소
+
+- 즉, 웹 서버는 요청 받은 URL로 서버에 존재하는 정적 자원(static resource) 제공
+
+<br />
+
+### Static file
+
+- 정적 파일
+- 응답할 때 **별도의 처리 없이** 파일 내용을 보여준다.
+- 파일 자체가 고정, 서비스 중에도 추가/변경 없이 고정
+- Django에서는 **staticfiles 앱**을 통해 관련 기능 제공
+
+<br />
+
+### Static file 구성
+
+- 가. django.contrib.staticfiles가 INSTALLED_APPS에 포함되어 있는지 확인
+- 나. settings.py의 **STATIC_URL** 정의
+- 다. 템플릿에서 static 템플릿 태그를 사용하여 지정된 상대경로에 대한 URL을 빌드
+
+```liquid
+{%- raw -%}
+{% load static %}
+<img src="{% static 'my_app/example.jpg' %}" alt="My image">
+{% endraw -%}
+```
+
+- 라. 앱의 static 디렉토리에 정적 파일 저장
+  -  ex) my_app/static/my_app/example.jpg
+  - templates 때처럼 **namespace 지정**
+
+<br />
+
+### STATICFILES_DIRS
+
+- 'app/static/' 디렉토리 경로(기본 경로)를 사용하는 것 외에 **추가적인 정적 파일 경로 목록을 정의**하는 리스트
+- 추가 파일 디렉토리에 대한 전체 경로를 포함하는 문자열 목록으로 작성되어야 한다.
+- settings.py에 **[STATICFILES_DIRS]** 을 추가
+
+
+<br />
+
+### STATIC_URL
+
+- **STATIC_ROOT에 있는 정적 파일을 참조할 때 사용할 URL**
+  -  개발 단계에서는 실제 정적 파일들이 저장되어 있는 'app/static/' 경로(기본 경로) 및 STATICFILES_DIRS에 정의된 추가 경로들을 탐색
+- 실제 파일이나 디렉토리가 아니며, URL로만 존재
+- 비어 있지 않은 값으로 설정한다면 반드시 slash(/)로 끝나야 한다.
+
+```
+STATIC_URL = '/static/'
+```
+
+<br />
+
+### STATIC_ROOT
+
+- collectstatic이 배포를 위해 정적 파일을 수집하는 디렉토리의 절대 경로
+- **django 프로젝트에서 사용하는 모든 정적 파일을 한 곳에 모아 놓는 경로**
+- 개발 과정에서는 해당 값은 작용되지 않는다.
+  - 개발 중 DEBUG = True, 배포 중 DEBUG = False
+  - 직접 작성하지 않으면 django 프로젝트에서는 settings.py에 작성되어 있지 않는다.
+  - DEBUG 값이 False로 되어 있는 상태에서 배포가 되어야 한다.
+  - 문제가 있더라도 에러 화면에 내부 코드나 경로 정보가 보이지 않는다.
+- 실 서비스 환경(배포 환경)에서 django의 모든 정적 파일을 다른 웹 서버(AWS 등)가 직접 제공하기 위함이다.
+
+<br />
+
+### collectstatic
+
+- django가 구동될 때 숨겨져있는 정적 파일들을 보여주는 명령어
+
+<br />
+
+> STATIC_ROOT 작성
+
+```python
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+```
+
+BASE_DIR 위치에 'staticfiles' 라는 이름의 폴더로 정적 파일을 모아 보여주겠다.
+
+<br />
+
+> git bash 명령어
+
+```bash
+$ python manage.py collectstatic
+```
+
+<br />
+
+### Django template tag
+
+> load
+
+- **사용자 정의 템플릿 태그 세트**를 load
+- load하는 lib, pkg에 등록된 모든 tag와 filter를 불러온다.
+- extends tag 하위에 코드 상단에 위치
+- **app_name/static/**까지 약속이 되어있다.
+
+<br />
+
+> static
+
+- STAIC_ROOT에 저장된 정적 파일에 연결
+
+```liquid
+{%- raw -%}
+{% load static %}
+
+...
+
+<img src="{% static 'my_app/example.jpg; %}" alt="My image">
+{% endraw -%}
+```

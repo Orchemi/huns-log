@@ -1,0 +1,301 @@
+---
+title: "[Django] URL"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-03T15:00
+last_modified_at: 2022-03-03T15:00
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## URL
+
+- Dispatcher(발송자, 운항 관리자)로서의 URL
+- 웹App은 **URL을 통한 클라이언트의 요청**으로부터 시작
+
+<br />
+
+### Variable Routing
+
+- **URL 주소**를 **변수**로 사용
+- URL의 일부를 변수로 지정 → **view 함수의 인자**로 전달 가능
+- 변수 값에 따라 하나의 path()에 여러 페이지(개별 페이지) 연결 가능
+- 사용자/컨텐츠에 따른 개별적인 페이지!! → **동적 웹 프로그래밍**
+- **꺽쇠**(`<>`; angle bracket)로 표시
+
+<br />
+
+> 사용 예시
+
+```
+path('accounts/user/`<int:user_pk>`/', ...)
+```
+
+- accounts/user/1 → 1번 유저 관련 페이지
+- accounts/user/2 → 2번 유저 관련 페이지
+
+<br />
+
+### URL Path converters
+
+- variable routing을 통해 url에 변수처럼 들어오는 것을 형변환
+- **int:**, **str:** 등이 있다.
+
+```python
+path('something/<???:name>', views.something)
+```
+
+<br />
+
+> str
+
+- '/'를 제외하고 비어있지 않은 모든 문자열과 매치
+- converter 부분을 명시하지 않을 경우 기본적으로 str
+
+<br />
+
+> int
+
+- 0 또는 양의 정수와 매치
+- 문자열, 소수의 경우 사용 시 오류
+
+<br />
+
+### 사용 예시
+
+```python
+# urls.py
+
+urlpatterns = [
+  ...
+  path('hello/<name>/<int:nums>', views.hello)
+]
+```
+
+- urls.py에서 server로 전송된 url 확인
+- 함수와 매핑할 url 형식 지정
+
+<br />
+
+```python
+# views.py
+
+def hello(request, name, nums):
+  context = {
+    'name':name,
+    'nums':nums,
+  }
+  return render(request, 'hello.html', context)
+```
+
+- 기본 url 뒤의 router variables는 함수의 parameter로 전달
+
+<br />
+
+```html
+<!-- hello.html -->
+{% extends 'base.html' %} {% block content %}
+  <h1>HELLO {{ name }}!!</h1>
+  <h2> {{ nums }}명 </h2>
+{% endblock content %}
+```
+
+- html 템플릿에서 변수로 사용
+
+<br />
+
+<u>주의📢</u> url path converter의 경우 urls.py에서 순서를 잘 설정해주어야 한다!
+ 
+
+```python
+# urls.py
+
+urlpatterns = [
+  path('<name>/', views.hello),
+  path('index/', views.index),
+  path('menus/', views.menus),
+]
+```
+
+url path converter가 들어있는 path의 순서가 위쪽으로 가게 되면, 이후에 비슷한 형식을 가진 raw value들은 사용할 수 없다!
+
+<br />
+
+## App URL mapping
+
+- app의 view 함수가 많아지면서 사용하는 path()이 많아진다.
+- 프로젝트의 urls.py에서 모두 관리하는 것은 유지보수에 좋지 않다.
+
+> Sol : 각 app의 urls.py을 만들고 함수가 아닌 app의 경로를 **include!**
+
+<br />
+
+- 지금까지는 pjt에서 pjt 내의 views.py의 함수를 매핑
+
+1. 프로젝트의 경로를 'pages/'로 들어오면 'pages' app으로 이후의 url을 전달
+2. App의 urls.py에서 이후의 url을 더 분석하여 처리
+
+```python
+# firstpjt/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+  path('admin/', admin.site.urls),
+  path('articles/', include('articles.urls')),
+  path('pages/', include('pages.urls')),
+]
+```
+
+<br />
+
+### include()
+
+- 다른 URLconf들을 참조할 수 있도록 한다.
+- URL의 해당 시점까지 일치하는 부분을 제외하고 남은 문자열 부분을 include된 URLconf로 전달
+- django는 **명시적 상대경로**(from `<module>` import `<function or variables>`)를 권장
+
+<br />
+
+## Naming URL patterns
+
+- 지금까지는 링크에 url을 직접 작성
+- 이제는 **path() 함수의 name 인자를 정의**해서 사용
+
+- django template tag 중 하나인 **url 태그**(`{% url 'path name' %}`)를 사용
+- path() 함수에 작성한 name 사용 가능
+
+```python
+# urls.py
+
+urlpatterns = [
+  path('index/', views.index, name='index'),
+]
+```
+
+url, 매핑 함수, 이후에 name 설정
+
+<br />
+
+```
+<a href="{% url 'index' %}">메인 페이지</a>
+```
+
+- 자세한 특징은 아래에 후술
+
+<br />
+
+### url template tag
+
+```liquid
+{% url 'path name' %}
+```
+
+- 주어진 URL 패턴 이름 및 선택적 매개 변수와 일치하는 절대 경로 주소 반환
+- 템플릿에 URL을 하드 코딩하지 않고도 **DRY 원칙(Don't Repeat Yourself)**을 위반하지 않으면서 링크 출력
+- url 설정에 **정의된 특정한 경로들의 의존성 제거 가능**
+- DRY 원칙: Don't Repeat Yourself
+
+<br />
+
+## 파일명 중복 대응 : Namespace
+
+- django의 파일 조회 순서
+  - [settings.py]-[TEMPLATES]-[DIRS]에 지정해둔 경로의 html 템플릿
+  - [settings.py]-[INSTALLED_APPS]에 지정해둔 각 App들의 html 템플릿
+
+- django는 **extends**나 **file_name/** 사용 시 등록된 경로는 제외하고 바로 갖다 붙인 것을 한 번에 모은다.
+- **파일명이 같으면 지정된 경로 우선순위대로 앞에 경로가 붙어버린다.
+- 다른 app이어도 **같은 파일명을 사용한다면 다른 파일이 렌더링 될 수 있다.**
+
+> Sol : app들마다 **templates 폴더 내에 app 이름의 폴더를 만들고** 그 안에 template html 파일을 넣자!
+
+- **경로를 물리적으로 구분해서 설정**해주는 것이다.
+- 이렇게 만들어준 물리 경로가 **namespace**가 되는 것!
+
+<br />
+
+```python
+# pages/views.py
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'pages/index.html')
+```
+
+- 이후 경로를 app이름(templates 내의 폴더 이름)으로 설정하면 되겠다.
+- 같은 파일명이어도 **경로를 명시함으로써 다른 파일임을 확실히 명시**하는 것.
+
+
+<br />
+
+### url tag에서는?
+
+> articles app의 index.html에서 pages app의 index.html을 연결하려면 url tag는 어떻게 쓰나요?
+
+```
+<!-- articles/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>안녕하세요ㅎㅎ</h1>
+  <a href="/articles/greeting/">greeting</a> | 🔸 url 태그에 절대 경로를 hard coding한 예
+  <a href="{% url 'dinner' %}">dinner</a> |
+  <a href="{% url 'dtl-practice' %}">dtl-practice</a> |
+  <a href="{% url 'throw' %}">throw</a> |
+  <a href="{% url 'index' %}">Page Index</a> ⭐ 목표하는 다른 app의 파일
+{% endblock content %}
+```
+
+dinner, dtl-practice, throw 같은 경우 articles 앱의 templates 내의 html 파일이므로 바로 사용할 수 있었다. 그런데 page는 다른 app인데 **다른 app의 경로를 url tag로 어떻게 쓸 수 있을까?**
+
+<br />
+
+### URL namespace
+
+```
+<!-- articles/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>안녕하세요ㅎㅎ</h1>
+  <a href="/articles/greeting/">greeting</a> |
+  <a href="{% url 'articles:dinner' %}">dinner</a> |
+  <a href="{% url 'articles:dtl-practice' %}">dtl-practice</a> |
+  <a href="{% url 'articles:throw' %}">throw</a> |
+  <a href="{% url 'pages:index' %}">Page Index</a> ⭐
+{% endblock content %}
+```
+
+- '어느 app의 path name이다'라는 것이 명시되면 좋겠다..!
+
+<br />
+
+### app_name
+
+> urls.py 파일 내에서 경로를 설정해주듯이 **app_name:**을 앞에 붙여 **어느 app의 path name인지를 명시**해준다.
+
+- 같은 앱 내부에서 사용되는 path여도 app_name을 명시해주자.
+
+```python
+# pages/urls.py
+
+app_name = 'pages'
+
+urlpatterns = [
+    path('index/', views.index, name='index'),
+]
+```
+
+app_name을 app 이름으로 설정해야 위와 같은 작업이 가능하다.

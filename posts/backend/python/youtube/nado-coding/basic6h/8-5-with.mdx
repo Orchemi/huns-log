@@ -1,0 +1,66 @@
+---
+title: "[Python] With"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-16T00:00
+last_modified_at: 2021-07-16T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# With 문
+
+## 1. pickle을 이용하는 방법
+
+- file의 정보를 읽어와서 변수에 저장하는 방법
+- **with open("file", "rb") as variable:**
+- with 문을 탈출하면서 profile.pickle file을 종료하므로 따로 .close() 문을 쓸 필요 없다.
+
+```python
+import pickle
+with open("profile.pickle", "rb") as profile_file:
+    # profile.pickle에서 데이터를 읽어와서 profile_file 변수에 값 저장
+
+    print(pickle.load(profile_file))
+
+# 출력값 : {'이름': '박명수', '나이': 30, '취미': ['축구', '골프', '코딩']}
+```
+
+<br />
+
+## 2. pickle이 아닌 일반 파일을 이용하는 방법 - 덮어쓰기
+
+```python
+with open("study.txt", "w", encoding="utf8") as study_file:
+    study_file.write("파이썬을 열심히 공부하고 있어요.")
+
+# 실행결과
+# study.txt 파일이 같은 디렉토리 내에 생기고, '파이썬을 열심히 공부하고 있어요.' 라는 문장이 있다.
+```
+
+<br />
+
+## 3. pickle이 아닌 일반 파일을 이용하는 방법 - 불러오기
+
+```python
+with open("study.txt", "r", encoding="utf8") as study_file:
+    print(study_file.read())
+
+# 출력값 : 파이썬을 열심히 공부하고 있어요.
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

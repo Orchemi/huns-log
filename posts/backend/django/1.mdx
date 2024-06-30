@@ -1,0 +1,124 @@
+---
+title: "[Django] Web과 Django"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-02T12:00
+last_modified_at: 2022-03-02T12:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Web
+
+- World Wide Web
+- 인터넷에 연결된 컴퓨터를 통해 정보를 공유할 수 있는 전세계적 정보 공간
+
+<br />
+
+### Static Web Page
+
+- 정적 웹 페이지
+- 서버에 미리 저장된 파일이 사용자에게 그대로 전달
+- 서버는 **추가적인 처리 과정 없이** 클라이언트에게 응답을 전송
+- 모든 상황에서 모든 사용자에게 **동일한 정보** 표시
+- 일반적으로 **HTML, CSS, JS**로 작성
+- **flat page**라고도 한다.
+
+<br />
+
+### Dynamic Web Page
+
+- 동적 웹 페이지
+- 서버는 **추가적인 처리 과정** 이후 클라이언트에게 응답 전송
+- **방문자와 상호작용**하기 때문에 내용은 그때그때 다르다.
+- 서버사이드 프로그래밍 언어(**python, java, c++ 등**) 사용
+- **파일을 처리**하고 **DB와 상호작용**
+
+<br />
+
+### Framework
+
+- 응용 프로그램 표준 구조를 구현하는 class, lib 모임
+- 재사용할 수 있는 수많은 코드 통합
+- 개발자가 개발에만 집중할 수 있도록
+
+<br />
+
+### Web Framework
+
+> 웹 페이지 개발 중에 겪는 어려움을 줄이자!
+
+- DB 연동, 템플릿 형태의 표준, 세션 관리, 코드 재사용 등의 기능
+- 동적인 웹 페이지, 웹 App, 웹 서비스 개발 보조용으로 만들어진다.
+- Application Framework의 일종
+
+<br />
+
+### Django를 사용하는 이유
+
+- 검증된 Python 언어 기반 Web framework
+- 대규모 서비스에도 안정적
+- 다양한 대기업들이 오랫동안 사용
+
+<br />
+
+## Framework Architecture
+
+### MVC Design Pattern
+
+- Model - View - Controller
+- **UI로부터 프로그램 로직 분리**
+- 디자인적인 부분에 영향 없이 쉽게 고칠 수 있는 애플리케이션 제작 가능
+- Django는 **MTV Pattern**이라고 한다.
+
+<br />
+
+### MTV Pattern
+
+- Model - Template - View
+- MVC와 같은 구조이지만 부르는 명칭이 다르다.
+
+<br />
+
+> Model
+
+- 응용프로그램의 **데이터 구조 정의**
+- **DB 기록** 관리(CRUD)
+
+<br />
+
+> Template
+
+- 파일의 **구조나 레이아웃 정의**
+- 실제 내용을 보여주는 데 사용(presentation)
+
+<br />
+
+> View
+
+- **HTTP 요청 수신, HTTP 응답 반환**
+- Model과의 소통 : Model을 통해 요청을 충족시키는데 필요한 데이터에 접근
+- template에게 응답의 서식 설정 맡김
+⭐ 하는 일이 많고 가장 중요!
+
+<br />
+
+### MTV 패턴의 flow
+
+1. HTTP Request
+2. URLS(urls.py) : View로 Request를 보내준다.
+3. View(views.py)
+- models.py : read/write data
+- **filename.html** : template
+- HTTP Response : HTML

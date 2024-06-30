@@ -1,0 +1,504 @@
+---
+title: "[Python] 흐름과 제어 - 반복 - 연습문제 1~13"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-01T02:52
+last-modified-at: 2022-01-01T02:52
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #21 ~ #32](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 5명의 학생의 점수에 대해 60 이상일 때 합격 메시지를 출력하고,
+60미만일 때 불합격 메시지를 출력하는 프로그램을 만드십시오.
+
+출력
+
+```python
+1번 학생은 88점으로 합격입니다.
+2번 학생은 30점으로 불합격입니다.
+3번 학생은 61점으로 합격입니다.
+4번 학생은 55점으로 불합격입니다.
+5번 학생은 95점으로 합격입니다.
+```
+
+### Sol
+
+입력값이 없으므로 각각의 점수는 list에 넣어 while문으로 돌려보겠다.
+
+```python
+scores = [88, 30, 61, 55, 95]
+i = 1
+
+while i <= 5:
+
+    if scores[i-1] >= 60:
+        print("{0}번 학생은 {1}점으로 합격입니다.".format(i, scores[i-1]))
+        i += 1
+    else:
+        print("{0}번 학생은 {1}점으로 불합격입니다.".format(i, scores[i-1]))
+        i += 1
+
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147830914-f798b974-6a0f-4a31-a09e-03e753a19ae1.png)`
+
+<br />
+
+## 연습문제 #2
+
+### 문제
+
+1부터 100까지의 숫자를 for 문과 range 함수를 이용해 출력하십시오.
+
+출력
+
+```python
+1
+2
+3
+4
+5
+...
+99
+100
+```
+
+### Sol
+
+range()의 종료값은 포함되지 않고, 증감치가 생략된다면 기본값은 1인 것을 이용하자.
+
+```python
+for i in range(1, 101):
+    print(i)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147831011-52ec6bc0-6363-4e0a-b83c-e196f10ce058.png)`
+
+<br />
+
+## 연습문제 #3
+
+### 문제
+
+1부터 100사이의 숫자 중 짝수를 for 문을 이용해 다음과 같이 출력하십시오.
+
+출력
+
+```python
+2 4 6 8 10 12 14 16 18 ... 90 92 94 96 98 100
+```
+
+### Sol
+
+연습문제 #2와 달리 사이에 공백이 있고, 한 줄로 나열된다.
+변수 result에 넣어 slicing과 index, len을 이용해보자.
+
+```python
+result = ""
+
+for i in range(1, 101):
+    if i % 2 == 0:
+        result += "%d " % i
+
+print(result[0:len(result)-1])
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147831218-eefc5bfb-e6bf-48b6-9da8-658631d4868c.png)`
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+1부터 100사이의 숫자 중 홀수를 for 문을 이용해 다음과 같이 출력하십시오.
+
+출력
+
+```python
+1, 3, 5, 7, 9, ... 95, 97, 99
+```
+
+### Sol
+
+연습문제 #3 과 굉장히 유사한 문제이다.
+
+홀수이므로 2로 나눈 나머지가 1이어야 하는 점, "%d "을 "%d, " 로만 바꾸었고, 맨 뒤의 콤마와 공백을 제거해 출력해야 하므로 슬라이싱에서 2를 빼주었다.
+
+```python
+result = ""
+
+for i in range(1, 101):
+    if i % 2 == 1:
+        result += "%d, " % i
+
+print(result[0: len(result) - 2])
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147831311-ff2e696f-c069-4f54-bbaa-f908b084fa8a.png)`
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+1부터 100사이의 숫자 중 3의 배수의 총합을 for 문을 이용해 출력하십시오.
+
+출력
+
+```python
+1부터 100사이의 숫자 중 3의 배수의 총합: 1683
+```
+
+### Sol
+
+```python
+total = 0
+
+for i in range(1, 100):
+    if i % 3 == 0:
+        total += i
+
+print("1부터 100사이의 숫자 중 3의 배수의 총합: {}".format(total))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147831396-1572a1d0-d13e-4b53-82b6-f83a37c10e86.png)`
+
+<br />
+
+## 연습문제 #6
+
+### 문제
+
+다음은 10명의 학생들의 혈액형(A, B, AB, O) 데이터입니다.
+['A', 'A', 'A', 'O', 'B', 'B', 'O', 'AB', 'AB', 'O']
+for 문을 이용하여 각 혈액형 별 학생수를 구하십시오.
+
+출력
+
+```python
+{'A': 3, 'O': 3, 'B': 2, 'AB': 2}
+```
+
+### Sol
+
+- 혈액형 리스트를 blood_type으로 정의하고 리스트를 참조한다.
+
+```python
+blood_type = ['A', 'A', 'A', 'O', 'B', 'B', 'O', 'AB', 'AB', 'O']
+num_A, num_O, num_B, num_AB = 0, 0, 0, 0
+
+for i in blood_type:
+
+    if i == 'A':
+        num_A += 1
+    elif i == 'O':
+        num_O += 1
+    elif i == 'B':
+        num_B += 1
+    elif i == 'AB':
+        num_AB += 1
+
+result = {'A': num_A, 'O': num_O, 'B': num_B, 'AB': num_AB}
+print(result)
+```
+
+- 각각 혈액형의 수는 0으로 초기화 한다.
+- 리스트 내의 각각의 항목들을 i에 참조해서 if문을 돌리므로, i를 그대로 확인한다.
+
+- Dictionary 구조로 출력되어야 하므로, for문을 마치고 세어진 각각의 num 변수들을 Dictionary에 입력한다. 그리고 이 Dictionary를 출력한다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147832231-cbc4a9a1-e6b1-41a7-b52a-b09f771f4c67.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+다음은 학생의 점수를 나타내는 리스트입니다.
+[85, 65, 77, 83, 75, 22, 98, 88, 38, 100]
+while 문과 리스트 객체의 pop()을 이용해 80점 이상의 점수들의 총합을 구하시오.
+
+출력
+
+```python
+454
+```
+
+### Sol
+
+.pop() 함수는 리스트의 맨 마지막 객체들을 빼내는 함수이다. 때문에 while문을 사용한다면 리스트의 항목 수가 0이 될 때까지 반복해야 하며, index는 len(lst)-1 로 시작하여 len(lst)와 함께 줄어야 한다.
+
+```python
+scores = [85, 65, 77, 83, 75, 22, 98, 88, 38, 100]
+i = 0
+total = 0
+
+while len(scores) >= 1:
+    if scores[len(scores)-1] >= 80:
+        total += scores[len(scores)-1]
+    scores.pop()
+
+print(total)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833147-5411170e-fb5c-48b6-a8fb-7f89cc2f6706.png)`
+
+<br />
+
+## 연습문제 #8
+
+### 문제
+
+while문을 이용해 아래와 같이 별(\*)을 표시하는 프로그램을 만드십시오.
+
+출력
+
+```python
+*****
+****
+***
+**
+*
+```
+
+### Sol
+
+```python
+i = 5
+
+while i >= 1:
+    print("*" * i)
+    i -= 1
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833239-dd18a66a-447b-487a-a198-b694f6c09119.png)`
+
+<br />
+
+## 연습문제 #9
+
+### 문제
+
+while문을 이용해 아래와 같이 별(\*)을 표시하는 프로그램을 만드십시오.
+
+출력
+
+```python
+*******
+ *****
+  ***
+   *
+```
+
+### Sol
+
+중앙정렬로 하면 간단하게 풀 수 있지만, 오른쪽으로 여백이 없는 것을 알 수 있었기 때문에 중앙정렬로 할 수는 없었다. 때문에 별의 개수와 공백의 개수를 의미하는 변수를 지정해 while문의 반복에 따라 수를 변경하는 방식으로 진행해야 했다.
+
+```python
+star = 7
+space = 0
+
+while star >= 0:
+    print("{0}{1}".format(" " * space, "*" * star))
+    space += 1
+    star -= 2
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833361-bed40615-8688-4f1d-8bb9-e377c2b2c2e2.png)`
+
+<br />
+
+## 연습문제 #10
+
+### 문제
+
+다음의 결과와 같이 어떤 한 양의 정수를 입력하여 그 숫자에 0~9가 몇 번 사용되었는지 표시하십시오.
+
+입력
+
+```python
+11
+```
+
+출력
+
+```python
+0 1 2 3 4 5 6 7 8 9
+0 2 0 0 0 0 0 0 0 0
+```
+
+### Sol
+
+```python
+num = input()
+n0, n1, n2, n3, n4, n5, n6, n7, n8, n9 = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+for i in num:
+    i_n = int(i)
+
+    if i_n == 0:
+        n0 += 1
+    elif i_n == 1:
+        n1 += 1
+    elif i_n == 2:
+        n2 += 1
+    elif i_n == 3:
+        n3 += 1
+    elif i_n == 4:
+        n4 += 1
+    elif i_n == 5:
+        n5 += 1
+    elif i_n == 6:
+        n6 += 1
+    elif i_n == 7:
+        n7 += 1
+    elif i_n == 8:
+        n8 += 1
+    elif i_n == 9:
+        n9 += 1
+
+print("0 1 2 3 4 5 6 7 8 9")
+print("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(
+    n0, n1, n2, n3, n4, n5, n6, n7, n8, n9))
+```
+
+너무 하드코딩한 기분이 들지만... 일단 결과는 원하는대로 나오는 것 같다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833775-267cb652-4b01-4ec5-9d2a-90b0efb506c1.png)`
+
+<br />
+
+## 연습문제 #11
+
+### 문제
+
+for문을 이용해 아래와 같이 별(\*)을 표시하는 프로그램을 만드십시오.
+
+출력
+
+```python
+    *
+   **
+  ***
+ ****
+*****
+```
+
+### Sol
+
+우측정렬을 이용하면 될 것 같다.
+
+```python
+for i in range(1, 6):
+    print("{0:>5}".format("*" * i))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833830-5bf9600d-70ef-4fa9-b256-af37ee833949.png)`
+
+<br />
+
+## 연습문제 #13
+
+### 문제
+
+다음의 결과와 같이 10진수를 2진수로 변환하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+9
+```
+
+출력
+
+```python
+1001
+```
+
+### Sol-A
+
+10진수를 2진수로 바꾸는 것은 숫자의 자료형만 바꾸면 되는 것이기 때문에 간단한 문제이다. 문제에서 for문이나 while문 등 반복문을 사용하라고 명시되어 있지 않으면 충분히 가능할 것 같다.
+
+```python
+d = int(input())
+
+print("{0:b}".format(d))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147833947-cf51d0d0-a705-4bda-96ba-5aa3b6147d81.png)`
+
+### Sol-B
+
+하지만 섹션이 반복문 섹션이니만큼, 출제자가 원하는 방향은 반복문의 사용일 것이다. 이에 맞춰보자면 2로 나눈 나머지를 모으며 몫이 0이 될 때까지 반복하면 될 것 같다.
+
+```python
+d = int(input())
+result = ""
+result_r = ""
+
+while d > 0:
+    a = d % 2
+    result += "%d" % a
+    d //= 2
+
+print(result)
+
+for i in range(1, len(result) + 1):
+    result_r += result[len(str(result)) - i]
+
+print(result_r)
+```
+
+입력값을 숫자로 변환한 숫자 변수 d를 2로 나눈 나머지를 result에 모았다. 이는 2진수를 만들기 위한 숫자 배열의 역수이므로 result_r 변수를 만들어 이를 뒤부터 새로 연결하였다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147834550-acc823ef-1c97-4098-86d8-16ab50a03fba.png)`

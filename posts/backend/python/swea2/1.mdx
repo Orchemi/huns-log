@@ -1,0 +1,555 @@
+---
+title: "[Python] 모듈과 패키지"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-04T01:09
+last-modified-at: 2022-01-04T01:09
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #1](https://swexpertacademy.com)`
+
+<br />
+
+## 표준 모듈
+
+각기 목적에 맞게 설계되어 있고 다양한 함수, 클래스 등을 제공하며, 별도의 추가 설치 과정 없이 import문으로 로딩해 사용함
+
+<br />
+
+### import문과 모듈 로딩
+
+math 모듈이 가지고 있는 함수를 활용
+
+```python
+import math
+
+print("math.radians(90) = {0}".format(math.radians(90)))
+print("math.ceil(3.2) = {0}".format(math.ceil(3.2)))
+print("math.floor(3.2) = {0}".format(math.floor(3.2)))
+print("math.pi = {0}".format(math.pi))
+
+
+[결과]
+math.radians(90) = 1.5707963267948966
+math.ceil(3.2) = 4  # 정수 올림
+math.floor(3.2) = 3   # 정수 내림
+math.pi = 3.141592653589793
+```
+
+<br />
+
+### import ~ as ~ 문과 모듈 별칭의 사용
+
+모듈명이 길거나 어려울 때 보다 효율적이고 편리하게 사용할 수 있음
+
+```python
+import math as m  # math 모듈을 m이란 별칭으로 참조 가능
+
+print("m.radians(90) = {0}".format(m.radians(90)))
+print("m.ceil(3.2) = {0}".format(m.ceil(3.2)))
+print("m.floor(3.2) = {0}".format(m.floor(3.2)))
+print("m.pi = {0}".format(m.pi))
+
+
+[결과]
+m.radians(90) = 1.5707963267948966
+m.ceil(3.2) = 4  # 정수 올림
+m.floor(3.2) = 3   # 정수 내림
+m.pi = 3.141592653589793
+```
+
+<br />
+
+### from ~ import ~ 문을 이용한 선택적 로딩
+
+모듈명 없이 함수와 값을 직접 호출 가능!
+
+```python
+from math import *
+# 모듈 or 패키지가 가지고 있는 함수, 값 등 모든 정보를 로딩
+
+from math import radians, ceil, floor, pi
+# 모듈 or 패키지 중 radians, ceil, floor, pi의 함수와 값을 명시적 기술
+# 해당 함수가 어느 모듈에서 로딩되어 사용됐는지 명확히 알 수 있어 ★ 권장!! ★
+
+print("radians(90) = {0}".format(radians(90)))
+print("ceil(3.2) = {0}".format(ceil(3.2)))
+print("floor(3.2) = {0}".format(floor(3.2)))
+print("pi = {0}".format(pi))
+
+
+[결과]
+radians(90) = 1.5707963267948966
+ceil(3.2) = 4
+floor(3.2) = 3
+pi = 3.141592653589793
+```
+
+<br />
+
+### sys 모듈
+
+시스템과 관련된 정보에 접근하거나 명령행에서 전달된 명령행 매개변수로부터 인자 값을 읽어올 때 활용됨
+
+```python
+import sys
+
+print("sys.argv => {0} {1}".format(type(sys.argv), sys.argv))
+# sys.argv : 리스트 타입, 명령행에서 python 명령에 전달된 인자들의 정보
+
+for i, val in enumerate(sys.argv):
+    print("sys.argv[{0}] => {1}".format(i, val))
+
+
+'''
+이후 [PyCharm - Run - Edit Configurations - Configuration - Parameters] 에 여러 값들을 공백으로 구분하며 입력 후 'OK' 버튼 눌러 실행. 예시에서는 '1 2 3'을 입력하였음.
+'''
+
+
+[결과]
+sys.argv[0] => <class 'list'> ['c:/Intellij/Python/SWEA/2022-01-02-SWEA-Python2#3-25.py']
+sys.argv[1] => 1
+sys.argv[2] => 2
+sys.argv[3] => 3
+```
+
+<br />
+
+### random 모듈
+
+난수(연속적인 임의의 수)를 생성하는 기능 제공
+
+- random() 함수 : 0.0 <= N < 1.0 범위의 부동소수점 난수 N 반환
+- uniform(r1, r2) 함수 : range(r1, r2) 범위 내의 부동소수점 난수 N 반환
+- randrange([start], stop, [step]) : range([start], stop, [step]) 범위 내에서 정수 난수 N 반환
+
+- choice(data_list) 함수 : 인자로 전달된 시퀀스 객체의 항목 중 임의 항목 반환
+- choices(data_list, ex.k=2) 함수 : 인자로 전달된 시퀀스 객체의 항목 중 임의의 k개 반환
+  - 복원 추출 기능을 가짐
+  - ex. choices([1, 2, 3, 4, 5]) => [4, 4] 가능
+- sample(data_list, ex.k=2) 함수 : 인자로 전달된 시퀀스 객체, 혹은 set 객체의 항목 중 임의의 k개 반환
+
+  - 비복원 추출 기능을 가짐
+  - ex. choices([1, 2, 3, 4, 5]) => [4, 4] 불가능
+
+- shuffle(data_list) 함수 : 인자로 전달된 시퀀스 객체의 항목을 뒤섞는 함수
+
+  - 반환값은 없음
+  - 원본 객체의 항목의 순서를 뒤섞음
+
+  <br />
+
+```python
+from random import random, uniform, randrange, choice, choices, sample, shuffle
+
+print("random() => {0}".format(random()))
+# random() => 0.8495812872025872
+
+print("uniform({0}, {1}) => {2}".format(1.0, 10.0, uniform(1.0, 10.0)))
+# uniform(1.0, 10.0) => 6.609709477973705
+
+
+start, stop, step = 1, 45, 2
+# start 생략 시 default : 0, step 생략 시 default : 1
+
+print("randrange({0}, {1}) => {2}".format(start, stop, randrange(start, stop)))
+# randrange(1, 45) => 43
+
+print("randrange({0}) => {1}".format(stop, randrange(stop)))
+# randrange(45) => 33
+
+print("randrange({0}, {1}, {2}) => {3}".format(
+    start, stop, step, randrange(start, stop, step)))
+# randrange(1, 45, 2) => 13
+
+
+data_list = [1, 2, 3, 4, 5]
+print("choice({0}) => {1}".format(data_list, choice(data_list)))
+# choice([1, 2, 3, 4, 5]) => 4
+
+print("choices({0}) => {1}".format(data_list, choices(data_list, k=2)))
+# choices([1, 2, 3, 4, 5]) => [4, 4]
+
+print("sample({0}) => {1}".format(data_list, sample(data_list, k=2)))
+# choices([1, 2, 3, 4, 5]) => [4, 1]
+
+
+shuffle(data_list)
+print("data_list => {0}".format(data_list))
+# data_list => [5, 2, 1, 4, 3]
+```
+
+<br />
+
+### datetime 모듈
+
+날짜와 시간 정보를 확인하고 조작하는 클래스, 함수 등을 제공함
+
+```python
+from datetime import datetime, timezone, timedelta
+
+now = datetime.now()
+print("{0}-{1:02}-{2:02} {3:02}-{4:02}-{5:02}".format(now.year,
+      now.month, now.day, now.hour, now.minute, now.second))
+# 2022-01-03 23-18-08
+
+fmt = "%Y{0} %m{1} %d{2} %H{3} %M{4} %S{5}"
+# %Y: 4자리 연도 / %m: 월 / %d: 일
+# %H : 24시간 체계 시간 / %M : 분 / %S : 초
+
+print(now.strftime(fmt).format(*"년월일시분초"))
+# 2022년 01월 03일 23시 21분 32초
+```
+
+<br />
+
+## 서드파티 모듈 설치 및 활용
+
+<u>주의📣</u> 표준 모듈이 모든 목적에 부합하는 것은 아니며, 모든 기능을 제공하는 것도 아님!
+ 
+
+### 서드파티 모듈(외부 모듈)
+
+다른 누군가에 의해 만들어져 배포되고 공유되는 모듈. 파이썬의 표준모듈의 기능이 부족하거나 없을 때 이를 이용하면 좋다.
+
+<br />
+
+### 서드파티 모듈 설치 및 제거 방법
+
+```python
+# pip 설치 방법
+pip install 모듈명
+
+# pip 제거 방법
+pip uninstall 모듈명
+```
+
+<br />
+
+### pytz 서드파티 모듈 사용법
+
+```python
+from datetime import datetime
+from pytz import common_timezones, timezone, utc
+
+# 타임존 정보 출력
+for tz in list(common_timezones):   # common_timezones 객체를 리스트 객체로 변환해서 반복문 수행
+    if tz.lower().find("paris") >= 0:
+        print(tz)
+
+tz.utc = timezone(utc.zone)
+tz_seoul = timezone("Asia/Seoul")
+tz_pacific = timezone("US/Pacific")
+tz_paris = timezone("Europe/Paris")
+
+fmt = "%Y-%m-%d %H:%M:%S %Z%z"
+# %Z: 타임존의 명칭 / %z: UTC 기준시각과의 시간 차이
+
+
+# UTC 현재 시각
+now_utc = datetime.now(tz_utc)
+print(now_utc.strftime(fmt)
+
+# Asia/Seoul 타임존
+now_seoul = now_utc.astimezone(tz_seoul)
+print(now_seoul.strftime(fmt))
+
+# US/Pacific 타임존
+now_pacific = now_utc.astimezone(tz_pacific)
+print(now_pacific.strftime(fmt))
+
+# Europe/Paris 타임존
+now_paris = now_utc.astimezone(tz_paris)
+print(now_paris.strftime(fmt))
+
+
+[결과]
+Europe/Paris
+2022-01-03 14:55:09 UTC+0000
+2022-01-03 23:55:09 KST+0900
+2022-01-03 06:55:09 PST-0800
+2022-01-03 15:55:09 CET+0100
+```
+
+<br />
+
+## 사용자 정의 모듈
+
+- 필요한 기능을 직접 구현해야 할 경우
+- 파이썬에서 모듈은 파일 단위로 정리되며, **모듈명은 곧 파일명**
+- 모듈의 구분
+  - 실행의 목적 : 파이썬 명령에 의해 실행
+  - 라이브러리의 목적 : import 문에 의해 로딩
+
+<br />
+
+### 라이브러리로 사용할 목적의 모듈
+
+라이브러리 모듈 제작
+
+```python
+# module_mycalc_1.py 파일의 코드
+def plus(x, y):
+    return x + y
+
+def minus(x, y):
+    return x - y
+
+# module_mycalc_2.py 파일의 코드
+def multiply(x, y):
+    return x * y
+
+def divide(x, y):
+    return x / y
+```
+
+실행 모듈 제작 - module_mycalc_1 만 사용
+
+```python
+import module_mycalc_1
+
+op1, op2 = 2, 3
+
+result = module_mycalc_1.plus(op1, op2)
+print("plus({0}, {1} => {2}".format(op1, op2, result))
+
+result = module_mycalc_1.minus(op1, op2)
+print("minus({0}, {1} => {2}".format(op1, op2, result))
+```
+
+실행 모듈 제작 - module_mycalc_1, module_mycalc_1 모두 사용
+
+```python
+import module_mycalc_1, module_mycalc_2
+
+op1, op2 = 2, 3
+
+result = module_mycalc_1.plus(op1, op2)
+print("plus({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_1.minus(op1, op2)
+print("minus({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_2.multiply(op1, op2)
+print("multiply({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_2.divide(op1, op2)
+print("divide({0}, {1}) => {2:.2}".format(op1, op2, result)) # 소수점 둘째자리까지 출력
+
+
+[결과]
+plus(2, 3) => 5
+minus(2, 3) => -1
+multiply(2, 3) => 6
+divide(2, 3) => 0.67
+```
+
+<br />
+
+### 모듈의 **name** 속성
+
+- 실행 목적의 모듈 : `__name__` 속성에 "`__main__`" 문자열 값이 저장
+- 라이브러리 목적의 모듈 : `__name__` 속성에 모듈의 이름이 저장
+
+```python
+def plus(x, y):
+    return x + y
+
+def minus (x, y):
+    return x - y
+
+# python 명령으로 실행 -> 실행 모듈로 동작
+# 모듈로 실행되었을 때와 메인으로 실행되었을 때를 구분해 동작 가능⭐
+if __name__ == "__main__":
+    print("plus(3, 2) => {0}".format(plus(3, 2)))
+    print("minus(3, 2) => {0}".format(minus(3, 2)))
+
+
+[결과]
+plus(3, 2) => 5
+minus(3, 2) => 1
+```
+
+<br />
+
+## 사용자 정의 패키지
+
+패키지 : 모듈이 모여서 폴더를 구성하는 것
+
+1. 패키지로 쓰고 싶은 폴더의 이름을 정의한다.
+
+- 예시에서는 package_mycalc 로 하였다.
+
+2. 모듈로 쓰고 싶은 .py 파일을 폴더에 구성한다.
+
+- 예시에서는 앞서 만든 module_mycalc_1, module_mycalc_2를 넣었다.
+
+3. `__init__.py` 파일을 만들고 아래의 내용을 넣는다.
+
+```python
+# 패키지에 포함될 모듈 이름 저장
+__all__ = ["module_mycalc_1", "module_mycalc_2"]
+
+# 패키지 로딩 확인을 위한 출력 메시지
+print("package_mycalc 를 로딩하였습니다.")
+```
+
+<br />
+
+### 패키지 사용
+
+`from 패키지명 import 모듈명` 코드를 통해 패키지 확인
+
+```python
+# 모든 모듈 로딩
+from package_mycalc import
+
+# 선택적 모듈 로딩
+from package_mycalc import module_mycalc_1, module_mycalc_2
+
+# 모듈 사용
+result = module_mycalc_1.plus(op1, op2)
+print("plus({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_1.minus(op1, op2)
+print("minus({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_2.multiply(op1, op2)
+print("multiply({0}, {1}) => {2}".format(op1, op2, result))
+
+result = module_mycalc_2.divide(op1, op2)
+print("divide({0}, {1}) => {2:.2}".format(op1, op2, result))
+
+
+[결과]
+package_mycalc 를 로딩하였습니다.   # 패키지 로딩 확인을 위한 출력 메시지
+plus(2, 3) => 5
+minus(2, 3) => -1
+multiply(2, 3) => 6
+divide(2, 3) => 0.67
+```
+
+<br />
+
+## 실습
+
+random 모듈 함수 활용하기
+
+### 문제
+
+[결과1]
+로또 번호의 시작 번호를 입력하세요 (기본값: 1):
+로또 번호의 끝 번호를 입력하세요 (기본값: 45): 100
+로또 공의 개수를 입력하세요 (기본값: 6): 12
+행운의 로또 번호는 8, 9, 15, 20, 25, 36, 50, 65, 81, 83, 87, 89 입니다.
+
+<br />
+
+### 나의 Sol
+
+```python
+# -*- coding: utf-8 -*-
+# Lotto.py
+
+import random
+
+start = 1
+end = 45
+balls = 6
+
+start = int(input("로또 번호의 시작 번호를 입력하세요 (기본값: 1): "))
+end = int(input("로또 번호의 끝 번호를 입력하세요 (기본값: 45): "))
+balls = int(input("로또 공의 개수를 입력하세요 (기본값: 6): "))
+
+balls_lst = range(start, end + 1)
+selection = random.sample(balls_lst, balls)
+
+
+txt = ""
+for i in selection:
+    txt = txt + str(i) + ", "
+
+print("행운의 로또 번호는 {0} 입니다.".format(txt[:-2]))
+```
+
+<br />
+
+### 모범 답안
+
+```python
+# -*- coding: utf-8 -*-
+# Lotto.py
+
+import random
+
+lotto = random.sample(range(1, 46, 1), 6)
+print(sorted(lotto))
+
+
+def input_start():
+    start = 0
+    try:
+        start = int(input("로또 번호의 시작 번호를 입력하세요 (기본값: 1): "))
+
+    except:
+        start = 1
+
+    finally:
+        return start
+
+
+def input_end():
+    end = 0
+    try:
+        end = int(input("로또 번호의 끝 번호를 입력하세요 (기본값: 45): "))
+
+    except:
+        end = 45
+
+    finally:
+        return end
+
+
+def input_count():
+    end = 0
+    try:
+        count = int(input("로또 공의 개수를 입력하세요 (기본값: 6): "))
+
+    except:
+        count = 6
+
+    finally:
+        return count
+
+
+def print_lotto(start, end, count):
+    lotto = random.sample(range(start, end + 1, 1), count)
+
+    print("행운의 로또 번호는 ", end="")    # line braek 방지를 위해 end="" 삽입
+
+    for i, num in enumerate(sorted(lotto)):
+        if i == len(lotto) - 1:
+            print("{0}".format(num), end="")
+        else:
+            print("{0}, ".format(num), end="")
+
+    print(" 입니다.")
+
+
+print_lotto(1, 45, 6)
+```

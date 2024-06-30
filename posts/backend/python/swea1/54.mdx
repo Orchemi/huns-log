@@ -1,0 +1,523 @@
+---
+title: "[Python] 구문오류와 예외"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-02T17:22
+last-modified-at: 2022-01-02T17:22
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #54](https://swexpertacademy.com)`
+
+<br />
+
+## 구문오류와 예외
+
+### 구문오류
+
+```python
+print("정상적인 실행 코드")
+print("구문 오류가 발생하는 코드)   # " 가 하나 없음
+
+
+[결과]
+  File "c:\Intellij\Python\SWEA\2022-01-02-SWEA-Python2#3-25.py", line 2
+    print("구문 오류가 발생하는 코드)   # " 가 하나 없음
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+```
+
+### 예외
+
+문법적인 문제는 없는데 실행중에 예기치 않게 발생. 예외가 발생했을 때 처리를 하지 않으면 프로그램이 끝나게 되므로, 안전하게 처리할 필요가 있음
+
+```python
+data_list = [10, 20, 30]  # 사용 가능한 인덱스: 0 ~ 2
+
+print(data_list[0])
+print(data_list[1])
+print(data_list[2])
+print(data_list[3])
+
+
+[결과]
+10
+20
+30
+Traceback (most recent call last):
+  File "c:\Intellij\Python\SWEA\2022-01-02-SWEA-Python2#3-25.py", line 6, in <module>
+    print(data_list[3])
+IndexError: list index out of range
+```
+
+<br />
+
+## 예외 처리 방법
+
+### 예외의 발생
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = int(input("폭을 입력하세요: "))
+height = int(input("높이를 입력하세요: "))
+
+area = width * height
+print("{0} X {1} = {2}".format(width, height, area))
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o   # int() 변환함수를 이용해 정수 타입으로 변환하는 과정에서 ValueError 발생
+Traceback (most recent call last):
+  File "c:\Intellij\Python\SWEA\2022-01-02-SWEA-Python2#3-25.py", line 4, in <module>
+    height = int(input("높이를 입력하세요: "))
+ValueError: invalid literal for int() with base 10: '1o'
+```
+
+<br />
+
+### 예외 발생시 해결 방법
+
+- if 문을 이용한 예외처리
+
+  - 정상적인 흐름을 제어할 경우에만 사용 가능
+  - 예외처리 전용 메커니즘의 사용이 필요할 수 있음
+
+- try ~ except 문
+  : 예외 발생 O
+- try ~ except ~ else 문
+  : 예외 발생 O, 예외 발생 X
+- try ~ except ~ else ~ finally 문
+  : 예외 발생 O, 예외 발생 X, 예외 발생 상관 없이
+
+<br />
+
+#### if 문을 이용한 예외의 처리
+
+정확히 말하자면 예외 발생 상황을 사전에 제어하는 코드
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+area = 0
+
+if width.isdigit() and height.isdigit():
+# isdigit() 함수 : 숫자 문자인지 검사
+# ["4", "10"] : True, [5, "1o"] : False
+
+    area = int(width) * int(height)
+    print("{0} X {1} = {2}".format(width, height, area))
+else:
+    print("숫자가 아닌 값이 입력되었습니다.")
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+숫자가 아닌 값이 입력되었습니다.
+프로그램을 종료합니다...
+
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 10
+5 X 10 = 50
+프로그램을 종료합니다...
+```
+
+<br />
+
+#### try ~ except 문을 이용한 예외의 처리
+
+try 구문의 코드를 한 줄 한 줄 읽어가다가 오류 발생 시 try 구문을 읽는 것을 멈추고 except 구문 시작
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+area = 0
+
+try:
+    area = int(width) * int(height)
+    print("{0} X {1} = {2}".format(width, height, area))
+except:
+    print("숫자가 아닌 값이 입력되었습니다.")
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+숫자가 아닌 값이 입력되었습니다.
+프로그램을 종료합니다...
+
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 10
+5 X 10 = 50
+프로그램을 종료합니다...
+```
+
+<br />
+
+#### try ~ except ~ else 문을 이용한 예외의 처리
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+area = 0
+
+try:
+    area = int(width) * int(height)
+
+except:   # try 구문에서 예외 발생 시 실행
+    print("숫자가 아닌 값이 입력되었습니다.")
+
+else: # try 구문에서 예외 발생하지 않을 시 실행
+    print("{0} X {1} = {2}".format(width, height, area))
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+숫자가 아닌 값이 입력되었습니다.
+프로그램을 종료합니다...
+
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 10
+5 X 10 = 50
+프로그램을 종료합니다...
+```
+
+<br />
+
+#### try ~ except ~ else ~ finally 문을 이용한 예외의 처리
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+area = 0
+
+try:
+    area = int(width) * int(height)
+
+except:   # try 구문에서 예외 발생 시 실행
+    print("숫자가 아닌 값이 입력되었습니다.")
+
+else: # try 구문에서 예외 발생하지 않을 시 실행
+    print("{0} X {1} = {2}".format(width, height, area))
+
+finally:  # try 구문에서 예외 발생 여부에 상관없이 실행
+    print("finally 코드 블록은 예외 발생 여부에 상관없이 실행됩니다.")
+
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+숫자가 아닌 값이 입력되었습니다.
+finally 코드 블록은 예외 발생 여부에 상관없이 실행됩니다.
+프로그램을 종료합니다...
+
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 10
+5 X 10 = 50
+finally 코드 블록은 예외 발생 여부에 상관없이 실행됩니다.
+프로그램을 종료합니다...
+```
+
+<br />
+
+## 예외 객체
+
+코드를 실행 중 오류가 발생하면 만들어진 것으로, 오류 발생과 관련한 정보를 가지는 객체
+
+Traceback... 뒤에
+
+SyntaxError: unterminated string literal (detected at line 1)
+TypeError: unsupported operand type(s) for /: 'int' and 'str'
+
+등이 예외 객체라고 본다.
+
+<br />
+
+### 예외 객체 활용 예시
+
+```python
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+area = 0
+
+try:
+    area = int(width) * int(height)
+
+except Exception as ex:   # try 구문에서 예외 발생 시 실행
+    print("{0}: {1}".format(type(ex), ex))  # 예외 객체를 ex로 지정해 print
+
+else: # try 구문에서 예외 발생하지 않을 시 실행
+    print("{0} X {1} = {2}".format(width, height, area))
+
+finally:  # try 구문에서 예외 발생 여부에 상관없이 실행
+    print("finally 코드 블록은 예외 발생 여부에 상관없이 실행됩니다.")
+
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+<class 'ValueError'>: invalid literal for int() with base 10: '1o'
+finally 코드 블록은 예외 발생 여부에 상관없이 실행됩니다.
+프로그램을 종료합니다...
+```
+
+<br />
+
+### 다중 except 문을 이용한 예외 객체에 따른 처리의 분기
+
+```python
+print("나누기 연산의 결과를 구해봅시다.")
+
+x, y, result = 0, 0, 0
+
+try:
+    x = int(input("피제수를 입력하세요: "))
+    y = int(input("제수를 입력하세요: "))
+    result = x / y
+
+except ValueError as ve:
+    print("입력 값은 반드시 숫자를 사용해야 합니다.")
+    print("{0}: {1}".format(type(ve), ve))
+
+except ZeroDivisionError as ze:
+    print("제수로 0을 사용할 수 없습니다.")
+    print("{0}: {1}".format(type(ze), ze))
+
+except Exception as ex:
+    print("예상치 못한 예외가 발생했습니다.")
+    print("{0}: {1}".format(type(ex), ex))
+
+else:
+    print("{0} / {1} = {2}".format(x, y, result))
+
+finally:
+    print("finally 코드 블록은 예외 발생 여부에 상관 없이 실행됩니다.")
+
+print("프로그램을 종료합니다...")
+```
+
+<br />
+
+## 강제 예외 발생
+
+### 강제로 예외를 발생시키는 방법 : rasie 문
+
+특정 조건에서 예외 객체를 만들어 예외를 일으킬 수 있음
+
+```python
+def calc_area(w, h):
+    if w.isdigit() and h.isdigit():
+        return int(w) * int(h)
+    else:
+        raise ValueError("숫자가 아닌 값이 입력되었습니다.")
+        # raise 문을 이용해 강제로 ValueError 예외 상황을 일으킴
+
+print("사각형의 면적을 구해봅시다.")
+
+width = input("폭을 입력하세요: ")
+height = input("높이를 입력하세요: ")
+
+try:
+    area = calc_area(width, height)
+    # 인자로 전달된 값이 숫자 형식의 문자열이 아닌 경우 ValueError 발생
+
+except ValueError as ve:
+    print("{0}: {1}".format(type(ve), ve))
+
+except Exception as ex:
+    print("{0}: {1}".format(type(ex), ex))
+
+else:
+    print("{0} X {1} = {2}".format(width, height, area))
+
+finally:
+    print("finally 코드 블록은 예외 발생 여부에 상관 없이 실행됩니다.")
+
+print("프로그램을 종료합니다...")
+
+
+[결과]
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 1o
+<class 'ValueError'>: 숫자가 아닌 값이 입력되었습니다.
+finally 코드 블록은 예외 발생 여부에 상관 없이 실행됩니다.
+프로그램을 종료합니다...
+
+사각형의 면적을 구해봅시다.
+폭을 입력하세요: 5
+높이를 입력하세요: 10
+5 X 10 = 50
+finally 코드 블록은 예외 발생 여부에 상관 없이 실행됩니다.
+프로그램을 종료합니다...
+```
+
+<br />
+
+## 실습 : 예외처리기능을 가진 프로그램 만들기
+
+### 문제
+
+사용자로부터 인덱스를 입력 받아 숫자로 변환하는 함수
+
+```python
+[결과1]
+data_list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+인덱스로 사용할 숫자를 입력하세요: o
+<class 'ValueError'>, invalid literal for int() with base 10: 'o'
+
+[결과2]
+data_list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+인덱스로 사용할 숫자를 입력하세요: 10
+<class 'IndexError'> list index out of range
+인덱스는 0 ~ 9까지 사용할 수 있습니다.
+[9]: 10
+```
+
+<br />
+
+### 나의 Sol
+
+```python
+# -*- coding: utf-8 -*-
+# IdxToNum.py
+
+def IdxToNum(idx):
+
+    if (idx.isdigit() and (0 <= int(idx) <= 9)):
+        return idx_in
+
+    elif not (idx.isdigit()):
+        raise ValueError(
+            "invalid literal for int() with base 10: '{0}'".format(idx))
+
+    elif not (0 <= int(idx) <= 9):
+        raise IndexError("list index out of range")
+
+
+data_list = list(range(1, 11))
+print("data_list: {0}".format(data_list))
+idx_in = input("인덱스로 사용할 숫자를 입력하세요: ")
+
+try:
+    result = IdxToNum(idx_in)
+
+except ValueError as ve:
+    print("{0}, {1}".format(type(ve), ve))
+
+except IndexError as ie:
+    print("{0}, {1}".format(type(ie), ie))
+    print("인덱스는 0 ~ 9까지 사용할 수 있습니다.")
+    print("[{0}]: {1}".format(len(data_list) - 1, data_list[len(data_list) - 1]))
+
+else:
+    print("[{0}]: {1}".format(result, data_list[int(result)]))
+```
+
+<br />
+
+### 모범 답안
+
+```python
+# -*- coding: utf-8 -*-
+# IdxToNum.py
+
+def input_index():
+    num = 0
+
+    try:
+        num = int(input("인덱스로 사용할 숫자를 입력하세요: "))
+
+    except ValueError as exception:
+        raise exception
+
+    else:
+        return num
+
+
+def print_in_bounds(list, index):
+    value = 0
+    try:
+        value = list[index]
+
+    except IndexError as exception:
+        print("{0} {1}".format(type(exception), exception))
+        index = len(list) - 1
+        print("인덱스는 0 ~ {0}까지 사용할 수 있습니다.".format(index))
+        value = list[index]
+
+    finally:
+        print("[{0}]: {1}".format(index, value))
+
+
+
+data_list = list(range(1, 11))
+print("data_list: {0}".format(data_list))
+
+try:
+    num = input_index()
+    print_in_bounds(data_list, num)
+
+except ValueError as exception:
+    print("{0}, {1}".format(type(exception), exception))
+
+except Exception as exception:
+    print(exception)
+```
+
+<br />
+
+### 실습 후기
+
+예외 객체에 대한 이해가 잘 안 되어있었기 때문에 예외 객체로 처리해야 하는 오류 메세지를 하드코딩하는 실수를 범했다. 무엇보다 모범답안은 함수와 예외처리, 그리고 객체지향에 대한 이해가 너무 잘 되어있었기 때문에 따라서 클론코딩하는 것만으로도 따라가기 버거웠다. 아직 갈 길이 멀었음을 느끼는 순간이다.

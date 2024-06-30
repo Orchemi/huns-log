@@ -1,0 +1,106 @@
+---
+title: "[SQL] ORDER BY와 GROUP BY : 정렬과 요약"
+
+categories:
+  - SQL
+
+tags:
+  - [DB, SQL]
+
+date: 2022-03-14T15:30
+last_modified_at: 2022-03-14T15:30
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## ORDER BY
+
+- 조회 결과 집합 정렬
+- SELECT 문에 추가하여 사용
+- 정렬 순서 키워드 : ASC(오름차순, default) / DESC(내림차순)
+
+<br />
+
+### 문법
+
+```sql
+SELECT * FROM [table_name] ORDER BY [col] ASC;
+SELECT * FROM [table_name] ORDER BY [col1], [col2] DESC;
+```
+
+- 컬럼을 여러 가지 사용하는 경우 `1순위 탐색 컬럼`과 `2순위 탐색 컬럼`
+- 1순위 탐색 컬럼으로 정렬한 뒤에 같은 범위에 대해 2순위 탐색으로 세부정렬
+
+<br />
+
+### 사용 예시
+
+> users 테이블에서 나이 순으로 오름차순 정렬하여 상위 10개 조회
+
+```sql
+SELECT * FROM users ORDER BY age ASC LIMIT 10;
+```
+
+<br />
+
+> 나이 순, 성(last_name) 순으로 오름차순 정렬하여 상위 10개 조회
+
+```sql
+SELECT * FROM users ORDER BY age, last_name ASC LIMIT 10;
+```
+
+<br />
+
+> 계좌 잔액 순으로 내림차순 정렬, 해당 유저의 성과 이름을 10개만 조회
+
+```sql
+SELECT last_name, first_name FROM users ORDER BY balance DESC LIMIT 10;
+```
+
+<br />
+
+## GROUP BY
+
+- 선택된 `행 그룹을 하나 이상의 열 값으로 요약 행` 생성
+- SELECT 문의 optional 절
+- `데이터 요약`에 주로 사용
+- ⭐ 문장의 WEHRE절이 포함된 경우 `반드시 WHERE 절 뒤에 작성`
+
+<br />
+
+### 문법
+
+```sql
+SELECT [col1], aggregate_function([col2]) FROM [table_name] GROUP BY [col1], [col2];
+```
+
+<br />
+
+### 사용 예시
+
+> users에서 각 성(last_name)이 몇 명씩 있는지 조회
+
+```sql
+SELECT last_name, COUNT(*) FROM users GROUP BY last_name;
+```
+
+- SELECT 직후의 col 요소들은 요약 행의 구성 요소들
+- GROUP BY 뒤의 col 요소는 그룹화의 기준
+
+<br />
+
+### AS: 요약 컬럼명 재정의
+
+- GROUP BY를 이용해 요약하는 경우, 요약 컬럼의 이름을 지정
+
+<br />
+
+```sql
+SELECT last_name, COUNT(*) AS name_count FROM users GROUP BY last_name;
+```

@@ -1,0 +1,95 @@
+---
+title: "[Python] While 반복문"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-14T00:00
+last_modified_at: 2021-07-14T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# while 반복문
+
+```python
+while (조건):
+    실행문
+
+# (조건)을 만족할 때까지 코드 실행
+```
+
+- 다음의 예시로 설명한다.
+
+<br />
+
+## 1. Starbucks
+
+- starbucks에서는 손님을 5번 불렀는데 오지 않는 경우 커피를 버린다고 가정
+
+```python
+customer = "토르"
+index = 5
+while index >= 1:
+    print("{0}님, 커피가 준비되었습니다. {1}번 남았어요.".format(customer, index))
+    index -= 1
+    if index == 0:
+        print("커피는 폐기처분되었습니다.")
+```
+
+출력값은 다음과 같다.
+
+> 토르님, 커피가 준비되었습니다. 5번 남았어요.  
+> 토르님, 커피가 준비되었습니다. 4번 남았어요.  
+> 토르님, 커피가 준비되었습니다. 3번 남았어요.  
+> 토르님, 커피가 준비되었습니다. 2번 남았어요.  
+> 토르님, 커피가 준비되었습니다. 1번 남았어요.  
+> 커피는 폐기처분되었습니다.
+
+<br />
+
+## 2. Megacoffee
+
+- megacoffee에서는 손님이 올 때까지 커피가 준비되었음을 알린다는 가정
+
+```python
+index = 1
+customer = "아이언맨"
+
+while True:
+    print("{0}님, 커피가 준비되었습니다. 호출 {1}회".format(customer, index))
+    index += 1
+```
+
+index는 계속 늘어나기만 하고 출력값은 무한루프에 빠진다.
+무한루프에서 벗어나기 위해선 `<ctrl + c>` 입력.
+
+<br />
+
+## 3. Gongcha
+
+- gongcha에서는 손님들이 와서 커피가 준비되었는지 물을 때,
+  이름을 물어봐서 커피를 준다고 가정
+
+```python
+target = "토르"  # 커피가 준비된 사람
+visitor = "Unknown"  # 종업원에게 찾아온 사람
+
+while visitor != target:
+    print("{0}님, 커피가 준비되었습니다".format(visitor))
+    visitor = input("이름이 어떻게 되세요? ")
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

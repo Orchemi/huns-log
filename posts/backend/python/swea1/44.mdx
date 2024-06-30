@@ -1,0 +1,668 @@
+---
+title: "[Python] 내장함수"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-01T23:33
+last-modified-at: 2022-01-02T03:05
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #44](https://swexpertacademy.com)`
+
+<br />
+
+## 수치 연산 함수
+
+### abs()
+
+인자로 숫자를 전달하면 그 숫자의 절대값을 반환하는 함수
+
+```python
+val = 10
+print("abs({0}) => {1}".format(val, abs(val)))
+
+val = -10
+print("abs({0}) => {1}".format(val, abs(val)))
+
+val = -3.14
+print("abs({0}) => {1}".format(val, abs(val)))
+
+
+[결과]
+abs(10) => 10
+abs(-10) => 10
+abs(-3.14) => 3.14
+```
+
+<br />
+
+### divmod()
+
+첫 번째 인자를 두 번째 인자로 나눴을 때의 **몫과 나머지를 튜플 객체로 반환하는 함수**
+
+```python
+val1, val2 = 9, 5
+result_tuple = divmod(val1, val2)   # 몫과 나머지를 tuple 객체로 변환해 변수 result_tuple에 저장
+
+print("divmod({0}, {1}) => 몫: {2}, 나머지: {3}".format(val1, val2, *result_tuple))
+
+
+[결과]
+divmod(9, 5) => 몫: 1, 나머지: 4
+```
+
+<br />
+
+### pow()
+
+첫 번째로 전달된 인자 값에 대해 두 번째로 전달된 인자 값으로 제곱한 결과를 반환하는 함수
+
+```python
+data_list = [1, 2, 3, 4, 5]
+
+print("pow({0}, 2) => {1}".format(data_list[2], pow(data_list[2], 2)))
+
+print("list(map(lambda x: pow(x, 2), {0})) => {1}".format(data_list, list(map(lambda x: pow(x, 2), data_list))))
+
+
+[결과]
+pow(3, 2) => 9
+list(map(lambda x: pow(x, 2), [1, 2, 3, 4, 5])) => [1, 4, 9, 16, 25]
+```
+
+<br />
+
+## 시퀀스형/반복 가능한 자료형을 다루는 함수
+
+### all()
+
+반복 가능한 자료형인 List, Tuple, Set, Dictionary, 문자열 등을 인자로 전달하여 **항목 모두가 True로 평가되면 True를 반환하고, False로 평가되는 항목이 하나라도 있으면 False를 반환**하는 함수
+
+```python
+val = [True, True, True]
+print("all({0}) => {1}".format(val, all(val)))
+
+val = [10, 20, 30]
+print("all({0}) => {1}".format(val, all(val)))
+
+val = [10, 20, 0]
+print("all({0}) => {1}".format(val, all(val)))
+
+
+[결과]
+all([True, True, True]) => True
+all([10, 20, 30]) => True
+all([10, 20, 0]) => False
+```
+
+```python
+val = [10, 20, ""]  # 공백문자열 : False
+print("all({0}) => {1}".format(val, all(val)))
+
+val = [10, 20, False]   # False 자체
+print("all({0}) => {1}".format(val, all(val)))
+
+val = [10, 20, None]    # None 항목 : False
+print("all({0}) => {1}".format(val, all(val)))
+
+
+[결과]
+all([10, 20, ""]) => False
+all([10, 20, False]) => False
+all([10, 20, None]) => False
+```
+
+<br />
+
+### any()
+
+반복 가능한 자료형인 List, Tuple, Set, Dictionary, 문자열 등을 인자로 전달하여 **항목 모두가 False로 평가되면 False를 반환하고, True로 평가되는 항목이 하나라도 있으면 True를 반환**하는 함수
+
+```python
+val = [True, True, True]
+print("any({0}) => {1}".format(val, any(val)))
+
+val = [10, 20, 30]
+print("any({0}) => {1}".format(val, any(val)))
+
+val = [10, 20, 0]
+print("any({0}) => {1}".format(val, any(val)))
+
+
+[결과]
+any([True, True, True]) => True
+any([10, 20, 30]) => True
+any([10, 20, 0]) => True
+```
+
+```python
+val = [10, 20, ""]
+print("any({0}) => {1}".format(val, any(val)))
+
+val = [10, 20, False]
+print("any({0}) => {1}".format(val, any(val)))
+
+val = [10, 20, None]
+print("any({0}) => {1}".format(val, any(val)))
+
+
+[결과]
+any([10, 20, ""]) => True
+any([10, 20, False]) => True
+any([10, 20, None]) => True
+```
+
+<br />
+
+### enumerate()
+
+List, Tuple, 문자열과 같은 시퀀스형을 입력받아 **인덱스를 포함하는 튜플 객체를 항목으로 구성하는 enumerate 객체를 반환하는 함수**
+
+```python
+data_list = [10, 20, 30, 40, 50]
+
+for idx, val in enumerate(data_list):
+    print("data_list[{0}]: {1}".format(idx, val))
+
+print("-" * 25)
+
+for obj in enumerate(data_list):
+    print("{0}: {1}, {2}".format(type(obj), obj[0], obj[1]))
+
+print("-" * 25)
+
+for obj in enumerate(data_list):
+    print("{0}: {1}, {2}".format(type(obj), *obj))  # 튜플이므로 언팩 연산자 사용
+
+
+[결과]
+data_list[0]: 10
+data_list[1]: 20
+data_list[2]: 30
+data_list[3]: 40
+data_list[4]: 50
+-------------------------
+<class 'tuple'>: 0, 10
+<class 'tuple'>: 1, 20
+<class 'tuple'>: 2, 30
+<class 'tuple'>: 3, 40
+<class 'tuple'>: 4, 50
+-------------------------
+<class 'tuple'>: 0, 10
+<class 'tuple'>: 1, 20
+<class 'tuple'>: 2, 30
+<class 'tuple'>: 3, 40
+<class 'tuple'>: 4, 50
+```
+
+<br />
+
+### filter()
+
+조건에 해당하는 항목을 걸러내는 함수
+
+```python
+def iseven(num):
+    return num % 2 == 0     # 짝수일 때 True 반환
+
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+ret_val = filter(iseven, numbers)
+# ret_val = filter(lambda n: n % 2 == 0, numbers)
+
+print("{0}".format(type(ret_val)))
+print("{0}".format(list(ret_val)))
+
+
+[결과]
+<class 'filter'>
+[2, 4, 6, 8, 10]
+```
+
+<br />
+
+### 반복 가능한 자료형 반환 함수
+
+반복 가능한 자료형을 인자로 전달 받아
+
+- list() : 리스트로 변환해 반환하는 함수
+- tuple() : 튜플로 변환해 반환하는 함수
+- set() : 셋으로 변환해 반환하는 함수
+- dict() : 딕셔너리로 변환해 반환하는 함수
+
+```python
+data_str = "Hello"
+
+data_list = list(data_str)
+print("list('{0}') => {1} {2}".format(data_str, type(data_list), data_list))
+# list('Hello') => <class 'list'> ['H', 'e', 'l', 'l', 'o']
+
+data_tuple = tuple(data_str)
+print("tuple('{0}') => {1} {2}".format(data_str, type(data_tuple), data_tuple))
+# tuple('Hello') => <class 'tuple'> ('H', 'e', 'l', 'l', 'o')
+
+data_set = set(data_str)
+print("set('{0}') => {1} {2}".format(data_str, type(data_set), data_set))
+# set('Hello') => <class 'set'> {'H', 'o', 'e', 'l'} 순서는 의미가 없다.
+
+data_dict = dict(enumerate(data_set))
+print("dict('{0}') => {1} {2}".format(data_set, type(data_dict), data_dict))
+# dict('{'H', 'o', 'e', 'l'}') => <class 'dict'> {0: 'H', 1: 'o', 2: 'e', 3: 'l'}
+```
+
+<br />
+
+### map()
+
+두 번째 인자로 반복 가능한 자료형을 전달 받아 **자료형의 각 항목에 대해 첫 번째 인자로 전달 받은 함수를 적용한 결과를 맵 객체로 반환하는 함수**
+
+```python
+data_list = list("abcdef")
+
+result = list(map(lambda x: x.upper(), data_list))
+# data_list 객체의 항목에 대해 대문자로 변환한 항목을 가진 map 객체 반환
+
+print("list(map(lambda x: x.upper(), {0})) => {1} {2}".format(data_list, type(result), result))
+# result 객체는 data_list의 모든 값이 대문자로 변환된 항목을 가진 list 객체
+
+
+[결과]
+list(map(lambda x: x.upper(), ['a', 'b', 'c', 'd', 'e', 'f'])) => <class 'list'> ['A', 'B', 'C', 'D', 'E', 'F']
+```
+
+<br />
+
+### max(), min()
+
+반복 가능한 자료형을 인자로 전달받아
+
+- max() : 항목 중 가장 큰 값 반환
+- min() : 항목 중 가장 작은 값 반환
+
+```python
+data_list = [10, 20, 30, 40, 50]
+print("{0} => min: {1}, max: {2}".format(data_list, min(data_list), max(data_list)))
+
+
+[결과]
+[10, 20, 30, 40, 50] => min: 10, max: 50
+```
+
+<br />
+
+### sorted()
+
+반복 가능한 자료형을 인자로 전달받아 항목들로부터 **정렬된 리스트를 생성해 반환**하는 함수
+
+```python
+data_list = [3, 8, 12, 2, 5, 11]
+
+asc_result = sorted(data_list)  # 오름차순으로 정렬된 리스트 객체 생성
+
+print("{0} {1}".format(type(data_list), data_list))
+print("{0} {1}".format(type(asc_result), asc_result))
+
+print("-" * 35)
+
+desc_result = list(reversed(asc_result))    # 내림차순의 리스트 객체 생성
+# reversed(lst) : lst의 구성을 거꾸로 구성
+
+print("{0} {1}".format(type(data_list), data_list))     # 원본
+print("{0} {1}".format(type(asc_result), asc_result))   # 오름차순
+print("{0} {1}".format(type(desc_result), desc_result)) # 내림차순
+
+[결과]
+<class 'list'> [3, 8, 12, 2, 5, 11]
+<class 'list'> [2, 3, 5, 8, 11, 12]
+-----------------------------------
+<class 'list'> [3, 8, 12, 2, 5, 11]
+<class 'list'> [2, 3, 5, 8, 11, 12]
+<class 'list'> [12, 11, 8, 5, 3, 2]
+```
+
+<br />
+
+## zip()
+
+둘 이상의 반복 가능한 자료형을 인자로 전달받아, 동일 위치의 항목을 묶어 튜플을 항목으로 구성하는 zip 객체를 생성하는 함수
+
+<u>중요🔔</u> 인자로 전달된 객체는 동일 자료형, 항목의 개수가 같아야 함
+ 
+
+```python
+data_list1 = [1, 2, 3]
+data_list2 = [4, 5, 6]
+data_list3 = ["a", "b", "c"]
+
+print("list(zip({0}, {1})) => {2}".format(data_list1,
+      data_list2, list(zip(data_list1, data_list2))))
+# list(zip([1, 2, 3], [4, 5, 6])) => [(1, 4), (2, 5), (3, 6)]
+
+print("list(zip({0}, {1}, {2})) => {3}".format(data_list1,
+      data_list2, data_list3, list(zip(data_list1, data_list2, data_list3))))
+# list(zip([1, 2, 3], [4, 5, 6], ['a', 'b', 'c'])) => [(1, 4, 'a'), (2, 5, 'b'), (3, 6, 'c')]
+
+print("dict(zip({0}, {1})) => {2}".format(data_list1,
+      data_list3, dict(zip(data_list1, data_list3))))
+# dict(zip([1, 2, 3], ['a', 'b', 'c'])) => {1: 'a', 2: 'b', 3: 'c'}
+```
+
+<br />
+
+## 변환 함수
+
+- chr() : 정수 형태의 유니코드 값 -> 문자
+- ord() : 문자 -> 유니코드 값(10진 정수)
+- hex() : 10진 정수 -> 16진수
+
+- int() : 숫자 형식의 문자열, 부동소수점 -> 정수
+  - 진수를 바꿀 수 있음! ex. int(인자, 진수)
+- float() : 숫자 형식의 문자열, 정수 -> 부동소수점 숫자
+- str() : 객체 -> 문자열 변환 값을 반환
+
+### chr() 함수 예시
+
+```python
+val = 65
+print("chr({0}) => '{1}'".format(val, chr(val)))
+# chr(65) => 'A'
+
+val = 97
+print("chr({0}) => '{1}'".format(val, chr(val)))
+# chr(97) => 'a'
+
+val = 0xac00    # 16진수
+print("chr({0:x}) => '{1}'".format(val, chr(val)))
+# chr(ac00) => '가'
+```
+
+### ord(), hex() 함수 예시
+
+```python
+val = "A"
+print("ord({0}) => '{1}'".format(val, ord(val)))
+# ord('A') => 65
+
+val = "a"
+print("ord({0}) => '{1}'".format(val, ord(val)))
+# ord('a') => 97
+
+val = "가"
+print("ord({0}) => '{1}'".format(val, ord(val)))
+print("ord({0}) => '{1}'".format(val, hex(ord(val))))
+# ord("가") => 44032
+# ord("가") => 0xac00
+```
+
+### int() 함수 예시
+
+```python
+x = "10"
+y = "3C"
+z = 4.5
+
+print("2진수 표현인 문자열 '{0}' 은(는) 10진수 {1}로 변환됩니다.".format(x, int(x, 2)))
+print("16진수 표현인 문자열 '{0}' 은(는) 10진수 {1}로 변환됩니다.".format(y, int(y, 16)))
+print("int({1})은 {0} {1}을 {2} {3}로 변환됩니다.".format(type(z), z, type(int(z)), int(z)))
+
+
+[결과]
+2진수 표현인 문자열 '10' 은(는) 10진수 2로 변환됩니다.
+16진수 표현인 문자열 '3C' 은(는) 10진수 60로 변환됩니다.
+int(4.5)은 <class 'float'> 4.5을 <class 'int'> 4로 변환됩니다.
+```
+
+<br />
+
+## 객체 조사를 위한 함수
+
+### dir()
+
+인자로 전달된 개개체가 가지고 있는 변수, **메서드와 같은 속성 정보를 리스트 객체로 반환**. 인자를 전달하지 않고 호출하면 현재 지역 스코프에 대한 정보를 리스트 객체로 반환
+
+```python
+print("dir() => {0}".format(dir()))
+# 지역 스코프에 대한 정보를 리스트 객체로 반환
+
+data_str = "Hello, Python!"
+print("dir(data_str) => {0}".format(dir(data_str)))
+# 문자열이 가지고 있는 많은 메소드 정보를 리스트 객체에 담아 반환
+
+data_list = [10, 20, 30, 40, 50]
+print("dir(data_list) => {0}".format(dir(data_list)))
+# 정수형 리스트 객체가 가지고 있는 메소드 정보를 리스트 객체에 담아 반환
+
+data_dict = {"key1": 10, "key2": 20, "key3": 30}
+print("dir(data_dict) => {0}".format(dir(data_dict)))
+# 객체가 가지고 있는 메소드 정보들을 리스트 객체에 담아 반환
+
+
+[결과]
+dir() => ['__annotations__', '__builtins__', ... , '__name__', '__package__', '__spec__']
+dir(data_str) => ['__add__', '__class__', '__contains__', '__delattr__', ... , 'upper', 'zfill']
+dir(data_list) => ['__add__', '__class__', '__class_getitem__', ... , 'pop', 'remove', 'reverse', 'sort']
+dir(data_dict) => ['__class__', '__class_getitem__', ... ,'update', 'values']
+```
+
+<br />
+
+### globals(), locals()
+
+- globals()
+  - 현재의 전역 심볼 테이블을 보여주는 딕셔너리를 반환하는 함수
+  - 전역변수화 함수, 클래스의 정보 포함
+- locals()
+
+  - 현재의 지역 심볼 테이블을 보여주는 딕셔너리를 반환하는 함수
+  - 매개변수를 포함한 지역변수와 중첩함수의 정보 포함
+
+```python
+class MyClass:
+    pass
+
+def test_fn(param):
+    def inner_fn():
+        pass
+    val1 = 5
+    val2 = 8
+    for item in locals().items():
+    # Locals 함수가 반환한 딕셔너리 객체에 대해 Items 함수로 리스트 객체를 얻음
+
+        print("\t{0} : {1}".format(item[0], item[1]))
+        # 첫 번째 항목인 키를, 두 번째 항목인 값을 접근해 지역 정보 출력
+
+value1 = 10
+value2 = 20
+obj1 = MyClass()
+
+g = dict(globals())
+# globals() 함수가 반환한 dict 객체의 현재 상태를 복사해 g에 저장
+
+print("globals()")
+# g의 items 함수로 변환된 리스트 객체를 얻음
+
+for item in g.items():
+    print("\t{0} : {1}".format(item[0], item[1]))
+    # 튜플 객체인 각 항목에 대해 첫 번째 항목인 key, 두 번째 항목인 value에 접근해 전역 정보 출력
+
+print("\n\nlocals()")
+test_fn(10)
+# test_fn 함수를 호출하며 인자값 10을 전달해서 함수 내의 코드를 차례대로 실행
+
+
+[결과]
+globals()
+        __name__ : __main__
+        __doc__ : None
+        __package__ : None
+        __loader__ : <_frozen_importlib_external.SourceFileLoader object at 0x000002111ECA4A00>
+        __spec__ : None
+        __annotations__ : {}
+        __builtins__ : <module 'builtins' (built-in)>
+        __file__ : c:\Intellij\Python\SWEA\2022-01-01-SWEA-Python1#45-53.py
+        __cached__ : None
+        MyClass : <class '__main__.MyClass'>
+        test_fn : <function test_fn at 0x000002111ED0AB00>
+        value1 : 10
+        value2 : 20
+        obj1 : <__main__.MyClass object at 0x000002111ECF3CA0>
+
+
+locals()
+        param : 10
+        inner_fn : <function test_fn.<locals>.inner_fn at 0x000002111ED0AB90>
+        val1 : 5
+        val2 : 8
+```
+
+<br />
+
+### id()
+
+인자로 전달된 객체의 고유 주소(참조값)를 반환하는 함수
+
+```python
+x = 10
+print("{0} x의 주소 값: {1}".format(type(x), hex(id(x))))
+
+y = 10
+print("{0} y의 주소 값: {1}".format(type(y), hex(id(y))))
+
+z = "10"
+print("{0} z의 주소 값: {1}".format(type(z), hex(id(z))))
+
+[결과]
+<class 'int'> x의 주소 값: 0x194a6380210
+<class 'int'> y의 주소 값: 0x194a6380210 # 동일 자료형, 동일 값 -> 동일 주소
+<class 'str'> z의 주소 값: 0x23111914670 # 자료형이 다르면 다른 주소를 가짐
+```
+
+<br />
+
+### isinstance(), issubclass()
+
+#### isinstance()
+
+첫 번째 인자로 전달된 객체가 두 번째 인자로 전달된 클래스의 인스턴스인지에 대한 여부를 True/False로 반환하는 함수
+
+#### issubclass()
+
+첫 번째 인자로 전달된 클래스가 두 번째 인자로 전달된 클래스의 서브클래스인지에 대한 여부를 True/False로 반환하는 함수
+
+#### 활용 예시
+
+```python
+class Parent:
+    pass
+
+class Child(Parent):
+    pass
+
+p = Parent()
+c = Child()
+
+print("p 객체는 Parent 클래스의 인스턴스입니까? {0}".format(isinstance(p, Parent))) # True 반환
+print("c 객체는 Parent 클래스의 인스턴스입니까? {0}".format(isinstance(c, Parent))) # True 반환
+print("p 객체는 Child 클래스의 인스턴스입니까? {0}".format(isinstance(p, Child))) # False 반환
+print("Child 클래스는 Parent 클래스의 서브클래스입니까? {0}".format(issubclass(Child, Parent))) # True 반환
+
+
+[결과]
+p 객체는 Parent 클래스의 인스턴스입니까? True
+c 객체는 Parent 클래스의 인스턴스입니까? True
+p 객체는 Child 클래스의 인스턴스입니까? False
+Child 클래스는 Parent 클래스의 서브클래스입니까? True
+```
+
+<br />
+
+## 실행 관련 함수 : eval()
+
+실행 가능한 표현식의 문자열을 인자롤 전달받아 해당 문자열의 표현식을 실행한 결과값을 반환하는 함수
+
+```python
+expr = "2 + 5 * 3"
+print("{0} => {1}".format(expr, eval(expr)))
+
+expr = "'hello, python!'.upper()"
+print("{0} => {1}".format(expr, eval(expr)))
+
+
+[결과]
+2 + 5 * 3 => 17
+'hello, python!'.upper() => HELLO, PYTHON!
+```
+
+<br />
+
+## 실습 문제
+
+### 문제
+
+map() 함수와 filter() 함수 활용하여 프로그램 만들기
+
+```python
+[결과]
+data_list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+항목 x에 적용할 표현식을 입력하세요: x + 3
+항목 x를 필터링할 조건의 표현식을 입력하세요: x % 5 == 0
+map 함수의 적용 결과: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+filter 함수의 적용 결과: [5, 10, 15, 20]
+```
+
+### 나의 Sol
+
+```python
+# -*- coding: utf-8 -*-
+# mapAndFilter.py
+
+data_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+             11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+
+print("data_list: {0}".format(data_list))
+express_m = input("항목 x에 적용할 표현식을 입력하세요: ")
+express_f = input("항목 x를 필터링할 조건의 표현식을 입력하세요: ")
+
+data_list_m = list(map(lambda x: eval(express_m), data_list))
+print("map 함수의 적용 결과: {0}".format(data_list_m))
+
+data_list_mf = list(filter(lambda x: eval(express_f), data_list_m))
+print("filter 함수의 적용 결과: {0}".format(data_list_mf))
+```
+
+<u>주의📣</u> map()과 filter() 함수 모두 list() 함수로 묶어서 출력해야 함에 주의한다!
+ 
+
+### 모범 답안
+
+```python
+# -*- coding: utf-8 -*-
+# mapAndFilter.py
+
+data_list = list(range(1, 21))
+print("data_llist: {0}".format(data_list))
+
+map_str = input("항목 x에 대해 적용할 표현식을 입력하세요: ")
+filter_str = input("항목 x를 필터링할 조건의 표현식을 입력하세요: ")
+
+map_list = list(map(lambda x: eval(map_str), data_list))
+filter_list = list(filter(lambda x: eval(filter_str), map_list))
+
+print("data_list에 대한 map 함수의 적용 결과: {0}".format(map_list))
+print("map_list에 대해 filter 함수의 적용 결과: {0}".format(filter_list))
+```

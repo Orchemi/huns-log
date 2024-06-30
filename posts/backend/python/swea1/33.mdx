@@ -1,0 +1,633 @@
+---
+title: "[Python] 함수의 기초"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-01T14:33
+last-modified-at: 2022-01-01T14:33
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #33](https://swexpertacademy.com)`
+
+<br />
+
+## 함수
+
+프로그램에서 어떤 특정 기능을 수행할 목적으로 만들어진 재사용 구조의 코드 부분
+
+### 함수의 장점
+
+- **구조적 프로그래밍** : 하나의 큰 프로그램을 여러 부분으로 나눌 수 있기 때문
+- 동일 함수를 여러 곳에서 **필요할 때마다 호출** 가능
+- 수정이 용이
+
+### 순수 함수(pure function)
+
+- 결과값 반환 외에 외부에 영향을 주지 않는 함수
+- 함수형 프로그래밍 지원 언어(ex.python)에서는 순수 함수를 인자, 반환값으로 사용
+
+<br />
+
+## 함수의 호출
+
+```python
+a, b = 2, 3
+c = a + b
+
+print("내장함수 str.format()과 print()를 이용한 c의 결과 출력: {0}".format(c))
+# str.format() 함수 호출문이 print() 함수의 인자로 전달
+```
+
+<br />
+
+## 함수의 선언
+
+사용자 정의 함수
+
+```python
+def 함수명(매개변수):
+    명령문1
+    명령문2
+    (return문)  # 필요한 경우
+```
+
+### 예시. calc_sum()
+
+```python
+def calc_sum(x, y):   # 매개변수에 인자값 전달
+    return x + y  # calc_sum() 함수를 호출한 위치에 반환값 전달
+
+a, b = 2, 3
+
+c = calc_sum(a, b)  # 반환값 5가 변수 c에 전달
+d = calc_sum(a, c)  # 반환값 7이 변수 d에 전달
+
+print("사용자 정의 함수 calc_sum() 호출을 이용한 c의 결과 출력: {0}".format(c))
+print("사용자 정의 함수 calc_sum() 호출을 이용한 c의 결과 출력: {0}".format(d))
+```
+
+<br />
+
+## 함수의 유형
+
+- 매개변수 : 함수에 입력값을 전달해야 하는가를 결정하는 요인
+- 반환값 : 함수가 수행 결과를 호출한 곳으로 돌려줄 필요가 있는가를 결정하는 요인
+
+<br />
+
+### 매개변수 O 반환값 O
+
+- 함수가 실행될 때 인자를 매개변수로 바꾸어 입력해야 함
+- 함수가 실행된 후 함수를 호출한 곳으로 결과를 반환함
+
+```python
+def func_parameters_return(x, y, z):
+    print("매개변수로 전달된 값은 {0}, {1}, {2} 입니다.".format(x, y, z))
+    print(" 매개변수와 반환값이 있는 함수입니다.")
+    return "Hello, Python!"
+
+ret_val = func_parameters_return(1, 2, 3)
+print("func_parameter_return() 함수가 반환한 값: {0}".format(ret_val))
+
+
+[결과]
+매개변수로 전달된 값은 1, 2, 3 입니다.
+매개변수와 반환값이 있는 함수입니다.
+func_parameter_return() 함수가 반환한 값: Hello, Python!
+```
+
+<br />
+
+### 매개변수 X 반환값 O
+
+- 함수가 실행될 때 입력은 안 해줘도 됨
+- 함수가 실행된 후 함수를 호출한 곳으로 결과를 반환함
+
+```python
+def func_noparameters_return():
+    print("매개변수가 없는 함수입니다.")
+    return "Hello, Python!"
+
+ret_val = func_parameters_return()
+print("func_parameter_return() 함수가 반환한 값: {0}".format(ret_val))
+
+
+[결과]
+매개변수가 없는 함수입니다.
+func_parameter_return() 함수가 반환한 값: Hello, Python!
+```
+
+<br />
+
+### 매개변수 O 반환값 X
+
+- 함수가 실행될 때 입력값이 있어야 함
+- 함수가 실행된 후 함수를 호출한 곳으로 결과를 반환할 필요가 없음
+
+```python
+def func_parameters_noreturn(x, y, z):
+    print("매개변수로 전달된 값은 {0}, {1}, {2} 입니다.".format(x, y, z))
+    print("반환값이 없는 함수입니다.")
+
+func_parameters_noreturn(1, 2, 3)
+
+
+[결과]
+매개변수로 전달된 값은 1, 2, 3 입니다.
+반환값이 없는 함수입니다.
+```
+
+<br />
+
+### 매개변수 X 반환값 X
+
+- 함수가 실행될 때 입력은 안 해줘도 됨
+- 함수가 실행된 후 함수를 호출한 곳으로 결과를 반환할 필요가 없음
+
+```python
+def func_noparameters_noreturn():
+    print("매개변수와 반환값이 없는 함수입니다.")
+
+func_noparameters_noreturn()
+
+
+[결과]
+매개변수와 반환값이 없는 함수입니다.
+```
+
+<br />
+
+## 함수와 매개변수
+
+### 매개변수
+
+- 함수 호출 시 입력 값을 전달받기 위한 변수
+- 전달받은 인자의 값에 의해 타입이 결정
+- 선언된 매개변수의 개수만큼 인자 전달 가능
+
+### 매개변수와 전달된 개수의 불일치 문제
+
+매개변수와 전달된 인자의 개수가 다를 경우 `TypeError` 발생
+
+### 언팩 연산자(\*)
+
+- **매개변수의 개수를 가변적으로 사용**할 수 있도록 언팩 연산자(\*) 제공
+- 매개변수에 적용 시 인자를 **튜플 형식으로 처리**함
+
+<u>주의📣</u> 가변형 매개변수를 가장 마지막 매개변수로 지정해야 부작용 없이 사용 가능
+ 
+
+<br />
+
+#### 가변 매개변수 사용
+
+```python
+def calc_sum(*params):  # 인자가 tuple 형식으로 저장되게 만듦
+    total = 0
+    for val in params:
+        total += val
+    return total
+
+ret_val = calc_sum(1, 2)
+# 1, 2가 인자로 전달되어 for문이 2회 반복
+# calc_sum() 함수 수행결과로 3 반환
+
+print("calc_sum(1, 2) 함수가 반환한 값: {0}".format(ret_val))
+
+ret_val = calc_sum(1, 2, 3)   # 1, 2, 3이 인자로 전달되어 for문 3회 반복 - 6 반환
+print("calc_sum(1, 2, 3) 함수가 반환한 값: {0}".format(ret_val))
+
+ret_val = calc_sum(1, 2, 3,4)   # 1, 2, 3, 4가 인자로 전달되어 for문 4회 반복 - 10 반환
+print("calc_sum(1, 2, 3, 4) 함수가 반환한 값: {0}".format(ret_val))
+
+
+[결과]
+calc_sum(1, 2) 함수가 반환한 값: 3
+calc_sum(1, 2, 3) 함수가 반환한 값: 6
+calc_sum(1, 2, 3, 4) 함수가 반환한 값: 10
+```
+
+<br />
+
+#### 명시적 매개변수와 가변 매개변수 혼합 사용
+
+```python
+def calc_sum(precision, *params):   # precision : 정수일지 소수일지 좌우하는 인자
+    if precision == 0:
+        total = 0
+    elif 0 < precision < 1:   # precision이 소수라면 total 변수 자료형 부동소수점 숫자형으로 지정
+        total = 0.0
+
+    for val in params:  # 매개변수 params는 1과 2를 가진 튜플로 for문 2회 반복
+        total += val
+    return total
+
+ret_val = calc_sum(0, 1, 2)
+print("cal_sum(0, 1, 2) 함수가 반환한 값: {0}".format(ret_val))
+
+ret_val = calc_sum(0.1, 1, 2)
+print("cal_sum(0.1, 1, 2) 함수가 반환한 값: {0}".format(ret_val))
+
+
+[결과]
+calc_sum(0, 1, 2) 함수가 반환한 값: 3
+calc_sum(0.1, 1, 2) 함수가 반환한 값: 3.0
+```
+
+<br />
+
+#### 언팩 연산자를 사용하는 튜플 형식의 반환값
+
+```python
+def calc_sum(precision1, precision2, *params):
+    if precision1 == 0:
+        total1 = 0
+    elif 0 < precision1 < 1:
+        total1 = 0.0
+
+    if precision2 == 0:
+        total2 = 0
+    elif 0 < precision2 < 1:
+        total2 = 0.0
+
+    for val in params:  # 튜플 형식의 매개변수 params의 전달된 인자들을 반복 접근
+        # 변수 total1/total2 에 개별 인자 값 누적
+        total1 += val
+        total2 += val
+
+    return total1, total2   # 튜플 (3, 3.0)을 통해 하나 이상의 값 반환
+
+ret_val = calc_sum(0, 0.1, 1, 2)  # 튜플 (3, 3.0)이 ret_val에 저장
+print("calc_sum((0, 0.1, 1, 2) 함수가 반환한 값: {0}, {1}".format(*ret_val))
+
+# 아래 코드는 위의 코드와 같다.
+print("calc_sum((0, 0.1, 1, 2) 함수가 반환한 값: {0}, {1}".format(ret_val[0], ret_val[1]))
+
+
+[결과]
+calc_sum(0, 0.1, 1, 2) 함수가 반환한 값: 3, 3.0
+calc_sum(0, 0.1, 1, 2) 함수가 반환한 값: 3, 3.0
+```
+
+<br />
+
+### 키워드 언팩 연산자(\*\*)
+
+- 매개변수의 개수를 가변적으로 사용할 수 있도록 함
+- 키워드 인자들을 전달해 **매개변수를 dictionary 형식으로 처리**함
+- 키워드 인자 : {키1 = 값1}, {키2 = 값2} 와 같은 형식
+
+<br />
+
+#### 키워드 언팩 연산자를 사용하는 dictionary 형식의 가변 매개변수
+
+```python
+def use_keyword_arg_unpacking(**params):
+    # key = value 형식의 인자값들이 params 매개변수에 dictionary 형식으로 전달
+
+    # params에서 params.key() 함수 호출을 통해 key list 구함
+    for k in params.keys():
+        print("{0}: {1}".format(k, params[k])) # key는 전달된 매개변수 이름, value는 전달된 인자 값
+
+print("use_keyword_arg_unpacking()의 호출")
+use_keyword_arg_unpacking(a=1, b=2, c=3) # params 매개변수에 dictionary 형식(key=value)으로 전달
+
+
+[결과]
+use_keyword_arg_unpacking()의 호출
+a: 1
+b: 2
+c: 3
+```
+
+<br />
+
+### 기본값을 갖는 매개변수
+
+매개변수에 전달할 인자 값이 생략되었다면, **사용할 기본 값 지정**
+
+<u>주의📣</u> 기본값을 가지는 매개변수는 일반 매개변수 앞에 위치할 수 없다!
+ 
+
+<br />
+
+```python
+def calc(x, y, operator="+")
+# "+"를 기본값으로 지정 : operateor에 전달할 인자를 생략하면 operator = "+"
+
+    if operator == "+":
+        return x + y
+    else:
+        return x = y
+
+ret_val = calc(10, 5, "+")  # 10 + 5 = 15
+print("calc(10, 5, "+")의 결과 값: {0}".format(ret_val))
+
+ret_val = calc(10, 5)  # 10 + 5 = 15
+print("calc(10, 5)의 결과 값: {0}".format(ret_val))
+
+ret_val = calc(10, 5, "-")  # 10 - 5 = 5
+print("calc(10, 5, "-")의 결과 값: {0}".format(ret_val))
+```
+
+<br />
+
+## scope
+
+### 변수의 유효범위
+
+- 전역 스코프 : 어디서나 접근 가능한 전역 변수
+- 함수 스코프 : 함수 내에서만 접근 가능한 지역 변수
+
+<br />
+
+### 함수 scope를 갖는 변수의 유효 범위
+
+```python
+def test_scope(a):
+    result = a + 1
+    print("\n\ttest_scope() 안에서의 a의 값: {0}".format(a))
+    print("\n\ttest_scope() 안에서의 result의 값: {0}".format(result))
+    return result
+
+x = 5
+print("test_scope() 호출 전 x의 값: {0}".format(x))
+
+ret_val = test_scope(x)
+# 전역변수 x의 값 5 : 매개변수 a의 인자로 전달, 지역변수 result에 6 저장
+
+print("test_scope() 함수가 반환한 값: {0}".format(ret_val))
+# a에 변수 x의 값 5가 인자로 전달, 1을 더한 6이 결과값으로 반환
+
+print("test_scope() 호출 후 x의 값: {0}".format(x))
+
+
+[결과]
+test_scope() 호출 전 x의 값: 5
+
+    test_scope() 안에서의 a의 값: 5
+    test_scope() 안에서의 result의 값: 6
+
+test_scope() 함수가 반환한 값: 6
+test_scope() 호출 후 x의 값: 5
+```
+
+<br />
+
+### 변수에 접근하는 절차
+
+1. 함수 스코프 내에서 가장 먼저 변수를 찾는다.
+2. 전역 스코프에서 변수를 찾음(함수 스코프 내에 변수가 없는 경우)
+
+```python
+a = 1   # 2순위
+def scope():
+    a = 2   # 1순위
+    print(a)
+
+scope()
+print(a)
+```
+
+### 지역변수와 전역변수의 이름이 같다면?
+
+<u>주의📣</u> 지역변수와 전역변수 이름이 같은 경우 전역변수가 가려져 접근을 못할 수 있음
+ 
+
+> 해결방법 : 접근하고자 하는 전역변수 앞에 **global** 기술
+
+```python
+def change_global_var():
+    global x
+    x += 1
+
+x = 5
+change_global_var()
+print("전역변수 x의 값: {0}".format(x))
+
+
+[결과]
+전역변수 x의 값: 6
+```
+
+<br />
+
+## 고급함수 사용법
+
+### 중첩 함수
+
+함수 내에 중첩함수를 선언해 사용 가능
+
+- 중첨함수를 포함하는 함수 내에서만 호출이 가능
+- 중첩함수를 포함하는 함수의 스코프에도 접근이 가능
+  **: 중첩함수를 포함하는 함수에서 선언된 지역변수에 접근이 가능!**
+
+<u>중요🔔</u> 함수 내에서 직접 선언 후 호출 가능, 함수의 매개변수로 함수 인자를 전달받아 함수 내에서 호출해서 사용 가능
+ 
+
+ <br />
+
+### 매개변수에 함수 전달하기
+
+```python
+def calc(operator_fn, x, y):
+    return operator_fn(x, y)
+
+def plus(op1, op2):
+    return op1 + op2
+
+def minus(op1, op2):
+    return op1 - op2
+
+ret_val = calc(plus, 10, 5)
+# ret_val = plus(10, 5)
+# ret_val = 15
+print("calc(plus, 10, 5)의 결과값: {0}".format(ret_val))
+
+ret_val = calc(minus, 10, 5)
+# ret_val = minus(10, 5)
+# ret_val = 5
+print("calc(minus, 10, 5)의 결과값: {0}".format(ret_val))
+
+
+[출력]
+calc(plus, 10, 5)의 결과값: 15
+calc(minus, 10, 5)의 결과값: 5
+```
+
+<br />
+
+### 람다식
+
+**프로그램의 유연성을 높이기 위해 함수를 매개변수로 전달하는 방식 선호!**
+But, 매번 함수를 선언해 사용한다는 것이 불편할 수 있음
+
+> 해결방안 : **람다식**
+
+- 변수에 저장해 **재사용이 가능**한 함수처럼 사용
+- 기존의 함수처럼 **매개변수의 인자로 전달**
+- 함수의 매개변수에 **직접 인자로 전달**
+
+```python
+Lambda 매개변수 : 반환값
+```
+
+<br />
+
+#### 람다식 예시
+
+```python
+def calc(operator_fn, x, y):
+    return operator_fn(x, y)
+
+ret_val = calc(lambda a, b: a + b, 10, 5)
+print("calc(lambda a, b: a + b, 10, 5)의 결과값: {0}".format(ret_val))
+
+ret_val = calc(lambda a, b: a - b, 10, 5)
+print("calc(lambda a, b: a - b, 10, 5)의 결과값: {0}".format(ret_val))
+
+
+[결과]
+calc(lambda a, b: a + b, 10, 5)의 결과값: 15
+calc(lambda a, b: a - b, 10, 5)의 결과값: 5
+```
+
+<br />
+
+### 클로저
+
+- 중첩함수에서 중첩함수를 포함하는 함수의 scope에 접근 가능
+- 중첩함수 자체를 반환값으로 사용한다면?
+  1. 정보 은닉 구현 가능
+  2. 전역변수의 남용 방지
+  3. 메서드가 하나밖에 없는 객체를 만드는 것보다 우아한 구현 가능
+
+#### 클로저 예시
+
+```python
+def outer_func():
+    id = 0  # 지역변수 : 함수 내의 코드 또는 중첩함수에서만 접근 가능
+
+    def inner_func():
+        nonlocal id
+        # 변수 id가 중첩함수인 inner_func 함수의 지역변수가 아님
+        # 변수 id 접근 시 outer_func 함수 스코프에서 찾게 만듦
+
+        id += 1
+        return id
+
+    return inner_func   # ★ inner_func() 함수 호출이 아닌 참조를 반환함에 유의 ★
+
+make_id = outer_func()
+
+print("make_id() 호출의 결과: {0}".format(make_id()))
+print("make_id() 호출의 결과: {0}".format(make_id()))
+print("make_id() 호출의 결과: {0}".format(make_id()))
+
+
+[결과]
+make_id() 호출의 결과: 1
+make_id() 호출의 결과: 2
+make_id() 호출의 결과: 3
+```
+
+<br />
+
+## 함수를 활용하여 원의 둘레와 면적 구하기
+
+### 문제
+
+1. 반지름을 입력 받아 숫자로 변환하는 함수
+2. 반지름을 매개변수로 하여 원의 면적과 둘레를 계산하는 함수 정의
+
+```python
+[결과]
+반지름을 입력하세요: 5
+원의 면적: 78.50, 원의 둘레: 31.40
+```
+
+### 나의 Sol
+
+```python
+from math import pi
+
+r = int(input("반지름을 입력하세요: "))
+
+def cal_S(r):
+    return pi * (r ** 2)
+
+def cal_l(r):
+    return 2 * pi * r
+
+print("원의 면적:{0:.2f}, 원의 둘레:{1:.2f}".format(cal_S(r), cal_l(r)))
+
+
+[결과]
+반지름을 입력하세요: 5
+원의 면적:78.54, 원의 둘레:31.42
+```
+
+문제에서는 원주율 pi를 3.14로 계산한 것 같아 math 라이브러리 import 없이 해보기로 하였다.
+
+```python
+# -*- coding: utf-8 -*-
+# calc_circle.py
+
+r = int(input("반지름을 입력하세요: "))
+pi = 3.14
+
+def cal_S(r):
+    return pi * (r ** 2)
+
+def cal_l(r):
+    return 2 * pi * r
+
+print("원의 면적:{0:.2f}, 원의 둘레:{1:.2f}".format(cal_S(r), cal_l(r)))
+
+
+[결과]
+반지름을 입력하세요: 5
+원의 면적:78.50, 원의 둘레:31.40
+```
+
+<br />
+
+### 모범 답안
+
+```python
+# -*- coding: utf-8 -*-
+
+# 파일명.py
+
+PI = 3.14
+
+def input_radius():
+    radius_str = input("반지름을 입력하세요: ")
+    return float(radius_str)
+
+def calc_circle_area(r):
+    return PI * r * r
+
+def calc_circumference(r):
+    return 2 * PI * r
+
+radius = input_radius()
+circle_area = calc_circle_area(radius)
+circumference = calc_circumference(radius)
+
+print("원의 면적: {0:0.2f}, 원의 둘레: {1:0.2f}".format(circle_area, circumference))
+```

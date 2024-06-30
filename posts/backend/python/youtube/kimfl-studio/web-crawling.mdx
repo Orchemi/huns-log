@@ -1,0 +1,94 @@
+---
+title: "[Python] 파이썬을 이용한 웹 크롤링"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, WebCrawler, Error]
+
+date: 2021-10-19T00:00
+last_modified_at: 2021-10-19T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# README
+
+> 왜 만드는가?
+
+사랑의 장기기증운동본부 2021 언택트 걷기대회 참여 인증 인스타그램 사진 다운로드를 위해 제작하는 프로그램이다. 약 60여 명의 인원의 SNS 활동 인증 사진에 일괄 다운로드를 진행할 계획이다.
+
+<br />
+
+# 1. ChromeDriver Download
+
+먼저 **크롬 드라이버**를 깔아보자. 구글에 'Chrome Driver' 라고 검색해서 나오는 사이트를 클릭하면 `[다운로드 화면](https://chromedriver.chromium.org/downloads)`으로 바로 넘어갈 수 있다. 최신 release의 해당하는 OS 버전으로 zip 파일을 다운받으면 된다.
+
+`![image](https://user-images.githubusercontent.com/86189596/137681833-92c3108a-fa50-4d29-ad87-ee5588ede6f0.png)`
+
+<br />
+
+# 2. 시작 파일/폴더 구성
+
+위의 zip 파일을 풀면, **chromedriver.exe** 파일을 만나게 될 수 있는데, 이를 실행할 py파일의 폴더로 옮겨준다.
+
+`![image](https://user-images.githubusercontent.com/86189596/137682073-e6102d8d-0ff1-470c-aa56-887655e2f3df.png)`
+
+<br />
+
+만약 이미지를 다운 받을 거라면, 다운된 이미지 보관에 사용될 img 폴더도 같이 생성한다.
+
+<br />
+
+# 3. Selenium / BeautifulSoup 설치
+
+터미널에 `pip install selenium`을 입력해 Selenium을 설치한다.
+
+마찬가지로 터미널에 `pip install BeautifulSoup4`를 입력해 BeuatifulSoup을 설치한다.
+
+<br />
+
+# 4. 작업과정
+
+## 가. 파이썬 import
+
+아래의 코드를 입력한다. pip와 라이브러리를 작업 파일.py에 import하는 역할을 한다. 기능을 사용할 수 있게 해주는 것.
+
+```python
+from urllib.request import urlopen
+from urllib.parse import quote_plus
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+```
+
+<br />
+
+> 왜 BeautifulSoup만 사용하지 않고, Selenium을 사용하는가.
+
+인스타그램의 소스 코드를 확인해보면 JavaScript로만 되어있다. 이는 이미지를 한 번에 불러오는 것이 아니라 페이지 스크롤에 따라 추가적으로 불러오는 구조이기 때문에 태그를 검색해 이미지를 한 번에 긁어오는 오늘의 목적에는 어울리지 않는다. 그래서 Selenium을 사용한다.
+
+<br />
+
+> 에러의 발생
+
+위의 pip를 import하는 과정에서 에러가 발생하였고, 오랜 시간 해결하지 못해 자칫 이 프로젝트를 포기하게 될 수도 있는 상황이 생겼다. 하지만 에러를 해결하였고, `[이 문제를 해결하는 과정](https://orchemi.github.io/python/ModuleErrorSolving/)`을 새롭게 게시물로 다루었다.
+
+<br />
+
+## 나. 인스타그램 로그인
+
+<br />
+
+<br />
+
+# REFERENCES
+
+- `[프로그래머 김플 스튜디오 - 파이썬 인스타그램 크롤링 이미지 다운로드](https://www.youtube.com/watch?v=j_BW5vNrcxA&t=41s)`
+- `[Selenium 모듈 에러 해결](https://shwank77.tistory.com/1588)`

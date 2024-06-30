@@ -1,0 +1,348 @@
+---
+title: "[Python] 내장함수 - 연습문제 1~11"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-02T02:47
+last-modified-at: 2022-01-02T02:47
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #45 ~ #53](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 이름과 나이를 입력 받아
+올해를 기준으로 100세가 되는 해를 표시하는 코드를 작성하십시오.
+
+입력
+
+```python
+홍길동
+20
+```
+
+출력
+
+```python
+홍길동(은)는 2099년에 100세가 될 것입니다.
+```
+
+### Sol-A
+
+```python
+import datetime
+
+dt = datetime.datetime.now()
+print(dt.year)
+
+thisYear = dt.year
+
+name = input()
+age = int(input())
+
+print("{0}(은)는 {1}년에 100세가 될 것입니다.".format(name, thisYear + 100 - age))
+```
+
+올해의 연도를 도출하기 위해서 datetime 라이브러리를 사용했다. `datetime` 모듈을 import하고 `datetime.datetime.now()` 코드를 이용하면 현시각을 연도부터 10^(-6)초 단위까지 알 수 있다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147855350-f9c7dba1-7505-454b-baa3-54863d9a2ad2.png)`
+
+목표하던 그대로 결과가 나왔다. 그런데 결과로 자꾸 fail이 나온다. 출력값 자체는 다르다. 문제가 만들어진 당시는 2019년인 모양, 그래야 20세인 홍길동이 100세가 됐을 때 2099년에 100세가 된다. 하지만 현재는 2022년. 설마 연도를 하드코딩해서 2019년으로 박아버린걸까..? 그래서 연도를 2019로 넣고 다시 코드를 짜서 테스트를 돌려보았다.
+
+### Sol-B
+
+```python
+thisYear = 2019
+name = input()
+age = int(input())
+
+print("{0}(은)는 {1}년에 100세가 될 것입니다.".format(name, thisYear + 100 - age))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147855425-4facfd87-ea41-4501-8a83-b54b16919cf1.png)`
+
+충격적이게도 연도를 2019년으로 숫자로 넣어서 제출하니 Pass가 떴다. 알다가도 모르겠는 SWEA...
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+"ADCBBBBCABBCBDACBDCAACDDDCAABABDBCBCBDBDBDDABBAAAAAAADADBDBCBDABADCADC"와
+같은 문자열이 주어지고, A는 4점, B는 3점, C는 2점, D는 1점이라고 할 때 문자열에 사용된
+알파벳 점수의 총합을 map 함수와 람다식을 이용해 구하십시오.
+
+출력
+
+```python
+184
+```
+
+### Sol
+
+```python
+input = list(
+    "ADCBBBBCABBCBDACBDCAACDDDCAABABDBCBCBDBDBDDABBAAAAAAADADBDBCBDABADCADC")
+result = 0
+
+score_list = list(map(lambda x: 69 - ord(x), input))
+
+for i in score_list:
+    result += i
+
+print(result)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147855694-7e414aad-01c1-49a6-b04b-199100accc6a.png)`
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+가변형 인자로 정수들을 입력받아 곱을 반환하는 함수를 정의하고,
+단, 1, 2, '4', 3와 같이 제대로 입력되지 않은 경우 예외를 처리하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+에러발생
+```
+
+### Sol
+
+```python
+def Multiplication(*num):
+    result = 1
+
+    for i in num:
+        if type(i) == int:
+            result *= i
+        else:
+            result = "에러발생"
+            break
+
+    print(result)
+
+
+Multiplication(1, 2, '4', 3)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856229-68c310c2-e073-4e2b-b0f1-a646559aa301.png)`
+
+<br />
+
+## 연습문제 #6
+
+### 문제
+
+ASCII 코드 값를 입력받아 문자를 확인하는 코드를 작성하십시오.
+
+입력
+
+```python
+65
+```
+
+출력
+
+```python
+ASCII 65 => A
+```
+
+### Sol
+
+```python
+num = int(input())
+print("ASCII {0} => {1}".format(num, chr(num)))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856355-03571ac3-3fcf-4809-b57e-dc350bc9d86f.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+1~10까지의 정수를 항목으로 갖는 리스트 객체에서 filter 함수와 람다식을 이용해
+짝수만을 선택해 리스트를 반환하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+[2, 4, 6, 8, 10]
+```
+
+### Sol
+
+```python
+lst = range(1, 11)
+lst_even = list(filter(lambda x: x % 2 == 0, lst))
+
+print(lst_even)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856401-869f736e-ba6b-4f44-9be5-5d8c0a458fb9.png)`
+
+<br />
+
+## 연습문제 #8
+
+### 문제
+
+1~10까지의 정수를 항목으로 갖는 리스트 객체에서 map 함수와 람다식을 이용해
+항목의 제곱 값을 갖는 리스트를 반환하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+```
+
+### Sol
+
+```python
+lst = range(1, 11)
+lst_square = list(map(lambda x: pow(x, 2), lst))
+
+print(lst_square)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856454-b592ba23-d8f1-4b75-9764-f5dc87cb1b7a.png)`
+
+<br />
+
+## 연습문제 #9
+
+### 문제
+
+1~10까지의 정수를 항목으로 갖는 리스트 객체에서 filter 함수와 람다식을 이용해
+짝수만을 선택한 후, map 함수와 람다식을 이용해 항목의 제곱 값을 갖는 리스트를 반환하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+[4, 16, 36, 64, 100]
+```
+
+### Sol
+
+```python
+lst = range(1, 11)
+lst_f = list(filter(lambda x: x % 2 == 0, lst))
+lst_fm = list(map(lambda x: pow(x, 2), lst_f))
+
+print(lst_fm)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856508-54b19cf3-40d8-4120-b48d-a40f3d940f05.png)`
+
+<br />
+
+## 연습문제 #10
+
+### 문제
+
+가변형 인자를 전달 받아 가장 큰 값을 반환하는 함수를 정의하고,
+다음과 같은 결과를 출력하는 프로그램을 작성하십시오.
+
+출력
+
+```python
+max(3, 5, 4, 1, 8, 10, 2) => 10
+```
+
+### Sol
+
+```python
+def max(*params):
+    max_num = 0
+
+    for param in params:
+        if param > max_num:
+            max_num = param
+
+    print("max{0} => {1}".format(params, max_num))
+
+
+max(3, 5, 4, 1, 8, 10, 2)
+```
+
+params 가변형 인자는 튜플 형식으로 저장되므로, max({0})가 아닌, max{0}로 바로 나와야 입력 형식에 맞는다. 이 부분을 간과하여 한 차례 fail을 맞았다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856668-76d2a6ac-d853-4a38-98ad-94f90834092a.png)`
+
+<br />
+
+## 연습문제 #11
+
+### 문제
+
+다음의 결과와 같이 'abcdef' 문자열의 각각의 문자를 키로 하고 0~5 사이의 정수를
+값으로 하는 딕셔너리 객체를 생성하고, 이 딕셔너리 객체의 키와 값 정보를 출력하는
+프로그램을 작성하십시오.
+
+출력
+
+```python
+a: 0
+b: 1
+c: 2
+d: 3
+e: 4
+f: 5
+```
+
+### Sol
+
+```python
+string_list = list("abcdef")
+
+for idx, val in enumerate(string_list):
+    print("{0}: {1}".format(val, idx))
+```
+
+enumerate(lst) 함수에 대해 잘 이해하고 있어야 쉽게 풀 수 있는 문제였다. 해당 속성들의 index와 함께 (index, value) 순으로 튜플을 만들며 새로운 리스트 객체를 만드는 함수이다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/147856868-adaf0ae0-1fb0-4f44-b2df-ce5ded400224.png)`

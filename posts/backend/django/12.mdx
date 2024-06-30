@@ -1,0 +1,192 @@
+---
+title: "[Django] Admin Site"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-08T15:30
+last_modified_at: 2022-03-09T01:07
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Automatic admin interface
+
+- 서버 관리자가 활용하기 위한 페이지
+- **Model class를 admin.py에 등록** 후 관리
+- django.contrib.auth 모듈에서 제공
+- record 생성 여부 확인에 매우 유용
+- 직접 record에 삽입 가능
+
+<br />
+
+## admin 생성
+
+아래의 명령어로 admin 계정을 생성한다.
+
+```bash
+python manage.py createsuperuser
+```
+
+<br />
+
+console의 안내를 따르면 된다.
+
+```bash
+사용자 이름 (leave blank to use 'tmdgn'): admin
+이메일 주소: 
+Password: 
+Password (again): 
+비밀번호가 너무 짧습니다. 최소 8 문자를 포함해야 합니다.  
+비밀번호가 너무 일상적인 단어입니다.
+비밀번호가 전부 숫자로 되어 있습니다.
+Bypass password validation and create user anyway? [y/N]: y  
+Superuser created successfully.
+```
+
+- 이름은 admin으로 하였다.
+- 이메일 주소는 공백 가능
+- Password는 2번 입력한다.
+- Password 보안에 대한 경고가 뜨지만 무시하고 만들 수 있다.
+
+<u>주의📢</u> Password 입력 동안에는 console에 보이지 않는다.
+ 
+
+<br />
+
+## admin 페이지 이동
+
+- 관리자 계정 생성 → 서버 실행 → **/admin** → 관리자 페이지 로그인
+
+`![image](https://user-images.githubusercontent.com/86189596/157172114-f7e7b5b0-634e-4dc3-a3a4-1c31174681b3.png)`
+
+- 위와 같은 편집창을 만날 수 있다.
+
+<u>주의📢</u> auth에 관련된 기본 테이블이 생성되지 않으면 관리자 계정을 생성할 수 없다.
+ 
+
+<br />
+
+## admin 등록
+
+```python
+# articles/admin.py
+
+from django.contrib import admin
+from .models import Article
+
+# admin site에 Article을 register
+admin.site.register(Article)
+```
+
+- admin.py는 관리자 사이트에 Article 객체에 관리자 인터페이스를 가지고 있음을 알려주는 것
+- models.py에 정의한 **__str__ 형태**로 객체 표현
+
+<br />
+
+## 결과 확인
+
+`![image](https://user-images.githubusercontent.com/86189596/157174021-cead0a16-8972-4896-a1b0-1051090b0241.png)`
+
+아까는 없었던 **Articles** article이 생겼다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157174134-5950a2f9-9372-4b7c-997d-a3dd65e50006.png)`
+
+- 들어가면 이와 같은 레코드들을 글로 확인할 수 있다.
+- \_\_str\_\_로 정의한 instance 자신의 title, 즉 self.title이 표시된다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157174391-6b4cc683-64dd-4c59-bbe1-bc1d5cea25b6.png)`
+
+링크를 타고 들어가면 content도 확인할 수 있다.
+
+<br />
+
+## ModelAdmin options : 추가 정보 제공
+
+### list_display
+
+models.py에 정의한 클래스의 각각의 속성(column)들의 값(record)을 admin 페이지에 출력하도록 설정
+
+```python
+# articles/admin.py
+
+from django.contrib import admin
+from .models import Article
+
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'title', 'content', 'created_at', 'updated_at',)
+
+# admin site에 Article과 ArticleAdmin을 register
+admin.site.register(Article, ArticleAdmin)
+```
+
+- Article 클래스에 정의된 property를 선택적으로 list_display에 넣어준다.
+- 이를 admin.site.register에서 인자로 같이 넣어준다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157174785-14ff4eab-1eb8-4b37-9b92-9be48d643e15.png)`
+
+- 이와 같이 **Select article to change** tab에서 추가한 요소들을 확인할 수 있다.
+
+<br />
+
+### list_filter
+
+- 자동 필터를 해서 article을 필터링할 수 있게 하는 것
+
+```python
+# articles/admin.py
+
+from django.contrib import admin
+from .models import Article
+
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'title', 'content', 'created_at', 'updated_at',)
+    list_filter = ('created_at',)
+
+# admin site에 Article을 register
+admin.site.register(Article, ArticleAdmin)
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/157175468-3b84d0f4-8e44-4ddd-9c62-f7335625ef4b.png)`
+
+- 특정 field를 기준으로 filter를 설정 가능
+- field를 정의할 때 정의한 datatype에 따라 filter 항목이 달라지는 모양이다.
+
+<br />
+
+### list_display_links
+
+항목에 링크를 거는 것
+
+```python
+# articles/admin.py
+
+from django.contrib import admin
+from .models import Article
+
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'title', 'content', 'created_at', 'updated_at',)
+    list_display_links = ('title',)
+
+# admin site에 Article을 register
+admin.site.register(Article, ArticleAdmin)
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/157175676-779f5f5e-6cbf-48ab-9cb4-9103fc6adafd.png)`
+
+- admin 사이트의 title에 해당 article에 대한 정보로 이동하는 링크를 걸 수 있게 되었다.
+- default는 PK에 해당 article의 세부 정보 페이지로 이동하는 링크가 걸려 있었다.

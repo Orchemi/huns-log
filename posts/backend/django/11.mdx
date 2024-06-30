@@ -1,0 +1,339 @@
+---
+title: "[Django] shell_plus에서의 CRUD"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-08T15:00
+last_modified_at: 2022-03-09T00:54
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## CRUD
+
+- 대부분의 컴퓨터 소프트웨어가 가지는 기본적인 데이터 처리 기능
+- Create(생성), Read(읽기), Update(갱신), Delete(삭제)
+
+<br />
+
+## Create
+
+### Create 1 : 인스턴스, 데이터 추가, 저장 따로
+
+```shell
+// article 인스턴스를 Article 클래스에서 제작
+In [4]: article = Article()
+
+// 아직 DB에는 반영되지 않은 것
+In [9]: article
+Out[9]: <Article: Article object (None)>
+
+// instance에 데이터가 없는 것
+In [10]: article.title
+Out[10]: ''
+
+// 데이터(property)를 추가
+In [11]: article.title = 'first'
+
+In [12]: article.content = 'test'
+
+// 역시 아직도 DB에는 반영이 안 되었음
+In [13]: article
+Out[13]: <Article: Article object (None)>
+
+// save() : 현재 설정된 값들이 DB에 반영!! ⭐
+In [14]: article.save()
+
+// DB에 반영이 되었다. 그냥 인스턴스를 shell에 입력하면 PK(id)가 함께 나옴
+In [15]: article
+Out[15]: <Article: Article object (1)>
+```
+
+위의 과정으로 인스턴스를 생성, 정의, 저장하여 DB에 반영까지 할 수 있다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157167037-cfa69a28-f035-42e1-925c-f8190b179395.png)`
+
+DB에 하나의 record가 table에 저장되었음을 확인
+
+<br />
+
+### Create 2 : 인스턴스 생성할 때 데이터 함께 생성, 저장은 따로
+
+```shell
+In [1]: article = Article(title='second', content='django!!')
+
+In [2]: article.save()
+```
+
+instance를 정의할 때 class 내에 property를 함께 정의
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157167432-b920e554-3987-4fb6-9898-1d15becf8267.png)`
+
+DB에 잘 반영되었다.
+
+<br />
+
+### Create 3 : 인스턴스 생성, 데이터, 저장 한 번에
+
+```shell
+In [3]: Article.objects.create(title='third', content='django~~')
+Out[3]: <Article: Article object (3)>
+```
+
+QuerySet API - create()를 사용
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157167668-c103fedc-e351-4163-afbf-371cc5d3e8f1.png)`
+
+역시 DB에 잘 반영되었다.
+
+<br />
+
+### save() method
+
+- 객체를 DB에 저장
+- 데이터 생성 시 save()를 호출하기 전에는 객체의 ID값을 알 수 없다.
+- **ID 값은 django가 아니라 DB에서 계산**되기 때문
+- 단순히 **model을 instance화하는 것은 DB에 영향을 미치지 않기 때문에 반드시 save() 필요**
+
+<br />
+
+### \_\_str\_\_(self) method
+
+> \_\_str\_\_(self) 정의 전
+
+```shell
+In [1]: article = Article.objects.create(title='str test', content='str test~~')
+
+In [2]: article
+Out[2]: <Article: Article object (19)>
+```
+
+pk인 id가 object의 고유 번호를 함께 출력할 뿐, 무슨 정보인지 알 수가 없다.
+
+<br />
+
+> \_\_str\_\_(self) 정의
+
+```python
+# models.py
+
+class Article(models.Model):
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
+```
+
+- 표준 파이썬 클래스의 메소드인 str()을 정의
+- 각각의 object가 **사람이 읽을 수 있는 문자열을 return**하도록 할 수 있다.
+- 작성/저장 후 반드시 shell_plus를 재시작해야 반영
+
+<br />
+
+> \_\_str\_\_(self) 정의 후
+
+```shell
+In [1]: article = Article.objects.create(title='str test', content='str test~~')
+
+In [2]: article
+Out[2]: <Article: str test>
+```
+
+title로 instance가 표시되어 어떤 record인지 판별이 쉬워졌다.
+
+<br />
+
+### QuerySet과 List
+
+- article을 Article의 objects 모두로 지정하면 list 형식으로 저장
+- indexing, slicing, for문 등 list 자료형의 조작이 모두 가능
+
+```shell
+In [1]: Article.objects.all()
+Out[1]: <QuerySet [<Article: first>, <Article: second>, <Article: third>]>
+
+In [2]: article = Article.objects.all()
+
+In [3]: article[0]
+Out[3]: <Article: first>
+
+In [4]: article[1:]
+Out[4]: <QuerySet [<Article: second>, <Article: third>]>
+
+In [5]: type(article)
+Out[5]: django.db.models.query.QuerySet
+
+In [6]: for a in article:
+   ...:     print(a.title)
+   ...: 
+first
+second
+third
+```
+
+<br />
+
+## READ
+
+### all()
+
+- 현재 QuerySet의 복사본을 반환
+- QuerySet : 모든 인스턴스의 집합
+
+```shell
+In [7]: Article.objects.all()
+Out[7]: <QuerySet [<Article: first>, <Article: second>, <Article: third>]>
+```
+
+<br />
+
+### get()
+
+- **ClassName.Manager.get(lookup_key=lookup_value)** 형식
+- 주어진 lookup 매개변수와 일치하는 객체 변환
+- 위와 같은 특징 때문에 PK와 같이 **고유성(unique)을 보장하는 조회에서 사용**
+
+- lookup 매개변수는 2개 이상 사용 가능
+
+`![image](https://user-images.githubusercontent.com/86189596/157169216-9b034820-4014-4f1f-8db8-be7dfae9ea58.png)`
+
+content가 django!!로 중복된 상황을 만들기 위해 위와 같이 DB를 바꿔 등록해보았다.
+
+```shell
+In [1]: Article.objects.get(content='django!!', title='second')
+Out[1]: <Article: second>
+```
+
+<br />
+
+> 오류 발생 예시
+
+- **DoesNotExist** 예외 : 객체를 찾을 수 없을 때
+- **MultipleObjectReturned** 예외 : 둘 이상의 객체를 찾았을 때
+
+```shell
+// 가져오는 key가 없는 경우
+In [1]: article = Article.objects.get(pk=100)
+DoesNotExist: Article matching query does not exist.
+
+// 가져오는 lookup 조건에 해당하는 object가 2개 이상인 경우
+In [2]: Article.objects.get(content='django!!')
+MultipleObjectsReturned: get() returned more than one Article -- it returned 2!
+```
+
+<br />
+
+### filter()
+
+- 주어진 lookup 매개변수와 일치하는 객체를 포함하는 새 QuerySet 반환
+
+- all() querySet API처럼 python에서 list로 처리 가능
+
+<u>중요⭐</u> get()은 객체 하나만 조회하며 객체 자체를 반환, filter()는 여러 개의 객체를 리스트로 반환하며, 한 개를 반환하더라도 리스트에 담아 반환
+ 
+
+```shell
+In [3]: Article.objects.filter(content="django!!")
+Out[3]: <QuerySet [<Article: second>, <Article: third>]>
+
+In [4]: Article.objects.filter(title='first')
+Out[4]: <QuerySet [<Article: first>]>
+```
+
+<br />
+
+## Update
+
+```shell
+# Article의 object 중 pk가 5인 object를 찾아 article에 저장
+In [6]: article = Article.objects.get(pk=5)
+
+# article의 title 검색
+In [7]: article.title
+Out[7]: 'first'
+
+# article의 title을 'byebye'로 갱신
+In [8]: article.title = 'byebye'
+
+# article을 DB에 저장/반영
+In [9]: article.save()
+
+# article의 title 갱신 확인
+In [10]: article.title
+Out[10]: 'byebye'
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/157170012-c1ba8d16-9eff-40e1-986d-175db2012958.png)`
+
+- id(pk)가 5인 record의 title이 'first'에서 'byebye'로 갱신
+- updated_at도 수정 일시로 갱신
+
+<br />
+
+## Delete : delete()
+
+- QuerySet의 모든 행에 대해 SQL 삭제 쿼리를 수행
+- 삭제된 객체 수와 객체 유형당 삭제 수가 포함된 딕셔너리 반환
+
+```shell
+# pk가 5인 record를 article에 저장
+In [11]: article = Article.objects.get(pk=5)
+
+# article을 제거하면 mapping된 record도 제거
+In [12]: article.delete()
+Out[12]: (1, {'articles.Article': 1})
+
+# pk가 5인 record 조회, DoesNotExist 에러 발생
+In [13]: Article.objects.get(pk=5)
+DoesNotExist: Article matching query does not exist.
+```
+
+`![image](https://user-images.githubusercontent.com/86189596/157170354-f2b44897-f643-41fb-825b-41bc37e31457.png)`
+
+- pk가 5인 record가 실제로 제거됨을 확인 가능
+
+<br />
+
+## Field lookups
+
+- **조회 시 특정 조건을 지정**
+- QuerySet 메서드 filter(), exclude() 미치 get()에 대한 키워드 인수로 지정
+- **underbar 2개**로 작성('__')
+- 사용 예시
+  - Article.objects.filter(pk__gt=6) : pk가 6 이상인 record
+  - Article.objects.filter(content__contains='ja') : content가 'ja'를 포함하는 record
+
+```shell
+In [15]: Article.objects.filter(pk__gt=6)
+Out[15]: <QuerySet [<Article: third>]>
+
+In [16]: Article.objects.filter(content__contains='ja')
+Out[16]: <QuerySet [<Article: second>, <Article: third>]>
+```
+
+- `[Django 공식문서 - Field Lookups](https://docs.djangoproject.com/en/3.2/ref/models/querysets/#field-lookups)`
+
+<br />
+
+## QuerySet API
+
+- DB 조작을 위한 다양한 QuerySet API methods
+- 공식문서 : `[Django 공식문서 - QuerySet API](https://docs.djangoproject.com/en/3.2/ref/models/querysets/#queryset-api-reference)`

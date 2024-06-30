@@ -1,0 +1,134 @@
+---
+title: "[Django] DB API와 shell_plus"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-08T13:30
+last_modified_at: 2022-03-08T13:30
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## DB API
+
+- DB를 편하게 조작하기 위한 도구
+- django가 기본적으로 ORM을 제공함에 따른 것
+- Model을 만들면 django는 **database-abstract API**를 자동으로 제작
+
+<br />
+
+### database-abstract API
+
+- database-abstract API 혹은 database-access API라고 한다.
+- 객체를 만들고 읽고 수정
+
+<br />
+
+### Making Queries
+
+- 문법 : ClassName.Manager.QuerySetAPI
+- 예시 : Article.objects.all()
+
+<br />
+
+> ClassName
+
+- models.py에서 스키마를 정의한 클래스
+- 쉽게 생각하면 DB 테이블 자체라고 생각
+
+<br />
+
+> Manager
+
+- django 모델에 DB query 작업이 제공되는 인터페이스
+- 기본적으로 모든 django 모델 클래스에 **object**라는 Manager 추가
+- DB 테이블의 데이터 record 각각이 하나하나의 object
+
+<br />
+
+> querySet API : method
+
+- querySet : DB로부터 전달받은 객체 목록(결과)
+- queryset 안의 객체는 0개, 1개, .. 혹은 N개
+- DB로부터 조회, 필터, 정렬 등 수행
+
+<br />
+
+## Django shell
+
+### 1. pip 설치
+
+- 일반 Python shell을 통해서는 django project 환경에 접근 불가능
+- **django project 설정이 load된 Python shell을 활용**해 DB API 구문 테스트 진행
+
+- 기본 Django shell보다 더 많은 기능을 제공하는 shell_plus를 사용해서 진행
+- shell_plus는 Django-extensions 라이브러리의 기능 중 하나
+
+```bash
+$ pip install django-extensions
+$ pip install ipython
+```
+
+- django-extensions : shell_plus를 사용하기 위한 pip
+- ipython : shell_plus이 terminal에서 보이는 인터페이스를 결정하기 위해 설치
+
+<br />
+
+### 2. settings.py App 등록
+
+이후 project의 settings.py 파일에 **django_extenstions** 앱으로 등록해준다.
+
+```python
+# settings.py
+
+INSTALLED_APPS = [
+    ...,
+    'django_extensions',
+    ...,
+]
+```
+
+<u>주의📢</u> pip install 시에는 django-extensions(하이픈), INSTALLED_APPS에는 django_extensions(언더바)임에 주의한다.
+ 
+
+<br />
+
+### 3. shell_plus 실행
+
+django_extensions를 앱으로 등록하면 shell_plus를 실행할 수 있게 된다.
+
+```bash
+$ python manage.py shell_plus
+```
+
+<br />
+
+위의 명령어를 치면 git bash가 shell_plus로 바뀐다.
+
+```
+# Shell Plus Model Imports
+from articles.models import Article
+...
+from django.contrib.sessions.models import Session
+# Shell Plus Django Imports
+from django.core.cache import cache
+...
+from django.db.models import Exists, OuterRef, Subquery
+Python 3.10.1 (tags/v3.10.1:2cd268a, Dec  6 2021, 19:10:37) [MSC v.1929 64 bit (AMD64)]   
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.1.1 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: 
+```
+
+- shell_plus를 실행하면 이전에 model에 정의했던 것을 자동으로 import
+- 일일히 import 해주지 않아도 돼서 유용하다.

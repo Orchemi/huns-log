@@ -1,0 +1,93 @@
+---
+title: "[Python] 변수 - 연습문제"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2021-12-31T01:46
+last-modified-at: 2021-12-31T01:46
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #5](https://swexpertacademy.com)`
+
+<br />
+
+## 문제
+
+1~9 사이의 정수 a를 입력받아 a + aa + aaa + aaaa 의 값을 계산하는 프로그램을 작성하십시오.
+
+<br />
+
+## Sol A
+
+```python
+a = input("1~9 사이의 정수 a를 입력하십시오. : ")
+
+a1 = 1*a
+a2 = 2*a
+a3 = 3*a
+a4 = 4*a
+
+sum = int(a1) + int(a2) + int(a3) + int(a4)
+print(sum)
+```
+
+input() 함수를 이용해 1~9 사이의 정수 a를 입력받는다. 이때 input() 값을 통해 입력된 값의 자료형은 문자열이므로, a는 문자형이다.
+
+문자형은 곱하면 해당 문자형이 곱한 개수만큼 반복되므로 aa = 2\*a, aaa= 3\*a 처럼 된다.
+
+a1 ~ a4 를 더해주기 위해 각각에 int를 씌워 정수형으로 변환한 뒤, 모두 더한 값을 변수 sum에 참조한 뒤, sum을 출력한다.
+
+<br />
+
+## Sol B
+
+```python
+a = int(input("1~9 사이의 정수 a를 입력하십시오. : "))
+
+a1 = 1*a
+a2 = 11*a
+a3 = 111*a
+a4 = 1111*a
+
+sum = a1 + a2 + a3 + a4
+print(sum)
+```
+
+int를 4번 씌워주는 과정이 불편하게 느껴졌다. input 값에 int를 씌워 아예 a를 정수형으로 변환했다.
+
+이렇게 되면 a2 = 11\*a, a3 = 111\*a 처럼 된다. 이를 모두 더해준 값을 sum에 담은 뒤, print한다.
+
+<br />
+
+## Sol C
+
+```python
+a = int(input("1~9 사이의 정수 a를 입력하십시오. : "))
+
+sum = 1234 * a
+print(sum)
+```
+
+이제는 a1 ~ a4 를 더하는 것도 번거롭게 느껴진다. 어차피 모든 한 자리 정수에 대해 a1 + a2 + a3 + a4 = (1 + 11 + 111 + 1111) \* a = 1234\*a 이므로 그대로 곱해 sum에 넣어 출력한다.
+
+<br />
+
+## 제출 화면
+
+`![image](https://user-images.githubusercontent.com/86189596/147772222-5ce98888-96fa-4921-9ee2-606b1e9c91fc.png)`
+
+Sol C는 전개가 너무 함축적인 것 같아 Sol B로 작성하였다. input() 내의 텍스트는 그냥 생략했고, 깔끔하게 input()으로만 넣었다. 결과는 Pass!

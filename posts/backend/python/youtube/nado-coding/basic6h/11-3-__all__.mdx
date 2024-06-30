@@ -1,0 +1,87 @@
+---
+title: "[Python] __all__"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-20T00:00
+last_modified_at: 2021-07-20T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# **all**
+
+- 모듈과 패키지의 공개 여부 결정
+
+## 가. **all** 설정 없이 import
+
+```python
+from travel import *
+trip_to = vietnam.VietnamPackage()
+trip_to.detail()
+```
+
+출력결과는 다음과 같다.
+
+```markdown
+    trip_to = vietnam.VietnamPackage()
+
+NameError: name 'vietnam' is not defined
+```
+
+> 오류는 왜 발생할까.
+
+> `*` 을 쓰는 것은 travel package의 모든 것을 가져오겠다는 뜻이다.
+> 실제로는 개발자가 이 문법상에서 공개범위를 설정해주어야 한다.
+
+\***\*init** 파일에 다음과 같이 작성한다.\*\*
+
+```python
+__all__ = ["vietnam"]
+```
+
+<br />
+
+## 나. **init** 파일 수정 후 import
+
+```python
+from travel import *
+
+trip_to = thailand.ThailandPackage()
+trip_to.detail()
+```
+
+출력결과는 다음과 같다.
+
+```markdown
+trip_to = thailand.ThailandPackage()
+NameError: name 'thailand' is not defined
+```
+
+> NameError는 왜 발생하는걸까?
+>
+> \***\*init** 파일에서 vietnam에 대해서만 공개했기 때문에
+> thailand에 대해서는 공개되지 않아 오류가 발생\*\*
+
+**init** 파일을 다음과 같이 수정한다.
+
+```python
+__all__ = ["vietnam", "thailand"]
+```
+
+이후 ThailandPackage class의 detail() 함수 실행시 정상적으로 출력됨을 확인할 수 있다.
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

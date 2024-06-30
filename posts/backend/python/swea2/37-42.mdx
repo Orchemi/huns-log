@@ -1,0 +1,359 @@
+---
+title: "[Python] 문자열 - 연습문제 1~7"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-08T01:45
+last-modified-at: 2022-01-08T15:47
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #37 ~ #42](https://swexpertacademy.com)`
+
+<br />
+
+## 연습문제 #1
+
+### 문제
+
+다음의 결과와 같이 회문(앞뒤 어느 쪽에서도 같은 단어, 말) 여부를 판단하는 코드를 작성하십시오.
+
+입력
+
+```python
+madam
+```
+
+출력
+
+```python
+madam
+입력하신 단어는 회문(Palindrome)입니다.
+```
+
+### Sol
+
+```python
+input_str = input()
+print(input_str)
+
+input_str_r = ""
+for i in input_str:
+    input_str_r = i + input_str_r
+
+if input_str == input_str_r:
+    print("입력하신 단어는 회문(Palindrome)입니다.")
+else:
+    print("입력하신 단어는 회문(Palindrome)이 아닙니다.")
+```
+
+해당 문자열을 처음부터 끝까지 한 글자씩 빼내어 앞에다가 붙이는 반복문을 만들면, 해당 단어를 뒤집은 꼴이 된다. 이때 이 두 문자열이 같다면 회문이기 때문에 if ~ else 문으로 답변을 도출한다.
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148565786-2ad12d09-ead7-4dbb-a032-cd6c67aa8101.png)`
+
+<br />
+
+## 연습문제 #2
+
+### 문제
+
+다음과 같이 문장을 구성하는 단어를 역순으로 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+A better tomorrow
+```
+
+출력
+
+```python
+tomorrow better A
+```
+
+### Sol A
+
+연습문제 1과 같은 방식이지만, 한 개의 문자였던 것과 달리 단어를 기준으로 역순으로 바꿔야한다. 때문에 단어를 구분하는 공백 " "으로 split하여 문자열을 리스트로 만든 뒤, 이를 연습문제 1처럼 풀면 될 것 같다.
+
+```python
+input_str = input()
+input_list = input_str.split(" ")
+
+input_str_r = ""
+
+for i in input_list:
+    input_str_r = "{0} {1}".format(i, input_str_r)
+
+print(input_str_r)
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148567015-49cf6a31-8f6d-4bfd-bdbe-9b5cf999d246.png)`
+
+<br />
+
+### Sol B
+
+곰곰히 생각해보니 리스트를 뒤집어 공백과 함께 출력하면 더 편할 것 같아 reversed() 함수를 사용하는 방식으로 코드를 짜봤다.
+
+```python
+input_str = input()
+input_list = input_str.split(" ")
+
+input_list_r = reversed(input_list)
+input_str_r = ""
+
+for i in input_list_r:
+    input_str_r += i + " "
+
+print(input_str_r[:-1])
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148567398-6c81cd67-f0f3-482e-b1cb-ee33447d3849.png)`
+
+## 연습문제 #3
+
+### 문제
+
+다음의 결과와 같이 임의의 URL 주소를 입력받아 protocol, host, 나머지(path, querystring, ...)로
+구분하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+http://www.example.com/test?p=1&q=2
+```
+
+출력
+
+```python
+protocol: http
+host: www.example.com
+others: test?p=1&q=2
+```
+
+### Sol
+
+```python
+# 입력값 저장
+input_str = input()
+
+# protocol 분리
+input_list_1 = input_str.split("://")
+protocol = input_list_1[0]
+
+# host 분리
+input_list_2 = input_list_1[1].split("/")
+host = input_list_2[0]
+
+# others 리스트에서 host 항목 제거
+input_list_2.remove(host)
+
+# others 리스트 문자열 합치기
+others = ""
+for i in input_list_2:
+    others += i + "/"
+
+# 맨 마지막 "/"" 제거
+others = others[:-1]
+
+# 출력
+print("protocol: {0}".format(protocol))
+print("host: {0}".format(host))
+print("others: {0}".format(others))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148569982-a41b92a6-3031-4b19-a01f-4f21018152a1.png)`
+
+바보같이 테스트용으로 print한 코드들까지 제출해서 3번이나 fail을 받았다. 이전에도 같은 실수를 자주 했는데 더 확인하는 습관을 들여야겠다.
+
+<br />
+
+## 연습문제 #4
+
+### 문제
+
+다음의 결과와 같이 여러 문장을 입력받아 대문자로 변환해 출력하는 프로그램을 작성합니다.
+아무 것도 입력하지 않고 엔터만 입력하면 입력이 종료됩니다.
+
+입력
+
+```python
+Hello World
+hello world
+Python
+```
+
+출력
+
+```python
+>> HELLO WORLD
+>> HELLO WORLD
+>> PYTHON
+```
+
+### Sol - 보류
+
+input이 몇 개나 들어올지 모르기 때문에 리스트에 담아 반복문과 조건문으로 input을 조절해보려 한다.
+
+```python
+input_list = []
+
+input_complete = 0
+
+while True:
+    a = input()
+
+    if a == "":
+        break
+    else:
+        input_list.append(a)
+
+for i in input_list:
+    print("{0}".format(i.upper()))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148571523-345f4e98-589e-48f1-bfb9-08a999ee96f7.png)`
+
+2번 제출했는데 자꾸 런타임 에러가 발생했다. 뭔가 문제인지 모르겠다.
+
+### Sol - 대체
+
+어렵지 않은 문제임에도 합격률이 30% 내외이고, 인터넷도 참고해보니 문제 자체에 출제 오류가 있는 것 같았다. 반복문이 계속 돌아가는 모양. 그래서 input이 3개인만큼 3번만 돌고 반복문을 멈추는 방식으로 코드를 정정해서 제출하기로 했다.
+
+```python
+input_list = []
+cnt = 0
+
+while True:
+    a = input()
+
+    if a == "":
+        break
+    else:
+        input_list.append(a)
+
+
+    # 문제 오류로 강제 종료
+    cnt += 1
+    if cnt == 3:
+        break
+
+for i in input_list:
+    print(">> {0}".format(i.upper()))
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148634758-f346ab92-ec15-4317-b342-528e7243549b.png)`
+
+어이없게도 합격..
+
+<br />
+
+## 연습문제 #5
+
+### 문제
+
+사용자가 입력한 문장에서 공백을 이용해 단어들을 구분하고,
+중복된 단어없이 단어를 콤마(,)로 구분해 사전순으로 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+산 하늘 강 바다 하늘 강 들
+```
+
+출력
+
+```python
+강,들,바다,산,하늘
+```
+
+### Sol
+
+다음의 과정을 거치면 될 것 같다.
+
+1. input_str로 입력받은 텍스트를 저장한다.
+2. split(" ")으로 리스트화하기
+3. set()으로 중복 제거하기
+4. list()로 변환하기
+5. sorted()로 오름차순 정렬
+6. 항목과 ','로 저장하는 반복문
+7. slicing으로 불필요 ',' 제거
+8. 출력
+
+```python
+input_str = input()
+
+# split(" ")으로 리스트화
+# set()으로 중복 제거
+# list()로 변환
+# sorted()로 오름차순 정렬
+input_list = sorted(list(set(input_str.split(" "))))
+
+result_str = ""
+for i in input_list:
+    result_str += i + ","
+
+print(result_str[:-1])
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148576096-5ddebb30-1e73-49ce-9b5c-611744b911c0.png)`
+
+<br />
+
+## 연습문제 #7
+
+### 문제
+
+다음 결과와 같이 문자열을 입력하면 짝수 인덱스를 가진 문자들을 출력하는 프로그램을 작성하십시오.
+
+입력
+
+```python
+H1e2l3l4o5w6o7r8l9d
+```
+
+출력
+
+```python
+Helloworld
+```
+
+### Sol
+
+```python
+input_str = input()
+
+for i in range(0, len(input_str), 2):
+    print(input_str[i], end="")
+```
+
+### 제출결과
+
+`![image](https://user-images.githubusercontent.com/86189596/148576738-b0fee532-6230-45d6-ab5e-1d8cfaecba8d.png)`

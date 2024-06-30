@@ -1,0 +1,64 @@
+---
+title: "[Python] 기본값"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-15T00:00
+last_modified_at: 2021-07-15T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 예시 1
+
+- 이름, 나이, 주사용 언어를 다루는 함수 profile
+
+```python
+def profile(name, age, main_lang):
+    print("이름 : {0}\t나이 : {1}\t주 사용 언어 : {2}"\
+          .format(name, age, main_lang))
+
+profile("유재석", 20, "파이썬")
+profile("김태호", 25, "자바")
+
+# 출력값 :
+# 이름 : 유재석  나이 : 20  주 사용 언어 : 파이썬
+# 이름 : 김태호  나이 : 25  주 사용 언어 : 자바
+```
+
+<br />
+
+## 예시 2
+
+- 같은 학교, 학년, 반, 수업을 듣는 경우
+- 중복되는 변수값을 매번 쓸 필요가 없다.
+- 이때 사용되는 개념 : 기본값
+- 값이 전달될 때는 전달된 값을 사용하고, 그렇지 않은 경우 기본값을 사용하겠다.
+
+```python
+def profile(name, age=17, main_lang="파이썬"):
+    print("이름 : {0}\t나이 : {1}\t주 사용 언어 : {2}" \
+          .format(name, age, main_lang))
+
+profile("유재석")
+profile("김태호")
+
+# 출력값 :
+# 이름 : 유재석  나이 : 17  주 사용 언어 : 파이썬
+# 이름 : 김태호  나이 : 17  주 사용 언어 : 파이썬
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

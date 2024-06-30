@@ -1,0 +1,92 @@
+---
+title: "[Python] 개발환경과 코드작성"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2021-12-30T15:03
+last-modified-at: 2021-12-30T15:03
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(1) 파이썬의 기본 구조와 기초 문법 #2](https://swexpertacademy.com)`
+
+<br />
+
+## 통합개발환경(IDE; Integrated Development Environment)
+
+코딩을 위한 코드 편집기, 컴파일을 위한 컴파일러(혹은 인터프리터), 디버깅을 위한 디버거 등 프로그램 개발에 필요한 도구들이 하나의 프로그램 개발 환경으로 통합되어 개발 생산성을 높이는 소프트웨어
+
+Python의 경우 JetBrain사의 PyCharm, Microsoft사의 VSC(Visual Studio Code), Eclipse 기반의 PyDev가 있다.
+
+<br />
+
+## 파이썬 코드 작성법
+
+### 들여쓰기
+
+- 알기 쉬운 코드, 가독성이 좋은 코드를 위해서 사용
+- 파이썬 인터프린터에 의해 잘못된 들여쓰기가 검사되지 않으면 치명적인 버그가 발생
+- 동일 코드 블록 내에서 같은 수준의 들여쓰기 사용
+- 동일 코드블록 내에서 동일 들여쓰기를 사용하지 않으면 에러 발생(tab이면 tab, spacebar이면 spacebar 하던대로 하기)
+
+```python
+코드블록1:
+  코드블록1-1
+코드블록2:
+  코드블록2-1
+  코드블록2-2
+```
+
+### 소스코드 인코딩
+
+- '\#' 을 사용하면 해당 행 이후의 내용이 주석처리
+- '\#' 주석에 작성된 코딩 지시자는 특별한 의미로 해석
+
+#### utf-8 코딩 지시자를 입력하는 방법
+
+```python
+# coding: utf-8
+
+또는
+
+# -*- coding: utf-8 -*-
+```
+
+### 세미콜론
+
+- Python은 문장 끝의 세미콜론을 생략하고 사용할 수 있다.
+- 한 행에 여러 문장을 기술할 경우 문장을 구분하기 위해 세미콜론(;)을 반드시 사용
+
+```python
+print(0); print(1)
+
+> 결과
+0
+1
+```
+
+### 파일과 모듈
+
+- .py 파일 하나는 하나의 모듈
+- 프로그램의 진입점 역할을 하거나 라이브러리로서 다른 모듈에서 불러올 수 있다.
+- 그러므로 if문을 사용하여 용도에 따라 분기할 필요가 있다.
+
+```python
+if __name__ == "__main__":
+  print("Hello World")
+```
+
+위의 코드는 위의 소스코드가 메인으로 실행된 경우에만 실행된다. **즉, 다른 코드에서 이 모듈을 불러들여 사용하는 경우 if문의 소스코드는 실행되지 않는다.**

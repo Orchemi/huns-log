@@ -1,0 +1,1145 @@
+---
+title: "[Django] CRUD까지의 전과정 정리"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-03-08T17:00
+last_modified_at: 2022-03-09T06:30
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+
+
+<br />
+
+## 1. PJT / APP 생성
+
+### 1.1. 초기설정
+
+> BASE_DIR 생성
+
+'total_flow'라는 이름의 폴더를 만들었다.
+
+<br />
+
+> venv 설치 및 실행
+
+```bash
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ python -m venv venv
+
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ source venv/scripts/activate
+
+# venv를 활성화하였어도 pip list를 입력해 venv 환경이 맞는지 재확인하자.
+(venv) 
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ pip list
+Package    Version
+---------- -------
+pip        21.2.4
+setuptools 58.1.0
+```
+
+<br />
+
+> django 3.2.12. 버전 설치
+
+```bash
+(venv) 
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ pip install django==3.2.12
+```
+
+<br />
+
+### 1.2. PJT 생성
+
+```bash
+(venv) 
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ django-admin startproject crud .
+```
+
+- `crud`라는 이름의 프로젝트를 만든다.
+- 끝에 .을 꼭 찍어 현재 BASE_DIR에 📂crud 및 📃manage.py가 바로 생기도록 한다.
+
+<br />
+
+### 1.3. APP 생성 및 등록
+
+> APP 생성
+
+```bash
+(venv) 
+tmdgn@ASUSSH MINGW64 ~/OneDrive/바탕 화면/total_flow
+$ python manage.py startapp articles
+```
+
+`articles`라는 이름의 app을 만든다.
+
+<br />
+
+> APP 등록
+
+```python
+# crud/settings.py
+
+# Application definition
+
+INSTALLED_APPS = [
+    # Local
+    'articles',
+    
+    # Built-in
+    'django.contrib.admin',
+    ...
+    'django.contrib.staticfiles',
+]
+```
+
+- articles app을 settings.py의 INSTALLED_APPS에 등록해준다.
+- 반드시 APP 생성 이후에 등록해야함을 잊지 않는다.
+
+<br />
+
+### 1.4. settings.py 추가 설정
+
+settings.py에 들어온 김에 필요한 설정들을 모두 해주겠다.
+
+<br />
+
+> BASE_DIR 설정
+
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]`python
+```
+
+- TEMPLATES의 DIRS에 [BASE_DIR / 'templates'], 를 추가해준다.
+- BASE_DIR에 바로 추가한 templates 폴더에는 base.html 등 모든 app의 templates 폴더보다 먼저 조회할 파일들을 넣는다.
+
+<br />
+
+> Internationalization 설정
+
+```python
+LANGUAGE_CODE = 'ko-kr'
+
+TIME_ZONE = 'Asia/Seoul'
+```
+
+- 언어코드를 `ko-kr`로 바꿔준다. 서버를 실행하면 나오는 여러 문자들을 한국어로 바꿔주는 역할을 한다.
+- TIME_ZONE을 `Asia/Seoul`로 바꿔준다. 시간 관련 함수에서 Seoul을 기준으로 시간을 출력해준다.
+
+<br />
+
+### 1.5. 📂BASE_DIR 📂templates 📃base.html 생성
+
+> 📂templates 생성
+
+- 📂BASE_DIR에 📂templates를 추가로 생성해준다.
+- django가 templates를 조회하는 것은 이전에 settings.py에서 BASE_DIR에 경로를 이미 설정해주었다.
+
+<br />
+
+> 📃base.html 생성
+
+- app에서 사용될 html 파일들의 모체가 되는 templates이다.
+- bootstrap을 사용하기 위해 bootstrap CDN 링크도 넣어주도록 한다.
+- block tag를 사용해 하위에서 extends할 부분을 정의해준다.
+- layout을 위해 container class의 div 태그 내에 block tag를 위치시킨다.
+
+```html
+{%- raw -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <title>Document</title>
+</head>
+<body>
+
+  <div class="container">
+    {% block content %}
+    {% endblock content %}
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>
+{% endraw -%}
+```
+
+<br />
+
+## 2. PJT urls.py 작업
+
+> PJT의 urls.py에 APP을 include해준다.
+
+```python
+# crud/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('articles/', include('articles.urls'))
+]
+
+```
+
+- django는 HTTP request를 받으며 데이터의 흐름이 시작
+- crud PJT의 urls에 APP의 urls.py에 대한 경로를 incldue한다.
+- django.urls 모듈의 include 함수를 import 하는 것에 유의한다.
+
+<br />
+
+## 3. APP 작업
+
+### 3.1. urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    path('', views.index, name='index')
+]
+```
+
+- app_name은 'articles'로 둔다.
+- articles/로 url이 끝나면 articles의 main 페이지를 불러오는 index함수를 호출한다.
+- index함수는 views.py에 있기 때문에 현재 폴더라는 의미의 .에서 views 모듈을 import한다는 코드를 추가한다.
+- path name을 index로 정의한다.
+
+<br />
+
+### 3.2. views.py
+
+> 사전 작업
+
+- 📂templates를 APP 폴더 내에 생성
+- 📂articles를 📂templates 폴더 내에 생성
+- 다른 APP의 r같은 파일명인 templates와의 구분을 위해 APP마다 물리적 경로를 설정하여 명시
+
+```python
+# articles/views.py
+
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'articles/index.html')
+```
+
+app 폴더 내의 📂templates 📂articles 📃index.html을 render하여 반환한다.
+
+<br />
+
+### 3.3. articles/index.html
+
+```html
+{%- raw -%}
+<!-- articles/templates/articles/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">Articles</h1>
+{% endblock content %}
+{% endraw -%}
+```
+
+- 📂BASE_DIR 📂templates 📃base.html을 상속받기 위해 extends tag 사용
+- block tag 사용 후 html 코드 넣기
+- 📃base.html과 📃index.html의 block tag의 이름이 같아야 한다.(위에서는 `content`)
+
+<br />
+
+### 3.4. Runserver 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/157299831-bfc58ed3-dd02-41ba-a7f7-b7b339e543fb.png)`
+
+서버를 실행하고 해당 url을 입력하니 articles/index.html의 템플릿이 잘 반영되었음을 확인할 수 있다.
+
+<br />
+
+## 4. DB 설정
+
+### 4.1. models.py
+
+```python
+# articles/models.py
+
+from django.db import models
+
+class Article(models.Model):
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
+```
+
+- schema를 class를 통해 정의
+- field는 class의 property를 통해 정의
+- models.--Field를 통해 datatype 설정
+- argument를 통해 옵션 및 제한사항 설정
+
+<br />
+
+### 4.2. Migrations
+
+> makemigrations
+
+```bash
+$ python manage.py makemigrations
+Migrations for 'articles':
+  articles\migrations\0001_initial.py
+    - Create model Article
+```
+
+Article class를 기반으로 한 현재의 migration file을 만들었다.
+
+<br />
+
+> migrate
+
+```bash
+$ python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, articles, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  ...
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying sessions.0001_initial... OK
+```
+
+migrate하여 DB에 반영하였다.
+
+<br />
+
+> migration SQL 확인
+
+```bash
+$ python manage.py sqlmigrate articles 0001
+BEGIN;
+--
+-- Create model Article
+--
+CREATE TABLE "articles_article" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "title" varchar(10) NOT NULL, "content" text NOT NULL, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+COMMIT;
+```
+
+sqlmigrate 명령어로 articles APP의 0001번 migration에 대해 field를 SQL적으로 확인했다.
+
+<br />
+
+### 4.3. shell_plus 사용 준비
+
+> pip 설치
+
+```bash
+$ pip install ipython django-extensions
+```
+
+pip install pip1 pip2 처럼 공백으로 한 번에 여러 pip를 설치할 수 있다.
+
+<br />
+
+> settings.py에 App 등록
+
+```python
+# crud/settings.py
+
+INSTALLED_APPS = [
+    # Local
+    'articles',
+    'django_extensions',
+    ...
+]
+```
+
+- django_extension을 INSTALLED_APPS에 추가
+- `django-extensions`이 아닌 `django_extensions`임에 주의
+- APP 등록 후 끝에 comma(,)를 찍는 것에 주의
+
+<br />
+
+> shell_plus 실행
+
+```bash
+$ python manage.py shell_plus
+
+# Shell Plus Model Imports
+from articles.models import Article
+...
+from django.contrib.sessions.models import Session
+# Shell Plus Django Imports
+from django.core.cache import cache
+...
+from django.db.models import Exists, OuterRef, Subquery
+
+In [1]: 
+```
+
+- 여러 django 모듈과 함수들, 그리고 class 등을 import 해주는 강력한 기능의 shell 도구이다.
+- ipython을 이용해 우리에게 익숙한 jupyter notebook 느낌의 shell 모습을 보인다.
+
+
+
+### 4.4. DB에 예시 data 추가
+
+index.html에서 출력할 record들을 예시로 만드는 작업이다.
+
+```shell
+# create 1
+In [1]: article = Article()
+
+In [2]: article.title = 'first'
+
+In [3]: article.content = 'test1'
+
+In [4]: article.save()
+
+# create 2
+In [5]: article = Article(title='second', content='test2')
+
+In [6]: article.save()
+
+# create 3
+In [7]: Article.objects.create(title='third', content='test3')
+Out[7]: <Article: third>
+```
+
+record를 만드는 3가지 방식을 모두 이용해 총 3개의 record instance를 만들어보았다.
+
+`![image](https://user-images.githubusercontent.com/86189596/157298381-39de978b-c72f-4174-b8f5-3c166c7e9470.png)`
+
+- 시각이 작성시각 기준 현재 새벽 3시, 즉 27시인데 created_at과 updated_at이 18시, 9시간이 차이난다.
+- Asia/Seoul은 UTC+9:00인 것을 생각하면 UTC 기준으로 record가 추가되었다.
+- DB에는 UTC 기준으로 time이 저장되고, Render할 때 TIME_ZONE 시각에 맞춰 차이를 더하고 빼주는 것
+
+<br />
+
+## 5. DB READ
+
+> index.html에 DB의 record들을 읽어와 rendering 해보자.
+
+<br />
+
+### 5.1. views.py
+
+```python
+# articles/views.py
+
+from django.shortcuts import render
+from .models import Article
+
+def index(request):
+    articles = Article.objects.all()
+    context = {
+        'articles': articles,
+    }
+    return render(request, 'articles/index.html', context)
+```
+
+- .models 모듈의 Article 클래스를 import한다.
+- 이 Article 클래스의 ORM과 querySet API를 이용해 모든 record를 복사해 articles에 저장한다.
+- 이를 context에 넣어 render에 반영해준다.
+
+<br />
+
+### 5.2. index.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">Articles</h1>
+  <hr>
+  {% for article in articles %}
+    <p>{{ article.pk }} | {{ article.title }}</p>
+    <p>{{ article.content }}</p>
+    <hr>
+  {% endfor %}
+{% endblock content %}
+{% endraw -%}
+```
+
+- django DTL의 for tag를 이용해 articles 리스트 내의 각각의 article, 즉 record 인스턴스마다 처리한다.
+- 인스턴스 property이자 record의 field인 pk, title, content를 위와 같은 형식으로 불러온다.
+- record마다 구분을 하기 위해 hr tag를 사용한 뒤, for문을 마친다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157301406-d94b448e-ff65-4315-8754-d76faf9a85e3.png)`
+
+<br />
+
+## 6. Create 1 : New 페이지 생성
+
+> article을 생성하는 페이지를 만들어보자.
+
+- 새로운 article을 만드는 keyword는 new이다.
+- new.html, path도 new, views함수도 new로 정해보자.
+
+<br />
+
+### 6.1. urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    path('', views.index, name='index'),
+    path('new/', views.new, name='new'),
+]
+```
+
+url에 new/로 request가 들어오면 views 모듈의 new 함수를 호출한다.
+
+<br />
+
+### 6.2. views.py
+
+```python
+def new(request):
+    return render(request, 'articles/new.html')
+```
+
+new함수가 실행되면, articles/new.html을 rendering한다.
+
+<br />
+
+### 6.3. articles/new.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">NEW</h1>
+  <hr>
+  <form action="#" method="GET">
+    <label for="title">제목 :</label>
+    <input class="w-100 mb-5 bg-light" type="text" name="title"> <br />
+    <label for="content">내용 :</label>
+    <textarea class="w-100 mb-5 bg-light" name="content" rows="10"></textarea> <br />
+    <button class="btn btn-primary btn-sm">완료</button>
+  </form>
+{% endblock content %}
+{% endraw -%}
+```
+
+- form tag를 이용해 제목과 내용을 입력하는 input을 마련한다.
+- label의 for와 input의 name을 통일하여 label이 input과 mapping되도록 한다.
+- textarea는 닫는 태그가 있음에 유의한다.
+- layout을 위해 bootstrap class를 일부 사용하였다.
+
+<br />
+
+### 6.4. articles/index.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">Articles</h1>
+  <a href="{% url 'articles:new' %}">게시글 작성</a>
+  <hr>
+  
+  {% for article in articles %}
+    <p>{{ article.pk }} | {{ article.title }}</p>
+    <p>{{ article.content }}</p>
+    <hr>
+  {% endfor %}
+{% endblock content %}
+{% endraw -%}
+```
+
+- 메인 페이지 articles/index.html에 게시글을 만드는 페이지로 이동하는 a tag 코드를 추가하였다.
+- href는 url tag를 이용하여 'articles' APP의 'new'라는 name의 path로 지정하였다.
+
+<br />
+
+### 6.5. 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/157304711-a2a67b5a-3167-4a3e-bcd0-337af0fe15b8.png)`
+
+- 게시글 작성 a 태그를 통해 new/로 향하는 링크가 존재함을 알 수 있다. 
+- 클릭하면 다음 화면을 맞이한다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157305392-b2dc414e-06b9-42fb-87a5-f0c68c75df7f.png)`
+
+제목과 내용을 입력하는 란이 있다.
+
+<br />
+
+## 7. Create 2 : form 데이터 저장
+
+> form에 데이터를 입력하여 버튼을 클릭하면 DB에 저장해보자.
+
+- create/ url을 사용할 것이다.
+
+<br />
+
+### 7.1. urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    path('', views.index, name='index'),
+    path('new/', views.new, name='new'),
+    path('create/', views.create, name='create'),
+]
+```
+
+create라는 name과 `create/` url을 만나면 views.create 함수를 호출한다.
+
+<br />
+
+### 7.2. views.py
+
+```python
+def create(request):
+    title = request.GET.get('title')
+    content = request.GET.get('content')
+    
+    Article.objects.create(title=title, content=content)
+    
+    return render(request, 'articles/new.html')
+```
+
+- request.GET은 query의 정보를 담고있다.
+- create 함수 내에서 request.GET의 key를 이용해 title과 content의 데이터를 각각 저장한다.
+- 이를 record를 create하는 querySet API를 이용해 record를 추가해준다.
+- articles/new.html로 페이지를 이동한다.
+
+<br />
+
+### 7.3. articles/new.py
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">NEW</h1>
+  <hr>
+  <form action="{% url 'articles:create' %}" method="GET">
+    <label for="title">제목 :</label>
+    <input class="w-100 mb-5 bg-light" type="text" name="title"> <br />
+    <label for="content">내용 :</label>
+    <textarea class="w-100 mb-5 bg-light" name="content" rows="10"></textarea> <br />
+    <a class="btn btn-light btn-sm" href="{% url 'articles:index' %}">이전</a>
+    <button class="btn btn-primary btn-sm">완료</button>
+  </form>
+{% endblock content %}
+{% endraw -%}
+```
+
+- form의 action에 url을 url tag를 이용해 넣어주었다.
+- form에서 submit이 발생하면 action에 해당하는 url과 query 데이터를 server에 HTTP request로 보내는 것이다.
+- 이전 화면인 index.html로 가는 a 태그를 추가하였다.
+
+<br />
+
+### 7.4. 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/157309695-7a26cece-d033-4574-9e61-3d80b5fc9cbe.png)`
+
+위와 같이 create test라는 텍스트를 각각 넣고 완료 버튼을 누른다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157309762-6f3710ec-9a23-4301-8dce-88c5b9ec62ec.png)`
+
+index 페이지로 가면, form에 저장했던 article이 성공적으로 반영되었음을 알 수 있다.
+
+<br />
+
+### 번외 : 정렬 순서 변경
+
+> index 페이지의 article 순서를 최신 article 순, 즉 반대로 정렬하고 싶다!
+
+```python
+def index(request):
+    # 1. DB로부터 받은 querySet을 views.py에서 pythonic하게 변경한다.
+    articles = Article.objects.all()[::-1]
+
+    # 2. DB에서 내림차순 querySet으로 DB를 불러온다.
+    articles = Article.objects.order_by('-pk')
+
+    ...
+```
+
+- 2가지 방법이 가능하다.
+- 일반적으로 2번 방법이 더 효과적이다.
+- DB에서 정렬/처리해서 데이터를 가져오는 것이 훨씬 속도가 빠르다.
+
+<br />
+
+## 8. HTTP method
+
+### 8.1. GET과 POST
+
+> GET
+
+- 특정 리소스를 가져오도록 요청할 때 사용
+- `데이터를 가져올 때만 사용`
+- `DB에 변화를 주지 않는다.`
+- CRUD에서 `R` 역할을 담당
+
+<br />
+
+> POST
+
+- 서버로 데이터를 전송할 때 사용
+- 리소스를 생성/변경하기 위해 데이터를 `HTTP body에 담아 전송`
+- 때문에 데이터 전달에 `보안이 GET보다 낫다`!!
+- 서버에 변경사항을 만든다.
+- CRUD에서 `C/U/D` 역할 담당
+
+<br />
+
+### 8.2. CSRF에 대비
+
+> CSRF의 자세한 내용 : [[Django] CSRF와 보안](https://orchemi.github.io/django/django_14/)
+
+<br />
+
+### 8.3. articles/new.py
+
+```html
+{%- raw -%}
+<form action="{% url 'articles:create' %}" method="POST">
+  {% csrf_token %}
+  <label for="title">제목 :</label>
+  <input class="w-100 mb-5 bg-light" type="text" name="title"> <br />
+  <label for="content">내용 :</label>
+  <textarea class="w-100 mb-5 bg-light" name="content" rows="10"></textarea> <br />
+  <a class="btn btn-light btn-sm" href="{% url 'articles:index' %}">이전</a>
+  <button class="btn btn-primary btn-sm">완료</button>
+</form>
+{% endraw -%}
+```
+
+- form tag의 method를 기존 'GET'에서, 'POST'로 바꿔준다.
+- csrf_token 태그를 form 태그 내에 입력한다.
+
+<br />
+
+### 8.4. articles/views.py
+
+```python
+def create(request):
+    title = request.POST.get('title')
+    content = request.POST.get('content')
+    
+    Article.objects.create(title=title, content=content)
+    return render(request, 'articles/index.html')
+```
+
+- 기존 GET method로 request를 보냈기 때문에 request.GET.get()을 사용
+- 이제는 POST method로 request를 보내기 때문에 request.POST.get()을 사용
+- create가 완료되면, articles/index.html로 이동하도록 return 수정
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157314029-2b1944b1-9521-4da4-9861-b90dec916676.png)`
+
+> 의문점 1. 왜 index 페이지에 데이터가 없는걸까?
+
+> 의문점 2. 왜 url은 아직도 /create/ 일까?
+
+> 정답 : create view 함수에서 다루고 있는 데이터만으로 index 페이지가 render되기 때문!!
+
+데이터도 안 주고 그대로 rendering하라는 건 도둑놈이지.
+
+<br />
+
+### 8.5. redirect()
+
+- 새 URL로 요청을 다시 보낸다.
+- 인자에 따라 `HttpResponseRedirect` 반환
+- 브라우저는 현재 경로에 따라 전체 URL 자체를 재구성(reconstruct)
+
+<br />
+
+> 사용 가능한 인자
+
+- model
+- view name : views.py에서 path 지정할 때 저장한 name
+- 상대경로 & 절대경로
+
+<br />
+
+### 8.6. redirect() 활용 실습
+
+```python
+# articles/views.py
+
+from django.shortcuts import render, request
+
+def create(request):
+    ...
+
+    # return render(request, 'articles/index.html')
+    return redirect('articles:index')
+```
+
+- render 대신에 redirect 함수를 사용한다.
+- render처럼 django.shortcuts의 함수이므로 import에 추가해준다.
+- article APP의 path name이 'index'인 path를 재실행
+- path(..., views.index, name='index')이므로 views.index 함수가 호출되는 것!!
+
+<br />
+
+## 9. 상세 페이지 구현 : Variable Routing
+
+> Variable Routing을 이용해 페이지별로 상세 페이지를 구현해보자.
+
+<br />
+
+### 9.1. urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    ...
+    path('<int:pk>/', views.detail, name='detail')
+]
+```
+
+url의 'articles/' 뒤에 바로 숫자가 붙는다면 이를 pk로 하여 views.detial 함수로 request와 함께 전달
+
+<br />
+
+### 9.2. views.py
+
+```python
+def detail(request, pk):
+    article = Article.objects.get(pk=pk)
+    context = {
+        'article': article,
+    }
+    return render(request, 'articles/detail.html', context)
+```
+
+- variable routing을 통해 전달받은 pk를 이용해 querySet API의 get 이용
+- DB에서 해당 pk를 가진 record를 READ해서 article에 저장
+- 이를 context 넣어 articles/detail.html에 전달 후 rendering
+
+<br />
+
+### 9.3. articles/detail.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">DETAIL</h1>
+  <hr>
+  <h4>{{ article.pk }}번째 글 | {{ article.title }}</h3>
+  <hr>
+  <p>작성 일자 : {{ article.created_at }}</p>
+  <p>수정 일자 : {{ article.updated_at }}</p>
+  <p>내용 : {{ article.content }}</p>
+
+  <a class="btn btn-sm btn-light" href="{% url 'articles:index' %}">이전</a>
+  
+{% endblock content %}
+{% endraw -%}
+```
+
+article의 field에 대한 데이터, 즉 property를 이용해 페이지 구성
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157317991-10fef318-82bb-4360-a785-64433c0ccbd7.png)`
+
+기대했던대로 url처럼 7번 pk를 가진 게시물을 잘 렌더링하였다.
+
+<br />
+
+### 9.4. articles/index.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center">Articles</h1>
+  <a href="{% url 'articles:new' %}">게시글 작성</a>
+  <hr>
+  
+  {% for article in articles %}
+    <p>{{ article.pk }} | <a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a></p>
+    <p>{{ article.content }}</p>
+    <hr>
+  {% endfor %}
+{% endblock content %}
+{% endraw -%}
+```
+
+- url tag에 공백을 기준으로 다음 무언가를 넣는다.
+- 이는 url 구성에서 `.../<articles:detail>/<article.pk>`로 breadcrumb을 만든다.
+- 이를 이용해 index.html에서 각 article에 대한 상세 페이지 이동 링크를 걸어준다.
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157318554-a6889c14-19f6-4061-b0c5-7ec03624e2fd.png)`
+
+성공적으로 링크가 반영되었음을 알 수 있다.
+
+<br />
+
+## 10. DELETE
+
+> 게시물을 제거하는 기능을 추가해보자.
+
+<br />
+
+### 10.1. urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    ...
+    path('<int:pk>/delete/', views.delete, name='delete'),
+]
+```
+
+- delete에 대한 path를 정의
+- `<int:pk>/delete/` url : 지우고자하는 article의 번호와 delete가 함께 request 된다.
+
+<br />
+
+### 10.2. views.py
+
+```python
+def delete(request, pk):
+    article = Article.objects.get(pk=pk)
+    if request.method=='POST':
+        article.delete()
+        return redirect('articles:index')
+    else:
+        return redirect('articles:detail', article.pk)
+```
+
+- urls.py에서 variable routing을 통해 받은 pk를 parameter로 넣는다.
+- article은 해당 pk에 해당하는 DB의 record이다.
+- request의 method가 POST라면 삭제하고, 아니라면 취소해야 한다.
+- if~else 문을 활용한다. 
+
+<br />
+
+## 11. EDIT : UPDATE
+
+> 게시글을 수정할 수 있는 기능을 추가해보자.
+
+<br />
+
+### 11.1. EDIT : urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    ...
+    path('<int:pk>/edit/', views.edit, name='edit'),
+]
+```
+
+delete와 마찬가지로, edit도 특정 pk의 게시물을 variable routing으로 받아온다.
+
+<br />
+
+### 11.2. EDIT : views.py
+
+```python
+def edit(request, pk):
+    article = Article.objects.get(pk=pk)
+    if request.method=='POST':
+        context = {'article': article,}
+        return render(request, 'articles/edit.html', context)
+    else:
+        return redirect('articles:detail', article.pk)
+```
+
+- request와 전달받은 pk를 이용한다.
+- 전달받은 pk로 DB에 조회해 해당 pk의 record를 article에 저장한다.
+- 만약 request가 POST라면 수정 페이지로 이동하고, 아니라면 해당 페이지에 남는다.
+- articles/edit.html 페이지를 재정의해줄 필요가 있다.
+
+<br />
+
+### 11.3. EDIT : articles/edit.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center">EDIT</h1>
+<hr>
+
+<form action="#" method="POST">
+  {% csrf_token %}
+  <label for="title">제목 : </label>
+  <input class="w-100 bg-light" type="text" name="title" value="{{ article.title }}"> <br />
+  <label for="content">내용 : </label>
+  <textarea class="w-100 bg-light" name="content" rows="10">{{ article.content }}</textarea> <br />
+
+  <a href="{% url 'articles:detail' article.pk %}" class="btn btn-sm btn-light">이전</a>
+  <input class="btn btn-sm btn-success" type="submit" value="완료">
+</form>
+
+{% endblock content %}
+{% endraw -%}
+```
+
+- width 100%로 작성 페이지와 layout을 맞춰주었다.
+- EDIT 역시 중요한 정보이므로, form tag는 POST method를 적용
+- POST이므로 csrf_token tag 사용
+- 수정할 때 정보를 가져오면 좋으므로, article의 title, content 정보를 넣어준다.
+  - input:text의 경우 value 옵션을 이용해 값을 넣어준다.
+  - textarea는 value 옵션이 없고 닫는 태그가 있으므로, 사이에 내용으로 넣어준다.
+
+<br />
+
+### 11.4. EDIT : articles/detail.html
+
+```html
+{%- raw -%}
+{% extends 'base.html' %}
+...
+
+  <form class="d-inline" action="{% url 'articles:edit' article.pk %}" method='POST'>
+    <button class="btn btn-sm btn-success">수정</button>
+    {% csrf_token %}
+  </form>
+
+  <form class="d-inline" action="{% url 'articles:delete' article.pk %}" method='POST'>
+    <button class="btn btn-sm btn-danger">삭제</button>
+    {% csrf_token %}
+  </form>
+
+{% endblock content %}
+{% endraw -%}
+```
+
+- article 상세 페이지에서 수정 페이지로 이동하도록 detail.html에 수정 버튼 추가
+- POST method 사용을 위해 form 태그와 button 클래스 사용
+- csrf_token tag 사용
+
+<br />
+
+### 11.5. 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/157326587-ed4b1965-ea31-496f-a8da-f99c87ac7aff.png)`
+
+article 상세 페이지에 수정 버튼이 추가
+
+<br />
+
+`![image](https://user-images.githubusercontent.com/86189596/157326521-50e5e834-ca1d-435e-8ac0-3ff19186a712.png)`
+
+- 수정 버튼을 클릭하면 편집 페이지로 이동
+- 기존 article 내용들이 input과 textarea에 존재
+
+<br />
+
+### 11.6. UPDATE : urls.py
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+urlpatterns=[
+    ...
+    path('<int:pk>/update/', views.update, name='update'),
+]
+```
+
+- update와 관련된 내용들을 정의
+- 특정 article에 대한 요청이므로, variable routing으로 pk 전달
+
+<br />
+
+### 11.7. UPDATE : views.py
+
+```python
+def update(request, pk):
+    article = Article.objects.get(pk=pk)
+    if request.method=='POST':
+        article.title = request.POST.get('title')
+        article.content = request.POST.get('content')
+        article.save()
+    return redirect('articles:detail', article.pk)
+```
+
+- DELETE와 거의 유사하다.
+- 역시 request의 method가 POST인 경우에만 수정할 수 있도록 if문을 사용한다.
+- request에 query로 들어온 수정 데이터를 처리하여 article의 property 갱신
+- article을 save()하여 DB에 저장
+- request method가 POST가 아니라면 수정 사항 없이 그대로 article 상세페이지로 이동
+
+<br />
+
+### 11.8. 결과
+
+`![image](https://user-images.githubusercontent.com/86189596/157328281-bdd01bf8-7a54-4f21-ba52-c28e86e82e07.png)`
+
+- 수정사항이 잘 반영됨을 알 수 있다.
+- url에 query형식으로 넣어도 POST method가 아니기 때문에 반영되지 않는다.

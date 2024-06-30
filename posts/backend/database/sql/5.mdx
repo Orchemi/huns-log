@@ -1,0 +1,110 @@
+---
+title: "[SQL] ALTER : 테이블과 컬럼의 갱신/삭제"
+
+categories:
+  - SQL
+
+tags:
+  - [DB, SQL]
+
+date: 2022-03-14T16:00
+last_modified_at: 2022-03-14T16:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## ALTER TABLE
+
+### table 이름 변경
+
+```sql
+ALTER TABLE [table_name] RENAME TO [new_table_name];
+```
+
+<br />
+
+### table에 새로운 column 추가
+
+> 문법
+
+```sql
+ALTER TABLE [table_name] ADD COLUMN [new_column_name] [data type] [option]
+```
+
+<br />
+
+> 실수에 주의하라
+
+```sql
+ALTER TABLE news ADD COLUMN created_at TEXT NOT NULL;
+```
+
+- NOT NULL 옵션을 가지는 column을 추가하고 싶다.
+- 하지만 오류 발생
+
+<br />
+
+> why?
+
+- 기존에 있던 기존 레코드들에 새로 추가하는 필드에 대한 정보가 없기 때문!!
+
+- 해결법 1 : NOT NULL 옵션 없이 추가(기존 레코드는 이 필드에서 빈 값)
+- 해결법 2 : 기본값(DEFAULT) 설정(기존 레코드가 DEFAULT로 채워짐)
+
+```sql
+ALTER TABLE [table_name] 
+ADD COLUMN [new_col_name] [data type] [option] NOT NULL DEFAULT [deault_val];
+```
+
+<br />
+
+> 사용 예시
+
+```sql
+ALTER TABLE news ADD COLUMN subtitle TEXT NOT NULL DEFAULT '소제목';
+```
+
+
+<br />
+
+### column 이름 수정(SQLite ver.3.25 이후)
+
+> 문법
+
+```sql
+ALTER TABLE [table_name] RENAME COLUMN [current_col_name] TO [new_col_name];
+```
+
+<br />
+
+> 사용 예시
+
+```sql
+ALTER TABLE news RENAME COLUMN title TO main_title;
+```
+
+⭐ column명은 따옴표 없이 작성함에 유의한다.
+
+<br />
+
+### column 삭제(가장 최신)
+
+> 문법
+
+```sql
+ALTER TABLE [table_name] DROP COLUMN [col_name]
+```
+
+<br />
+
+> 사용 예시
+
+```sql
+ALTER TABLE news DROP COLUMN subtitle;
+```

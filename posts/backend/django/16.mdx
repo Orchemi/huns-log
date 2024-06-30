@@ -1,0 +1,703 @@
+---
+title: "[Django] HTTP Handling, Image와 Media"
+
+categories:
+  - Django
+
+tags:
+  - Django
+
+date: 2022-04-08T12:30
+last_modified_at: 2022-04-08T12:30
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: true
+---
+
+## Handling HTTP requests
+
+> Django에서 HTTP 요청을 처리하는 방법
+
+1. Django shortcut functions
+2. View decorators
+
+<br />
+
+### Django shortcut functions
+
+- django.shortcuts 패키지는 개발에 도움이 되는 여러 함수 / 클래스 제공
+- **render()**, **redirect()**, get_object_or_404(), get_list_or404()
+
+<br />
+
+> render() 
+
+template을 화면에 render하는 함수
+
+<br />
+
+> redirect()
+
+다시 views의 함수를 호출하는 함수
+
+<br />
+
+#### get_object_or_404()
+
+- model manager인 objects에서 get()을 호출
+- 해당 객체가 없을 경우 **DoesNotExist** 예외 대신 **Http 404를 raise**
+
+- get()에 경우 조건에 맞는 데이터가 없을 경우 예외 발생
+- **코드 실행 단계에서 발생한 예외 및 에러**에 대해서 브라우저는 **http status code 500으로 인식**
+- http 코드 상태
+    - 400번대 : client의 잘못(잘못된 정보 요청)
+    - 500번대 : server의 잘못(서버가 처리 방법을 모르는 상황)
+    - 상태 번호에 따라 유저가 잘못된 정보를 요청했는지, 서버 쪽의 에러인지 알려줌
+- **상황에 따라 적절한 예외처리** 및 클라이언트에게 **올바른 에러 상황을 전달**하는 것 또한 개발의 중요한 요소 중 하나
+
+<br />
+
+```python
+# views.py
+
+def detail(request, pk):
+    # article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
+    context = {
+        'article': article,
+    }
+    return render(request, 'articles/detail.html', context)
+```
+
+- 기존에는 DB에서 get() 함수로 데이터를 가져와 article에 저장
+- get_object_or_404() 함수를 이용해 **pk가 pk인 Article의 인스턴스**를 가져와 article에 저장
+- 만약 없다면 **404 Not Found 에러 발생**시킨다.
+
+<br />
+
+#### get_list_or_404()
+
+- 게시판에서 사용은 부적합(첫 번째 글이 없으면 main page가 렌더링되지 않아서)
+- API를 받아올 때 사용
+
+<br />
+
+### View decorators
+
+- Django는 다양한 HTTP 기능을 지원하기 위해 **view 함수**에 적용할 수 있는 여러 **decorator**를 제공
+
+> Decorator
+
+- 어떤 함수에 기능을 추가하고 싶을 때, 해당 **함수를 수정하지 않고 기능을 연장해주는 함수**
+- 원본 함수를 **수정하지 않으면서 추가 기능만을 구현**할 때 사용
+
+<br />
+
+#### Allowed HTTP methods
+
+- **요청 method**에 따라 view 함수에 대한 **엑세스를 제한**
+- 요청이 조건을 충족시키지 못하면 **HttpResponseNotAllowed을 return**
+- **405 Method Not Allowed**
+
+- require_http_methods(), require_POST(), require_safe()
+
+<br />
+
+> require_http_methods()
+
+- view 함수가 **특정한 method 요청에 대해서만 허용**하도록 하는 decorator
+- list 형식으로 http method 목록을 제한
+
+```python
+from django.views.decorators.http import require_http_method
+
+@require_http_methods(["GET", "POST"])
+def my_view(request):
+    ...
+```
+
+<br />
+
+> require_POST()
+
+- view 함수가 **POST method 요청만 승인**하도록 하는 decorator
+- POST method만 사용하는 delete() view 함수를 살펴보자.
+
+```python
+# 기존
+def delete(request, pk):
+    # article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
+    if request.method == 'POST':
+        article.delete()
+        return redirect('articles:index')
+    return redirect('articles:detail', article.pk)
+
+
+# require_POST 사용
+@require_POST
+def delete(request, pk):
+    # article = Article.objects.get(pk=pk)
+    article = get_object_or_404(Article, pk=pk)
+    article.delete()
+    return redirect('articles:index')
+```
+
+- request.method가 POST일 때와 아닐 때의 return을 달리 할 필요가 없다.
+- request.method를 함수 내부에서 POST인지 확인할 필요가 없다.
+- 이를 정리해줄 수 있다.
+
+<br />
+
+> require_safe()
+
+- view 함수가 **GET(및 HEAD method)만 허용하도록 요구**하는 decorator
+- django는 **require_GET() 대신 require_safe()**를 사용하는 것을 권장
+
+<br />
+
+## Media files
+
+- **사용자가 웹에서 업로드하는 정적 파일**
+
+<br />
+
+### Model field : ImageField()
+
+- 이미지 업로드에 사용하는 모델 필드
+- **FileField를 상속받는 서브 클래스** → FileField의 모든 속성 및 메서드 사용 가능
+- 추가로 사용자에 의해 업로드된 객체가 유효한 이미지인지 검사
+
+- ImageField 인스턴스는 최대 길이가 100자인 문자열로 DB에 생성
+- max_length 인자를 사용하여 최대 길이를 변경
+
+- 주의📢 : 사용하려면 반드시 **Pillow 라이브러리** 필요
+- ImageField migration 시 필요한 라이브러리
+
+<br />
+
+### FileField()
+
+- 파일 업로드에 사용하는 모델 필드
+- 2개의 선택 인자 : **upload_to**, storage
+- 참고자료 : `[django 공식문서 - Model Field Types](https://docs.djangoproject.com/en/4.0/ref/models/fields/#field-types)`
+
+<br />
+
+### ImageField 작성법
+
+- upload_to='images/'
+- 실제 이미지가 저장되는 경로 지정
+
+- blank=True
+- 기본값은 False
+- 이미지 필드에 빈 값(빈 문자열)이 허용되도록 설정(**이미지를 선택적으로 업로드** 가능)
+
+<br />
+
+#### 코드
+
+```python
+# models.py
+
+class Article(models.Model):
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    # saved to 'MEDIA_ROOT/images/'
+    image = models.ImageField(upload_to='images/', blank=True) ⭐
+    created_at = models.DateTimeField(auto_now_add=True)
+    ...
+```
+
+<br />
+
+#### upload_to argument
+
+- 업로드 디렉토리와 파일 이름을 설정하는 2가지 방법 제공
+
+> 가. 문자열 값이나 경로 지정
+
+- 파이썬의 strftime() 형식이 포함 가능
+- 파일 업로드 날짜/시간으로 대체
+
+```python
+# models.py
+
+class MyModel(models.Model):
+    # MEDIA_ROOT/uploads/ 경로로 파일 업로드
+    upload = models.FileField(upload_to='uploads/')
+
+    # MEDIA_ROOT/uploads/2021/01/01/ 경로로 파일 업로드
+    upload = models.FileField(upload_to='uploads/%Y/%m/%d/')
+```
+
+<br />
+
+> 참고 : time 모듈의 strftime()
+
+- time.strftime(format[, t])
+- 날짜 및 시간 객체를 문자열 표현으로 변환하는 데 사용
+
+<br />
+
+> 나. 함수 호출
+
+- 체계적으로 경로를 지정
+
+```python
+# models.py
+
+def articles_image_path(instance, filename):
+    # 'MEDIA_ROOT/image_<pk>/' 경로에 '<filename>' 이름으로 업로드
+    return f'image_{instance.pk}/{filename}'
+
+class Article(models.Model):
+    image = models.ImageField(upload_to=articles_image_path)
+```
+
+<br />
+
+#### Model field option : blank
+
+- 기본값: False
+
+- True인 경우 필드를 비워둘 수 있다.
+- DB에는 ''(빈 문자열)이 저장
+
+- 유효성 검사에서 사용(is_valid)
+- 모델 필드에 blank=True를 작성하면 form 유효성 검사에서 빈 값을 입력 가능
+
+<br />
+
+#### Model field option : "null"
+
+- 기본값: False
+- True인 경우 django는 **빈 값에 대해 DB에 NULL로 저장**
+
+<br />
+
+> 주의 사항
+
+- CharField, TextField와 같은 **문자열 기반 필드에는 사용하는 것을 피해야 한다.**
+- 문자열 기반 필드에 True로 설정 시 **'데이터 없음(no data)'**에 "빈 문자열(1)"과 "NULL(2)"의 2가지 가능한 값이 있음을 의미
+- 대부분의 경우 "데이터 없음"에 대해 한 가지의 가능한 값을 가진다.
+- Django는 **NULL이 아닌 빈 문자열을 사용하는 것을 규칙**으로 한다.
+
+<br />
+
+> blank & null 비교
+
+```python
+# models.py
+
+class Person(models.Model):
+    name = models.CharField(max_length=10)
+
+    # null=True 금지
+    bio = models.TextField(max_length=50, blank=True)
+
+    # 문자열 필드 아닌 경우 : null, blank 모두 설정 가능
+    birth_date = models.DateField(null=True, blank=True)
+```
+
+- blank : Validation-related
+- null : Database-related
+
+- 문자열 기반 및 비문자열 기반 필드 모두에 대해 null option은 DB에만 영향
+- form에서 빈 값을 허용하려면 blank=True를 설정
+
+<br />
+
+### ImageField(or FileField) 사용을 위한 단계
+
+1. settings.py에 **MEDIA_ROOT**, **MEDIA_URL** 설정
+2. **upload_to 속성을 정의**하여 업로드된 파일에 사용할 ****MEDIA_ROOT의 하위 경로를 지정**
+3. 업로드된 파일의 경로는 **django가 제공하는 'url' 속성**을 통해 얻을 수 있다.
+
+```html
+{%- raw -%}
+<img src="{{ article.image.url }}" alt="{{ article.image }}">
+{% endraw -%}
+```
+
+<br />
+
+#### MEDIA_ROOT
+
+- 사용자가 업로드한 파일(미디어 파일)들을 보관할 디렉토리의 **절대 경로**
+- django는 성능을 위해 업로드 파일은 DB에 저장하지 않음
+- 실제 DB에 저장되는 것은 **파일의 경로**
+
+- **주의📢 : MEDIA_ROOT는 STATIC_ROOT와 반드시 다른 경로로 지정**
+
+```python
+# settings.py
+
+MEDIA_ROOT = BASE_DIR / 'media'
+```
+
+<br />
+
+#### MEDIA_URL
+
+- MEDIA_ROOT에서 제공되는 미디어를 처리하는 URL
+- **업로드된 파일의 주소**(URL)를 만들어주는 역할
+- 웹 서버 사용자가 사용하는 public URL
+
+- 비어 있지 않은 값으로 설정한다면 반드시 slash(/)로 끝나야 한다.
+
+- **주의📢 : MEDIA_URL은 STATIC_URL와 반드시 다른 경로로 지정**
+
+```python
+# settings.py
+
+MEDIA_URL = '/media/'
+```
+
+<br />
+
+#### 개발 단계에서 사용자가 업로드한 파일 제공
+
+- 참고문서 : `[django 공식문서 - MEDIA UPLOAD](https://docs.djangoproject.com/ko/4.0/howto/static-files/#serving-files-uploaded-by-a-user-during-development)`
+- settings.MEDIA_URL, settings.MEDIA_ROOT 필요
+
+<br />
+
+> project의 urls.py에 import
+
+```python
+# crud/urls.py
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # ... the rest of your URLconf goes here ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+- import와 +를 위와 같이 처리해준다.
+- + 는 list에 list를 붙이는 방식
+
+<br />
+
+> migration
+
+- Pillow pip를 install
+- freeze는 센스껏
+- migration을 실시
+
+```bash
+$ pip install Pillow
+$ pip freeze > requirements.txt
+
+$ python manage.py makemigrations
+$ python manage.py migrate
+```
+
+<br />
+
+### Image 업로드(CREATE)
+
+> form 태그 : enctype(인코딩) 속성
+
+**input타입이 File일 때에는 반드시 인코딩 속성이 필요하다!!**
+
+- **multipart/form-data**
+    - 전송되는 데이터의 형식을 지정
+    - 파일/이미지 업로드 시에 반드시 사용
+    - `<input type="file" />`을 사용할 경우에 사용
+
+- 기본값 : 모든 문자 인코딩
+- application/x-www-form-urlencoded
+
+- text/plain
+    - 인코딩을 하지 않은 문자 상태로 전송
+    - 공백은 '+' 기호로 변환하지만, 특수 문자는 인코딩하지 않음
+
+<br />
+
+> 코드
+
+```html
+{%- raw -%}
+<!-- articles/create.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>CREATE</h1>
+  <hr>
+  <form action="{% url 'articles:create' %}" method="POST" enctype="multipart/form-data">
+    ...
+  </form>
+{% endblock content %}
+{% endraw -%}
+```
+
+<br />
+
+#### accept 속성
+
+- 입력 허용할 파일 유형을 나타내는 문자열
+- 쉼표로 구분된 "고유 파일 유형 지정자" (unique file type specifiers)
+- **파일을 검증하는 것은 아님**
+- (accept 속성 값을 image라고 하더라도 비디오/오디오 및 다른 형식 파일 제출 가능)
+
+- 고유 파일 유형 지정자
+- `<input type="file">`에서 선택할 수 있는 파일의 종류를 설명하는 문자열
+
+<br />
+
+#### request.FILES
+
+> CREATE에서 이미지 잘 올렸는데 왜 DB에 저장이 안 되나요?
+
+- 지금까지 DB에 받은 것은 request.POST에 있는 정보
+- image와 같은 file은 **request.FILES**에 저장되어 전달!!
+- 아래처럼 argument로 request.FILES를 추가
+
+<br />
+
+```python
+def create(request):
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES)
+    ...
+```
+
+- 위의 코드처럼 작성하면 이미지가 DB에 저장
+- MEDIA_ROOT에 저장된 경로대로 image 파일이 저장
+- DB에는 경로만 text 형식으로 저장
+
+<br />
+
+### Image 읽어오기(READ)
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+...
+{% block content %}
+  <h1>DETAIL</h1>
+  <h3>{{ article.pk }}번째 글</h3>
+  <img src="{{ article.image.url }}" alt="{{ article.image }}">
+  <hr>
+  ...
+{% endblock content %}
+{% endraw -%}
+```
+
+- template에 img 태그를 넣고 src와 alt를 article.image.url, article.image로 지정
+    - article.image.url : 업로드 파일의 경로
+    - article.image : 업로드 파일의 이름
+
+- django가 제공하는 **file에 대한 기능**
+- settings.py에 지정한 MEDIA_URL에 의거해 image 경로 및 alt 지정
+
+- static, media 파일 모두 서버에 요청해서 조회하는 것
+- 서버에 요청하기 위해서는 url이 필요
+
+<br />
+
+### Image 수정(UPDATE)
+
+- 이미지는 바이너리 데이터(하나의 덩어리)
+- 텍스트처럼 일부만 수정하는 것이 불가능
+- 때문에 **새로운 사진으로 덮어 씌우는 방식을 사용**
+
+```html
+{%- raw -%}
+<!-- articles/update.html -->
+<form action="{% url 'articles:create' %}" method="POST" enctype="multipart/form-data">
+...
+</form>
+{% endraw -%}
+```
+
+update template의 form 태그에 enctype을 위와 같이 작성해넣는다.
+
+<br />
+
+```python
+# articles/views.py
+form = ArticleForm(request.POST, request.FILES, instance=article)
+```
+
+- update view 함수에 request.FILES parameter 입력
+- keyword 인자를 사용하면 순서는 상관 없고, 위와 같이 작성하면 순서대로 작성
+
+
+<br />
+
+#### 같은 이름의 파일
+
+> 같은 이름의 파일이 업로드되면 어떡하나요?
+
+파일 이름 뒤에 임의의 랜덤값이 들어가서 구분되니 걱정 X
+
+<br />
+
+#### image가 없는 게시글 에러
+
+> image 업로드 없는 게시글은 rendering 에러가 뜨는데요?
+
+template에서 if 태그를 이용
+
+<br />
+
+- 기존
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+<img src="{{ article.image.url }}" alt="{{ article.image }}"> 
+{% endraw -%}
+```
+
+- 위의 코드는 image가 있다고 간주하고 바로 부여
+- 없을 수도 있음을 가정해야 한다.
+
+<br />
+
+```html
+{%- raw -%}
+<!-- articles/detail.html -->
+{% if article.image %}
+  <img src="{{ article.image.url }}" alt="{{ article.image }}"> 
+{% endif %}
+{% endraw -%}
+```
+
+- 위처럼 if문을 이용해 article.image가 있는 경우만 추가
+- 또는 static으로 기본 스켈레톤 이미지를 넣어도 된다.
+
+<br />
+
+## Image Resizing
+
+> 이미지 크기가 너무 큰데 조정할 수 없나요?
+
+- 실제 원본 이미지를 서버에 그대로 업로드 하는 것은 서버의 부담이 큰 작업
+- img 태그에서 직접 사이즈를 조정할 수 있지만, **업로드 될 때 이미지 자체를 resizing하는 것을 고려**
+- **django-imagekit 라이브러리**(`[링크](https://github.com/matthewwithanm/django-imagekit)`)활용
+- django-imagekit는 Pillow 라이브러리를 필요로 함
+
+<br />
+
+### django-imagekit
+
+- 가. pip install
+
+```bash
+$ pip install django-imagekit
+```
+
+<br />
+
+- 나. settings.py의 INSTALLED_APPS에 'imagekit' 추가
+
+```python
+# crud/settings.py
+
+INSTALLED_APPS = [
+    'articles',
+    'imagekit',
+    ...
+]
+```
+
+<br />
+
+### django-imagekit 사용
+
+#### 가. 원본 이미지를 재가공하여 썸네일만 저장
+
+```python
+# 공식문서
+
+from django.db import models
+from imagekit.models import ProcessedImageField
+from imagekit.processors import Thumbnail
+
+class Profile(models.Model):
+    avatar_thumbnail = ProcessedImageField(upload_to='avatars',
+                                           processors=[ResizeToFill(100, 50)],
+                                           format='JPEG',
+                                           options={'quality': 60})
+
+profile = Profile.objects.all()[0]
+print(profile.avatar_thumbnail.url)    # > /media/avatars/MY-avatar.jpg
+print(profile.avatar_thumbnail.width)  # > 100
+```
+
+위는 공식문서이다. 우리의 models.py에 적용해보자.
+
+<br />
+
+```python
+from django.db import models
+from imagekit.models import ProcessedImageField
+# from imagekit.processors import ResizeToFill  공식문서는 이건데 아래 thumbnail 사용
+from imagekit.processors import Thumbnail
+
+# Create your models here.
+class Article(models.Model):
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    # image = models.ImageField(upload_to='images/', blank=True)
+    image = ProcessedImageField(
+        blank=True,
+        upload_to='thumbnails/',
+        processors=[Thumbnail(200, 300)],
+        format='JPEG',
+        options={'quality': 60}
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+```
+
+- **import되는 모듈을 확실하게 import**하는 것에 주의
+- 기존 ImageField 주석처리 : imagekit가 제공하는 Thumbnail 사용
+- **blank=True** 지정에 주의
+- upload_to를 별도의 'thumbnails/'로 지정
+- ****field가 바뀌므로 migration 재진행** 반드시 해야 한다!!
+
+<br />
+
+#### 나. 원본도 저장, 썸네일도 저장
+
+```python
+from django.db import models
+from imagekit.models import ProcessedImageField, ImageSpecField
+# from imagekit.processors import ResizeToFill  공식문서는 이건데 아래 thumbnail 사용
+from imagekit.processors import Thumbnail
+
+# Create your models here.
+class Article(models.Model):
+    title = models.CharField(max_length=10)
+    content = models.TextField()
+    image = models.ImageField(upload_to='images/', blank=True)
+    image_thumbnail = ImageSpecField(
+        source='image',     # 원본 ImageField 명
+        processors=[Thumbnail(200, 300)],
+        format='JPEG',
+        options={'quality': 60}
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+```
+
+- image와 image_thumbnail에 각각 원본과 썸네일 저장
+- 필요에 따라 원본이나 썸네일을 각각 사용 가능
+- 원본인 image를 먼저 저장, **blank는 image에서 True 체크**
+- **image를 source로 하여** thumbnail인 image_thumbnail 생성 및 저장

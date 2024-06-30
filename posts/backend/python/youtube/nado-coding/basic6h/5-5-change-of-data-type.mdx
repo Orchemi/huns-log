@@ -1,0 +1,62 @@
+---
+title: "[Python] 자료구조의 변경"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-14T00:00
+last_modified_at: 2021-07-14T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 자료구조의 변경
+
+```python
+menu = {"커피", "우유", "주스"}
+
+print(menu)
+
+# 출력값 : {'주스', '커피', '우유'}
+
+
+# type 확인
+print(menu, type(menu))
+
+# 출력값 : {'커피', '주스', '우유'} <class 'set'>
+
+
+# type : set → list
+menu = list(menu)
+print(menu, type(menu))
+
+# 출력값 : ['커피', '우유', '주스'] <class 'list'>
+
+
+# type : list → tuple
+menu = tuple(menu)
+print(menu, type(menu))
+
+# 출력값 : ('우유', '커피', '주스') <class 'tuple'>
+
+
+# type : tuple → set
+menu = set(menu)
+print(menu, type(menu))
+
+# 출력값 : {'커피', '주스', '우유'} <class 'set'>
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

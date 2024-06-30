@@ -1,0 +1,47 @@
+---
+title: "[Python] Quiz 3"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-12T00:00
+last_modified_at: 2021-07-12T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 문제
+
+```html
+당신은 최근에 코딩 스터디 모임을 새로 만들었습니다. 월 4회 스터디를 하려고
+하는데 3번은 온라인, 1번은 오프라인으로 하기로 했습니다. 아래 조건에 맞는
+오프라인 모임 날짜를 정해주는 프로그램을 작성하시오. 조건 1 : 랜덤으로 날짜를
+뽑아야 함 조건 2 : 월별 날짜는 다름을 감안하여 최소 일수인 28 이내로 정함 조건 3
+: 매월 1~3일은 스터디 준비를 해야 하므로 제외 (출력문 예제) 오프라인 스터디 모임
+날짜는 매월 x 일로 선정되었습니다.
+```
+
+<br />
+
+## 나의 작성 코드
+
+```python
+from random import *
+offline = randint(4, 28)
+
+print("오프라인 스터디 모임 날짜는 매월 " + str(offline) + "일로 선정되었습니다.")
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

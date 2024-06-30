@@ -1,0 +1,72 @@
+---
+title: "[Python] 한 줄 For 반복문"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-14T00:00
+last_modified_at: 2021-07-14T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 한 줄로 끝내는 for문 활용
+
+- 다음의 예시로 설명한다.
+
+```markdown
+출석번호가 1, 2, 3, 4... 앞에 100을 붙이기로 가정
+→ 101, 102, 103, 104
+```
+
+```python
+students = [1,2,3,4,5]
+print(students)
+
+# 출력값 : [1, 2, 3, 4, 5]
+
+
+# 출석번호에 100 더하기
+students = [i+100 for i in students]
+print(students)
+
+# 출력값 : [101, 102, 103, 104, 105]
+```
+
+<br />
+
+## 1. 학생 이름을 길이로 변환
+
+```python
+students = ["Ironman", "Thor", "Groot"]
+students = [len(i) for i in students]
+print(students)
+
+# 출력값 : [7, 4, 5]
+```
+
+<br />
+
+## 2. 학생 이름을 대문자로 변환
+
+```python
+students = ["Ironman", "Thor", "Groot"]
+students = [i.upper() for i in students]
+print(students)
+
+# 출력값 : ['IRONMAN', 'THOR', 'GROOT']
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

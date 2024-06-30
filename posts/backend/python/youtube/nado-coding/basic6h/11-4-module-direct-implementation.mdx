@@ -1,0 +1,71 @@
+---
+title: "[Python] 모듈 직접 실행"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-20T00:00
+last_modified_at: 2021-07-20T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 모듈 직접 실행
+
+## 가. 모듈 직접 실행
+
+- thailand.py 파일을 다음과 같이 수정한다.
+
+```python
+class ThailandPackage:
+    def detail(self):
+        print("[태국 패키지 3박 5일] 방콕, 파타야 여행 (야시장 투어) 50만원")
+
+if __name__ == "__main__":
+    print("Thailand 모듈을 직접 실행")
+    print("이 문장은 모듈을 직접 실행할 때만 실행됩니다.")
+    trip_to = ThailandPackage()
+    trip_to.detail()
+else:
+    print("Thailand 외부에서 모듈 호출")
+```
+
+이후 thailand.py 에서 모듈을 실행하면 실행결과는 다음과 같다.
+
+```markdown
+Thailand 모듈을 직접 실행
+이 문장은 모듈을 직접 실행할 때만 실행됩니다.
+[태국 패키지 3박 5일] 방콕, 파타야 여행 (야시장 투어) 50만원
+```
+
+<br />
+
+## 나. 모듈 외부에서 호출
+
+```python
+from travel import *
+
+trip_to = thailand.ThailandPackage()
+trip_to.detail()
+```
+
+실행결과는 다음과 같다.
+
+```markdown
+Thailand 외부에서 모듈 호출
+[태국 패키지 3박 5일] 방콕, 파타야 여행 (야시장 투어) 50만원
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

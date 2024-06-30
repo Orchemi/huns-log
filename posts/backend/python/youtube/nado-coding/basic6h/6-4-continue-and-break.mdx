@@ -1,0 +1,52 @@
+---
+title: "[Python] Continue & Break"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-14T00:00
+last_modified_at: 2021-07-14T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# Continue와 Break
+
+```markdown
+- 선생님이 수업 중 출석번호로 학생들에게 책을 읽으라고 하는 경우 가정
+- 출석번호 2, 5번은 결석
+  - 결석한 학생은 넘어간다.
+- 출석번호 7번은 책이 없다.
+  - 선생님은 책이 없으면 수업을 끝낸다.
+- continue : 출석번호 2, 5번은 skip하고 계속 책을 읽게 하는 역할
+```
+
+```python
+absent = [2, 5] # 결석
+no_book = [7]  # 책이 없음
+
+for student in range(1, 11):  # 1,2,3,4,5,6,7,8,9,10
+    if student in absent:
+        continue              # 해당 student에 대한 코드 진행은 더 없이 다음 student에 대한 반복 진행
+    elif student in no_book:
+        print("오늘 수업 여기까지. {0}는 교무실로 따라와".format(student))
+        break                 # for문 반복 완전 종료
+    print("{0}야, 책을 읽어봐.".format(student))
+```
+
+- Continue : 해당 반복은 skip 하고 다음 반복에 대해 코드 진행
+- Break : 해당 For 반복문 완전히 종료
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`

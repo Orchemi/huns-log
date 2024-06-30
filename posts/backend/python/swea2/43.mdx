@@ -1,0 +1,1117 @@
+---
+title: "[Python] 객체지향"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-08T11:40
+last-modified-at: 2022-01-08T11:43
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #43](https://swexpertacademy.com)`
+
+<br />
+
+## 객체지향의 이해
+
+### 객체지향 프로그래밍
+
+객체를 이용해 문제를 해결하는 프로그래밍
+
+1. 상태와 행위로 이루어진 객체 형성
+2. 객체 조립
+3. 프로그램 형성
+
+부품화와 재사용성에 좋다.
+
+<br />
+
+### 객체지향 프로그래밍의 구성
+
+#### 클래스(Class)
+
+- 같은 문제 도메인에 속하는 속성(attribute)과 행위(behavior)를 정의
+- 객체지향 프로그래밍의 기본적인 사용자 정의 데이터 타입
+
+#### 객체(Object)
+
+- 인스턴스 : 메모리에 로딩된 클래스를 통해 클래스를 템플릿으로 하여 메모리 상에 생성된 정보
+- 자신 고유의 속성을 가지며 클래스에서 정의한 행위 수행
+- 객체의 행위는 클래스에서 정의된 행위에 대한 정의를 공유함으로써 메모리를 효율적으로 사용
+
+#### 메서드(Method)
+
+- 메시지(Message)라고도 부름
+- 클래스로부터 생성된 객체 사용 시 객체에 명령을 내리는 행위
+- 객체가 가지고 있는 메서드를 호출한다 -> 객체에 메시지를 전달한다
+- 한 객체의 속성을 조작할 목적으로 사용
+- 객체 간의 통신은 메시지 전달을 통해 이루어짐
+
+<br />
+
+### 객체지향 프로그래밍의 특징
+
+#### 추상화
+
+- 객체에서 공통된 속성과 행위를 추출하는 것
+
+- ex. 홍길동, 이순신 강감찬 등의 학생들이 있다면, **학생으로 추상화**
+  - 공통속성 : 학번, 이름, 주민번호, 학과, 주소, 전화번호
+  - 공통행위 : 수강신청, 수강취소, 휴학신청, 복학신청 등
+- 여기서 학생 -> **추상 데이터 타입**
+
+<br />
+
+> 추상 데이터 타입
+
+1. 데이터 타입의 표현과 연산을 캡슐화
+2. 접근 제어를 통해 데이터의 정보를 은닉
+
+<br />
+
+> 객체지향 프로그래밍에서는
+
+1. 클래스 : 추상 데이터 타입
+2. 객체 : 추상 데이터 타입의 인스턴스
+3. 메서드 : 추상 데이터 타입에서 정의된 연산
+
+<br />
+
+#### 상속
+
+- 새로운 클래스가 기존의 클래스의 데이터와 연산을 이용할 수 있게 해주는 속성
+- 하위 클래스를 이용해 프로그램의 요구에 맞추어 클래스 수정 가능
+- 클래스 간의 종속 관계를 형성하여 객체 조직화
+
+<br />
+
+> 상속의 효과
+
+1. 재사용으로 인해 코드가 줄어듦(부모 클래스의 속성 재사용)
+2. 범용적인 사용 가능 : object 타입의 매개변수에는 string이나 int의 객체 쓰여도 상관 X
+3. 자료와 메서드의 자유로운 사용 및 추가 가능
+
+<br />
+
+#### 다형성
+
+- 다양한 형태로 나타날 수 있는 특징
+- 상위 클래스의 행위를 하위 클래스에서 재정의하기 때문에 생김
+- 어떤 한 요소에 여러 개념을 넣어 놓는 것
+
+<br />
+
+> 오버라이딩
+
+같은 이름의 메서드가 **여러 클래스에서 다른 기능**을 하는 것
+
+<br />
+
+> 메서드 오버라이딩
+
+- 상속으로 물려 받은 자료나 메서드를 그대로 사용하지 않고, 하위 클래스에서 새로 정의해 사용하는 기법
+- 상위 클래스의 메서드와 동일한 서명(매개변수의 타입, 개수, 리턴 타입)을 가져야 함
+- 코드의 재사용성 향상
+
+<br />
+
+> 오버로딩
+
+같은 이름의 메서드가 **인자의 개수나 자료형에 따라서 다른 기능**을 하는 것
+
+<br />
+
+> 메서드 오버로딩
+
+- 클래스 내부에 동일한 이름의 행위를 여러 개 정의하는 것
+- 메서드의 이름이 같고, 매개변수의 타입과 수는 서로 달라야 함
+- 리턴 타입은 관계하지 않음
+- 메서드 이름을 하나로 통일 가능하며, 같은 이름의 메서드에 여러 종류의 매개 변수를 받을 수 있음
+
+<br />
+
+#### 실습 코드 : 딕셔너리와 리스트 객체
+
+멤버의 정보를 관리
+
+- 개개인을 딕셔너리 객체로 저장
+- 이 딕셔너리 객체들을 모두 저장하는 리스트 객체 필요
+
+```python
+members = [
+    {"name": "홍길동", "age": 20},
+    {"name": "이순신", "age": 45},
+    {"name": "강감찬", "age": 35},
+]
+
+for member in members:
+    print("{0}\t{1}".format(member["name"], member["age"]))
+
+
+[결과]
+홍길동  20
+이순신  45
+강감찬  35
+```
+
+<br />
+
+#### 실습코드 2 : 딕셔너리 객체의 생성 및 정보 출력
+
+```python
+# 딕셔너리 객체 생성 함수
+def create(name, age):
+    return {"name": name, "age": age}
+
+
+# 딕셔너리 정보를 문자열로 변환
+def to_str(person):
+    return "{0}\t{1}".format(person["name"], person["age"])
+
+
+# 딕셔너리 객체를 가진 members 리스트 객체 생성
+members = [create("홍길동", 20), create("이순신", 45), create("강감찬", 35)]
+
+
+# 함수 문자열 반복 출력
+for member in members:
+    print(to_str(member))
+
+
+[결과]
+홍길동  20
+이순신  45
+강감찬  35
+```
+
+<br />
+
+## 클래스 정의
+
+### 클래스
+
+객체 생성을 위한 청사진 또는 템플릿
+
+<br />
+
+> 멤버와 관련된 추상 데이터 타입이 필요하다면
+
+1. 멤버 클래스 설계
+2. 멤버 클래스 제작
+3. 객체 생성
+
+<br />
+
+### 클래스 정의 및 객체 생성
+
+1. 클래스 정의
+   class 클래스명:
+
+2. 객체 생성
+   변수 = 클래스명() -> 생성자 메서드(클래스 이름과 동일한 메서드)
+
+```python
+class Person:
+    pass
+
+# 멤버 객체 생성하는 생성자 메서드
+member = Person()
+
+# 첫 번째 인자인 객체가, 두 번째인자인 클래스의 인스턴스인지 검사
+if isinstance(member, Person):
+    print("member는 Person 클래스의 인스턴스입니다.")
+
+
+[결과]
+member는 Person 클래스의 인스턴스입니다.
+```
+
+<br />
+
+### 객체의 생성과 소멸, 그리고 self
+
+1. 생성자 메서드
+
+- 객체를 생성하기 위해 호출
+- `__init__` 메서드 실행
+
+- 정의
+
+```python
+class 클래스명:
+    def __init__(self, 매개변수목록):
+        ...
+```
+
+<br />
+
+2. 소멸자 메서드
+
+- 객체가 소멸되기 전에 호출
+- `__del__` 메서드 실행
+- 정의
+
+```python
+class 클래스명:
+    ...
+
+    def __del__(self):  # self를 제외한 매개변수 사용 X
+        ...
+
+```
+
+<br />
+
+3. self
+
+- 객체 공간을 가리키는 식별자
+- 객체공간의 필드와 메서드에 접근할 경우 self.식별자 형식 이용
+
+```python
+class Person:
+    # self가 가리키는 객체 공간에 name, age 필드 생성
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print("{0} 객체가 생성되었습니다.".format(self.name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.name))
+
+member = Person("홍길동", 20)
+
+print("{0}\t{1}".format(member.name, member.age))
+
+print(dir(member))
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+홍길동  20
+['__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__',
+'__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__',
+'__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__',
+'__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__',
+'__weakref__', 'age', 'name']
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+## 클래스와 인스턴스의 특징
+
+### 인스턴스 메서드
+
+- self가 가리키는 객체의 필드 정보에 접근해 특정 목적의 기능을 수행하도록 정의된 메서드
+- 정의
+
+ex. to_str(self) 메서드
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print("{0} 객체가 생성되었습니다.".format(self.name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.name))
+
+    def to_str(self):  # 인스턴스 메서드이므로 self 매개변수 필수
+        return "{0}\t{1}".format(self.name, self.age)
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+for member in members:
+    print(member.to_str())
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+홍길동  20
+이순신  45
+강감찬  35
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+### 인스턴스 변수
+
+- 클래스 내에서 self.변수 형태를 가지는 변수
+- 객체마다 가지고 있는 개체 고유의 정보
+
+> 멤버 필드의 접근 제한이 이루어지지 않을 경우
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        # 캡슐화된 필드로 만드는 것이 필요
+        # 입력 시 유효성 검사를 할 수 없으므로 잘못된 값 저장 가능성
+        # ex. age필드에 200, -20 등의 값 입력
+
+        print("{0} 객체가 생성되었습니다.".format(self.name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.name, self.age)
+```
+
+<br />
+
+> 인스턴스 변수의 접근 제한 기능
+
+- 클래스 외부에서 필드에 접근하는 것을 제한
+- **프라이빗 필드 생성** : `self.__name = name`
+- getter/setter 메서드의 제공 여부 결정 가능
+  - getter : 멤버를 읽어오는 메서드
+  - setter : 멤버를 변경하는 메서드
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+    # __name 필드의 값을 반환하는 getter 메서드
+    # __name 필드에 대해서는 getter 메서드만 제공
+    def get_name(self):
+        return self.__name
+
+    # __age 필드에 대해서는 getter 메서드와 setter 메서드 전부 제공
+    def get_age(self):
+        return self.__age
+
+    # __age 필드의 값을 변경하는 setter 메서드
+    def set_age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0이상의 값만 허용합니다.")
+        self.__age = age
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+members[0].set_age(-20)
+
+for member in members:
+    print(member.to_str())
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+Traceback (most recent call last):
+  File "c:\Intellij\Python\SWEA\2022-01-08-SWEA-Python2#44-50.py", line 31, in <module>
+    members[0].set_age(-20)
+  File "c:\Intellij\Python\SWEA\2022-01-08-SWEA-Python2#44-50.py", line 25, in set_age
+    raise TypeError("나이는 0이상의 값만 허용합니다.")
+TypeError: 나이는 0이상의 값만 허용합니다.
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+### 데코레이터(Decorator))
+
+- getter/setter 기능을 대신할 수 있는 기능
+- 변수 이름과 같은 메서드를 만들어 사용 가능
+
+1. @property
+2. @property의이름.setter
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+    @property
+    # 변수처럼 사용 가능
+    # __name 필드값을 반환하는 getter메서드의 역할
+    def name(self):
+        return self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @age.setter
+    # 변수처럼 사용 가능
+    # __name 필드값을 반환하는 setter메서드의 역할
+    def age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0 이상의 값만 허용합니다.")
+        self.__age = age
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+# age @property 데코레이터를 이용해 변수처럼 값 저장
+members[0].age = 22
+
+for member in members:
+    print(member.to_str())
+
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+홍길동  22
+이순신  45
+강감찬  35
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+### 클래스 변수
+
+클래스 내에서 클래스명.변수 형식으로 선언된 변수
+
+- 클래스 변수 정의
+
+```python
+class 클래스명:
+    클래스변수 = 값
+```
+
+<br />
+
+- 클래스 변수 접근
+
+```python
+클래스명.클래스변수
+```
+
+<br />
+
+- 클래스 변수의 count 활용법
+
+```python
+class Person:
+    count = 0
+
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        Person.count += 1
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @age.setter
+    def age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0 이상의 값만 허용합니다.")
+        self.__age = age
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+print("현재 Person 클래스의 인스턴스는 총 {0} 개입니다.".format(Person.count))
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+현재 Person 클래스의 인스턴스는 총 3 개입니다.
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+### 클래스 메서드
+
+클래스가 소유한 메서드
+
+- 클래스 메서드의 정의
+
+```python
+class 클래스명:
+    ...
+
+    @classmethod
+    def 클래스메서드(cls, 매개변수목록):
+        ...
+```
+
+<br />
+
+- 클래스 메서드의 사용
+
+```python
+class Person:
+    count = 0
+
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        Person.count += 1
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @age.setter
+    def age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0 이상의 값만 허용합니다.")
+        self.__age = age
+
+    @classmethod
+    def get_info(cls):
+        return "현재 Person 클래스의 인스턴스는 총 {0} 개입니다.".format(cls.count)
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+print(Person.get_info())
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+현재 Person 클래스의 인스턴스는 총 3 개입니다.
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+### 연산자 오버로딩
+
+- 파이썬에서 연산자는 각 클래스의 메서드와 매핑(mapping)되어 있음
+- 사용자 정의 클래스에는 연산자에 대해 매핑될 메서드가 없음
+  -> 연산자를 사용하기 위해서 연산자를 중복해서 정의
+
+<br />
+
+- 비교연산자 오버로딩
+
+```python
+class Person:
+    count = 0
+
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        Person.count += 1
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    def to_str(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @age.setter
+    def age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0 이상의 값만 허용합니다.")
+        self.__age = age
+
+    @classmethod
+    def get_info(cls):
+        return "현재 Person 클래스의 인스턴스는 총 {0} 개입니다.".format(cls.count)
+
+    # self의 __age 필드가 other 객체의 __age 필드보다 크면 true 반환
+    def __gt__(self, other):
+        return self.__age > other.__age
+
+    # self의 __age 필드가 other 객체의 __age 필드보다 크거나 같으면 true 반환
+    def __ge__(self, other):
+        return self.__age >= other.__age
+
+    # self의 __age 필드가 other 객체의 __age 필드보다 작으면 true 반환
+    def __lt__(self, other):
+        return self.__age < other.__age
+
+    # self의 __age 필드가 other 객체의 __age 필드보다 작거나 같으면 true 반환
+    def __le__(self, other):
+        return self.__age <= other.__age
+
+    # self의 __age 필드가 other 객체의 __age 필드와 같으면 true 반환
+    def __eq__(self, other):
+        return self.__age == other.__age
+
+    # self의 __age 필드가 other 객체의 __age 필드와 같지 않으면 true 반환
+    def __ne__(self, other):
+        return self.__age != other.__age
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+cnt = len(members)
+i = 0
+
+while True:
+    print(
+        "members[{0}] > members[{1}] => {2}".format(i, 0, members[i] > members[i + 1])
+    )
+    i += 1
+    if i == cnt - 1:
+        print(
+            "members[{0}] > members[{1}] => {2}".format(i, 0, members[i] > members[0])
+        )
+        break
+
+```
+
+<br />
+
+### `__str()__` 메서드
+
+`__str()__` 메서드를 구현하면 str() 함수에 객체를 전달해 문자열로 변환
+
+```python
+class Person:
+    count = 0
+
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+        Person.count += 1
+        print("{0} 객체가 생성되었습니다.".format(self.__name))
+
+    def __del__(self):
+        print("{0} 객체가 제거되었습니다.".format(self.__name))
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @age.setter
+    def age(self, age):
+        if age < 0:
+            raise TypeError("나이는 0 이상의 값만 허용합니다.")
+        self.__age = age
+
+    @classmethod
+    def get_info(cls):
+        return "현재 Person 클래스의 인스턴스는 총 {0} 개입니다.".format(cls.count)
+
+    def __gt__(self, other):
+        return self.__age > other.__age
+
+    def __ge__(self, other):
+        return self.__age >= other.__age
+
+    def __lt__(self, other):
+        return self.__age < other.__age
+
+    def __le__(self, other):
+        return self.__age <= other.__age
+
+    def __eq__(self, other):
+        return self.__age == other.__age
+
+    def __ne__(self, other):
+        return self.__age != other.__age
+
+    def __str__(self):
+        return "{0}\t{1}".format(self.__name, self.__age)
+
+
+members = [Person("홍길동", 20), Person("이순신", 45), Person("강감찬", 35)]
+
+for member in members:
+    # Person 클래스의 객체 전달하면 __str__ 메서드 호출
+    print(str(member))
+
+
+
+[결과]
+홍길동 객체가 생성되었습니다.
+이순신 객체가 생성되었습니다.
+강감찬 객체가 생성되었습니다.
+홍길동  20
+이순신  45
+강감찬  35
+강감찬 객체가 제거되었습니다.
+이순신 객체가 제거되었습니다.
+홍길동 객체가 제거되었습니다.
+```
+
+<br />
+
+## 클래스 상속
+
+- 부모 클래스의 동작을 자식 클래스에서 재사용하거나 확장, 수정하는 것
+- 파이썬에서는 단일 상속만 지원
+- 하나의 클래스는 단일 클래스에서만 상속 가능
+- 정의
+
+```python
+class 클래스명(부모클래스명):
+```
+
+- 예시
+
+```python
+class Parent:
+    def __init__(self, family_name):
+        self.__family_name = family_name
+        print("Parent 클래스의 __init__() ...")
+
+    @property
+    def family_name(self):
+        return self.__family_name
+
+
+class Child(Parent):  # Parent 클래스 상속
+    def __init__(self, first_name, last_name):
+
+        # 부모 클래스의 __family_name 필드를 매개변수 last_name으로 초기화
+        Parent.__init__(self, last_name)
+        # super().__init__(last_name) : 클래스 이름 호출이 아니라 super() 써도 됨
+
+        self.__first_name = first_name
+        print("Child 클래스의 __init__() ...")
+
+    @property
+    def first_name(self):
+        return self.__first_name
+
+    @first_name.setter
+    def first_name(self, first_name):
+        self.__first_name = first_name
+
+    @property
+    def name(self):
+        return "{0}{1}".format(self.family_name, self.first_name)
+
+
+child = Child("길동", "홍")
+
+print(child.family_name)
+print(child.first_name)
+print(child.name)
+print("======>")
+child.first_name = "길순"
+print(child.name)
+
+
+
+
+[결과]
+Parent 클래스의 __init__() ...
+Child 클래스의 __init__() ...
+홍
+길동
+홍길동
+======>
+홍길순
+```
+
+<br />
+
+### 메서드 오버라이딩
+
+부모 클래스에 있는 메서드와 동일한 서명을 가진 메서드를 자식 클래스에서 다시 정의해 사용하는 것
+
+```python
+class Parent:
+    def __init__(self, family_name):
+        self.__family_name = family_name
+        print("Parent 클래스의 __init__() ...")
+
+    @property
+    def family_name(self):
+        return self.__family_name
+
+    def print_info(self):
+        print("Parent: {0}".format(self.family_name))
+
+
+class Child(Parent):  # Parent 클래스 상속
+    def __init__(self, first_name, last_name):
+        Parent.__init__(self, last_name)
+        # super().__init__(last_name) : 클래스 이름 호출이 아니라 super() 써도 됨
+
+        self.__first_name = first_name
+        print("Child 클래스의 __init__() ...")
+
+    @property
+    def first_name(self):
+        return self.__first_name
+
+    @first_name.setter
+    def first_name(self, first_name):
+        self.__first_name = first_name
+
+    @property
+    def name(self):
+        return "{0}{1}".format(self.family_name, self.first_name)
+
+    def print_info(self):
+        Parent.print_info(self)
+        # super().print_info()
+        print("Child: {0}".format(self.name))
+
+
+child = Child("길동", "홍")
+child.print_info()
+```
+
+<br />
+
+## 실습
+
+### 문제
+
+오름차순/내림차순으로 정렬하기
+
+- Student 클래스
+  - 프라이빗 필드를 가지고 있음
+  - 읽기 전용 name, gender property
+  - 읽기, 쓰기 모두 가능한 height property
+  - 특수함수 `__repr__`에 대한 정의를 가짐
+
+[결과]
+
+```python
+name으로 오름차순 정렬 후 ===>
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 홍길동, gender: 남, height: 176.5)
+
+name으로 내림차순 정렬 후 ===>
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 강감찬, gender: 남, height: 182.2)
+
+height으로 오름차순 정렬 후 ===>
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 이순신, gender: 남, height: 188.5)
+
+height으로 내림차순 정렬 후 ===>
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 유관순, gender: 여, height: 158.4)
+```
+
+<br />
+
+### 나의 Sol
+
+```python
+# -*- coding: utf-8 -*-
+# student_name_height.py
+
+
+class Student:
+    def __init__(self, name, gender, height):
+        self.__name = name
+        self.__gender = gender
+        self.__height = height
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def gender(self):
+        return self.__gender
+
+    @property
+    def height(self):
+        return self.__height
+
+    @height.setter
+    def height(self, height):
+        self.__height = height
+
+student_list = []
+Student("강감찬", "남", 182.2)
+Student("유관순", "여", 158.4)
+Student("이순신", "남", 188.5)
+Student("홍길동", "남", 176.5)
+```
+
+뭘 어떻게 해야할지 감이 안 온다.. 더 붙잡지 않고 답안을 보기로 했다.
+
+<br />
+
+### 모범 답안
+
+```python
+# -*- coding: utf-8 -*-
+# student_name_height.py
+
+
+class Student:
+    def __init__(self, name, gender, height):
+        self.__name = name
+        self.__gender = gender
+        self.__height = height
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def gender(self):
+        return self.__gender
+
+    @property
+    def height(self):
+        return self.__height
+
+    @height.setter
+    def height(self, height):
+        self.__height = height
+
+    # 객체 출력시 주로 사용하는 함수
+    def __repr__(self):
+        return "{0}(name: {1}, gender: {2}, height: {3})".format(
+            self.__class__.__name__, self.name, self.gender, self.height
+        )
+
+
+students = [
+    Student("홍길동", "남", 176.5),
+    Student("강감찬", "남", 182.2),
+    Student("유관순", "여", 158.4),
+    Student("이순신", "남", 188.5),
+]
+
+print("name으로 오름차순 정렬 후 ===>")
+for student in sorted(students, key=lambda x: x.name):
+    print(student)
+
+print("name으로 내림차순 정렬 후 ===>")
+for student in sorted(students, key=lambda x: x.name, reverse=True):
+    print(student)
+
+print("height으로 오름차순 정렬 후 ===>")
+for student in sorted(students, key=lambda x: x.height):
+    print(student)
+
+print("height으로 내림차순 정렬 후 ===>")
+for student in sorted(students, key=lambda x: x.height, reverse=True):
+    print(student)
+
+
+
+[결과]
+name으로 오름차순 정렬 후 ===>
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 홍길동, gender: 남, height: 176.5)
+
+name으로 내림차순 정렬 후 ===>
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 강감찬, gender: 남, height: 182.2)
+
+height으로 오름차순 정렬 후 ===>
+Student(name: 유관순, gender: 여, height: 158.4)
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 이순신, gender: 남, height: 188.5)
+
+height으로 내림차순 정렬 후 ===>
+Student(name: 이순신, gender: 남, height: 188.5)
+Student(name: 강감찬, gender: 남, height: 182.2)
+Student(name: 홍길동, gender: 남, height: 176.5)
+Student(name: 유관순, gender: 여, height: 158.4)
+```
+
+<br />
+
+## 알게된 사실
+
+1. sorted() 함수는 `reverse=True/False` 를 이용해 한 번에 오름/내림차순 정렬할 수 있다.
+
+2. sorted() 함수의 항목이 리스트나 딕셔너리 등 반복 가능한 시퀀스형일 때, `key=` 속성을 이용해 항목의 해당 속성을 특정해 정렬할 수 있다. 이때 각각의 항목의 세부 항목에 대해 sorted() 내에서 한 번에 해야하므로 `lambda x: x.속성`을 이용해 세부 항목에 대해 1차로 추려줄 필요가 있다.
+
+3. `__repr__` 함수는 보통 출력할 때 많이 사용하는 함수이다. 꼭 그래야하는 건 아니지만 컨벤션이 그렇다.

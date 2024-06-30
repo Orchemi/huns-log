@@ -1,0 +1,249 @@
+---
+title: "[SQL] DB 기초와 SQLite"
+
+categories:
+  - SQL
+
+tags:
+  - [DB, SQL]
+
+date: 2022-03-14T12:00
+last_modified_at: 2022-04-17T04:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## DB
+
+### DB란?
+
+- 체계화된, 논리적으로 연관된 데이터의 모임
+- 몇 개의 자료 파일을 조직적으로 통합
+- 자료 항목의 중복 제거, 자료를 구조화하여 기억
+- 자료의 집합체
+
+<br />
+
+### DB의 장점
+
+- 데이터 중복 최소화
+- 데이터 무결성(정확한 정보 저장)
+- 데이터 일관성
+- 데이터 독립성(물리적/논리적)
+- 데이터 표준화
+- 데이터 보안 유지
+
+<br />
+
+### RDB : 관계형 DB
+
+- Relational Database
+- key와 value들의 간단한 관계(relation)를 표(table) 형태로 정리
+- 관계형 모델에 기반
+
+<br />
+
+### RDB 용어
+
+> 스키마(schema)
+
+- 전반적인 명세 기술 : 자료의 구조, 표현방법, 관계 등
+
+<br />
+
+> 테이블(table)
+
+- 열과 행의 모델을 사용해 조직된 데이터 요소들의 집합
+- 열(컬럼/필드) : 고유한 데이터 형식 지정
+- 행(레코드/값) : 실제 데이터의 저장
+- 기본키(PK) : 각 행(record)의 고유값
+
+<br />
+
+## RDMS
+
+- RDB를 기반으로 하는 DBMS
+- MySQL, SQLite, ORACLE, MS SQL...
+
+<br />
+
+### Sqlite의 특징
+
+- 서버 형태가 아닌 파일 형식으로 응용 프로그램에 넣어 사용
+- 비교적 가벼운 DB
+- 안드로이드 운영체제 기본 탑재
+- 임베디드에서도 많이 활용
+- 로컬에서 간단한 DB 구성 가능
+- 오픈소스 프로젝트
+
+<br />
+
+### Data Type : Type Affinity ⭐
+
+- 특정 컬럼에 저장하도록 권장하는 데이터 타입
+- 여러가지 detail이 추상화되어 5가지 데이터 타입으로 동적으로 변경
+
+0. NULL
+1. INTEGER : 크기에 따라 0, 1, 2, 3, 4, 5, 6 또는 8바이트에 저장된 부호가 있는 정수
+2. REAL : 8바이트 부동 소수점 숫자로 저장된 부동 소수점 값
+3. TEXT 
+4. BLOB : 입력된 그대로 정확히 저장된 데이터(별다른 타입 없이 그대로 저장)
+5. NUMERIC
+
+<br />
+
+## SQL
+
+### SQL(Structured Query Language)
+
+- `RDBMS의 데이터 관리를 위해 특수 목적으로 설계`된 프로그래밍 언어
+- DB 스키마 생성 및 수정
+- 자료의 검색 및 관리
+- DB 객체 접근 조정 관리
+
+<br />
+
+### SQL의 분류
+
+> DDL : 데이터 정의어
+
+- Data Definition
+- RDBMS 구조(테이블, 스키마)를 정의
+- CREATE, DROP, ALTER
+
+<br />
+
+> DML : 데이터 조작어
+
+- Data Manipulation
+- CRUD
+- INSERT, SELECT, UPDATE, DELETE
+
+<br />
+
+> DCL : 데이터 제어어
+
+- Data Control
+- DB 사용자의 권한 제어
+- GRANT, REVOKE, COMMIT, ROLLBACK
+
+<br />
+
+## SQLite CRUD
+
+### CREATE : DB 생성
+
+```
+$ sqlite3 tutorial.sqlite3
+sqlite> .database
+```
+
+- tutorial.sqlite3 을 활용하겠다는 뜻
+- tutorial.sqlite3가 없다면 생성
+- database 생성
+- '.'은 sqlite 프로그램의 기능을 실행
+
+<br />
+
+### csv로 table 만들기
+
+```bash
+sqlite> .mode csv
+sqlite> .import hellodb.csv examples
+
+sqlite> .tables
+examples
+```
+
+- hellodb.csv 파일로 examples 테이블 생성
+- .tables : 테이블 조회
+
+<br />
+
+### READ : SELECT
+
+> SELECT 1. 기본 선택
+
+```
+sqlite> SELECT * FROM examples;
+```
+
+- examples 테이블의 모든 데이터 조회
+
+<br />
+
+> 결과
+
+```
+1,"길동","홍",600,"충청도",010-0000-0000
+```
+
+<br />
+
+> SELECT 2. 컬럼도 함께 선택
+
+`.headers on`
+
+```
+sqlite> .headers on
+
+sqlite> SELECT * FROM examples;
+```
+
+<br />
+
+> 결과
+
+```
+id,first_name,last_name,age,country,phone
+1,"길동","홍",600,"충청도",010-0000-0000
+```
+
+<br />
+
+> SELECT 3. 테이블 형식으로 보기
+
+`.mode column`
+
+```
+sqlite> .mode column
+
+sqlite> SELECT * FROM examples;
+```
+
+<br />
+
+```
+id  first_name  last_name  age  country  phone
+--  ----------  ---------  ---  -------  -------------
+1   길동          홍          600  충청도      010-0000-0000
+```
+
+<br />
+
+> 스키마 확인
+
+`.schema [table_name]`
+
+```
+sqlite3> .schema classmate
+```
+
+<br />
+
+### SQL 확장자 파일 만들기
+
+[DB.sqlite3 우클릭] -> [NEW QUERY] 클릭 -> SQL 파일 만들어짐
+
+<br />
+
+> 실행 : 마우스 우클릭 
+
+1. Run Query : SQL 파일의 SQL 코드 전체 실행
+2. Run Selected Query : 선택 범위의 SQL 코드만 실행

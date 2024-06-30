@@ -1,0 +1,513 @@
+---
+title: "[Python] 자료구조 - 셋, 딕셔너리"
+
+categories:
+  - Python SWEA
+
+tags:
+  - [BE Language, Python Lang, Python SWEA]
+
+author_profile: true
+
+date: 2022-01-05T23:27
+last-modified-at: 2022-01-05T23:38
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+published: false
+---
+
+## 참고 강의
+
+`[SWEA 파이썬 프로그래밍 기초(2) 파이썬의 기본 응용 #26](https://swexpertacademy.com)`
+
+<br />
+
+## 셋
+
+중괄호 {} 안에 서로 다른 자료형의 유일한 값을 콤마(,)로 구분해 하나 이상 저장할 수 있는 컬렉션 자료형 중의 하나
+
+1. 인덱스를 제공하지 않음
+2. 순서의 개념이 없음
+3. 중복을 허용하지 않음
+
+<br />
+
+### 셋의 생성
+
+```python
+data_set = {10, 20, "파이썬", "파이썬"}
+print("{0} {1}".format(type(data_set), data_set))
+# [결과] <class 'set'> {10, 20, '파이썬'}
+
+
+data_set = set(range(10, 21, 2))
+print("{0} {1}".format(type(data_set), data_set))
+# [결과] <class 'set'> {10, 12, 14, 16, 18, 20}
+
+
+data_str = "Better Tomorrow"
+data_set = set(data_str)
+print("{0} {1}".format(type(data_set), data_set))
+# [결과] <class 'set'> {' ', 'w', 'e', 't', 'r', 'o', 'B', 'm', 'T'}
+# 정해진 순서 없이 출력되며, 중복 문자는 하나만 저장
+```
+
+<br />
+
+### 셋 기본 연산
+
+- 교집합(&; intersetion)
+- 합집합(\|; union)
+- 차집합(-; difference)
+
+1. 연산자 사용
+
+```python
+data_set1 = {1, 2, 2, 3, 4, 4, 5, 6, 7, 7, 7, 11}
+data_set2 = {2, 3, 5, 9, 11, 12, 15}
+
+print("{0} & {1} = {2}".format(data_set1, data_set2, data_set1 & data_set2))
+print("{0} | {1} = {2}".format(data_set1, data_set2, data_set1 | data_set2))
+print("{0} - {1} = {2}".format(data_set1, data_set2, data_set1 - data_set2))
+
+
+[결과]
+{1, 2, 3, 4, 5, 6, 7, 11} & {2, 3, 5, 9, 11, 12, 15} = {11, 2, 3, 5}
+{1, 2, 3, 4, 5, 6, 7, 11} | {2, 3, 5, 9, 11, 12, 15} = {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 15}
+{1, 2, 3, 4, 5, 6, 7, 11} - {2, 3, 5, 9, 11, 12, 15} = {1, 4, 6, 7}
+```
+
+<br />
+
+2. 함수 사용
+
+```python
+data_set1 = {1, 2, 2, 3, 4, 4, 5, 6, 7, 7, 7, 11}
+data_set2 = {2, 3, 5, 9, 11, 12, 15}
+
+print("{0}.intersection({1}) = {2}".format(
+    data_set1, data_set2, data_set1.intersection(data_set2)))
+print("{0}.union({1}) = {2}".format(
+    data_set1, data_set2, data_set1.union(data_set2)))
+print("{0}.difference({1}) = {2}".format(
+    data_set1, data_set2, data_set1.difference(data_set2)))
+
+
+[결과]
+{1, 2, 3, 4, 5, 6, 7, 11} & {2, 3, 5, 9, 11, 12, 15} = {11, 2, 3, 5}
+{1, 2, 3, 4, 5, 6, 7, 11} | {2, 3, 5, 9, 11, 12, 15} = {1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 15}
+{1, 2, 3, 4, 5, 6, 7, 11} - {2, 3, 5, 9, 11, 12, 15} = {1, 4, 6, 7}
+```
+
+<br />
+
+### 셋 항목 추가
+
+1. add(element) 함수
+2. updatd({\*element}) 함수 : 여러 원소를 항목으로 추가
+
+```python
+data_set = {1, 2, 3}
+print("data_set: {0}".format(data_set))
+# [결과] data_set: {1, 2, 3}
+
+
+data_set.add(3)
+data_set.add(4)
+print("data_set: {0}".format(data_set))
+# [결과] data_set: {1, 2, 3, 4}
+
+
+data_set.update({4, 5, 6})  # 4, 5, 6 을 항목으로 추가
+print("data_set: {0}".format(data_set))
+# [결과] data_set: {1, 2, 3, 4, 5, 6}
+```
+
+<br />
+
+### 셋 항목 제거
+
+```python
+data_set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+print("data_set: {0}".format(data_set))
+# [결과] data_set: {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+
+data_set.remove(9)
+data_set.remove(2)
+print("data_set: {0}".format(data_set))
+# [결과] {1, 3, 4, 5, 6, 7, 8, 10}
+
+
+data_set.pop()  # pop() 함수 : 첫 번째 항목 제거
+print("data_set: {0}".format(data_set))
+# [결과] data_set: {3, 4, 5, 6, 7, 8, 10}
+
+
+data_set.clear()
+print("data_set: {0}".format(data_set))
+# [결과] data_set: set()
+# {}는 딕셔너리의 리터럴이므로, 비어있는 set은 set()으로 표시
+```
+
+<br />
+
+### 셋 항목 확인
+
+1. issuperset() 함수
+
+- 사용 : set1.issuperset(set2)
+- set1이 set2를 전부 포함하는 집합인지 확인
+
+2. issubset() 함수
+
+- 사용 : set1.issuperset(set2)
+- set1이 set2에 전부 포함되는 집합인지 확인
+
+```python
+data_set1 = {1, 2, 3, 4, 5}
+data_set2 = {2, 3}
+
+print("{0}.issuperset({1}) => {2}".format(
+    data_set1, data_set2, data_set1.issuperset(data_set2)))
+print("{0}.issubset({1}) => {2}".format(
+    data_set2, data_set1, data_set2.issubset(data_set1)))
+
+
+[결과]
+{1, 2, 3, 4, 5}.issuperset({2, 3}) => True
+{2, 3}.issubset({1, 2, 3, 4, 5}) => True
+```
+
+<br />
+
+## 셋 내포
+
+리스트 내포와 같은 방식으로 사용한다.
+
+```python
+data_set1 = {1, 2, 3, 4, 5}
+print("data_set1: {0} {1}".format(type(data_set1), data_set1))
+# [결과] data_set1: <class 'set'> {1, 2, 3, 4, 5}
+
+data_set2 = {item for item in data_set1}
+print("data_set2: {0} {1}".format(type(data_set2), data_set2))
+# [결과] data_set2: <class 'set'> {1, 2, 3, 4, 5}
+
+...
+```
+
+<br />
+
+## 딕셔너리
+
+중괄호 {} 안에 key:value 형식을 가진 유일한 데이터를 콤마(,)로 구분해서 하나 이상 저장할 수 있는 컬렉션 자료형 중 하나
+
+1. 인덱스를 제공하지 않음
+2. 순서의 개념이 없음
+3. 중복을 허용하지 않음
+
+### 딕셔너리의 생성
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+# 매개변수 목록을 기술해 딕셔너리 객체 생성
+# ⭐'key=value' 형식의 매개변수 목록에서 key를 문자열로 작성하지 않도록 주의
+data_dict2 = dict(홍길동=20, 이순신=45, 강감찬=35)
+print("data_dict2: {0} {1}".format(type(data_dict2), data_dict2))
+# [결과] data_dict2: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_tuple1 = (("홍길동", 20), ("이순신", 45), ("강감찬", 35))
+data_dict3 = dict(data_tuple1)
+print("data_dict3: {0} {1}".format(type(data_dict3), data_dict3))
+# [결과] data_dict3: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_list1 = [("홍길동", 20), ("이순신", 45), ("강감찬", 35)]
+data_dict4 = dict(data_list1)
+print("data_dict4: {0} {1}".format(type(data_dict4), data_dict4))
+# [결과] data_dict4: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_list1 = {("홍길동", 20), ("이순신", 45), ("강감찬", 35)}
+data_dict5 = dict(data_set1)
+print("data_dict5: {0} {1}".format(type(data_dict5), data_dict5))
+# [결과] data_dict5: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+```
+
+<br />
+
+### 딕셔너리 항목 접근
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+
+# dict_name[key]
+print("data_list1['홍길동'] => {0}".format(data_dict1["홍길동"]))
+
+
+[결과]
+data_list1['홍길동'] => 20
+```
+
+<br />
+
+### 딕셔너리 항목 추가
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+# 객체 이름[중복되지 않는 키] = 값
+data_dict1["을지문덕"] = 40
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35, '을지문덕': 40}
+
+
+# update() 함수에 딕셔너리 객체 전달하면 새로운 항목으로 추가
+data_dict1.update({"신사임당": 50, "유관순": 16})
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35, '을지문덕': 40, '신사임당': 50, '유관순': 16}
+```
+
+<br />
+
+### 딕셔너리 항목 변경
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+
+# 객체이름[중복되는 키] = 값
+data_dict1["강감찬"] = 38
+
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 38}
+
+
+# update() 함수에서 키가 동일할 때 기존 항목 변경
+data_dict1.update({"홍길동": 25, "이순신": 48})
+
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+# [결과] data_dict1: <class 'dict'> {'홍길동': 25, '이순신': 48, '강감찬': 38}
+```
+
+<br />
+
+### 딕셔너리 항목 제거
+
+- list의 항목 제거와 같다.
+
+1. del 함수 : del dict_name[key]
+2. pop() 함수 : dict_name.pop(key)
+3. clear() 함수 : dict_name.clear()
+
+<br />
+
+### 딕셔너리와 for문
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+
+print("{0} {1}".format(type(data_dict1.items()), data_dict1.items()))   # 튜플로 구성
+print("{0} {1}".format(type(data_dict1.keys()), data_dict1.keys()))     # 문자열로 구성
+print("{0} {1}".format(type(data_dict1.values()), data_dict1.values()))  # 정수로 구성
+
+
+[결과]
+<class 'dict_items' > dict_items([('홍길동', 20), ('이순신', 45), ('강감찬', 35)])
+<class 'dict_keys' > dict_keys(['홍길동', '이순신', '강감찬'])
+<class 'dict_values' > dict_values([20, 45, 35])
+```
+
+<br />
+
+## 딕셔너리 내포
+
+```python
+data_dict1 = {
+    "홍길동": 20,
+    "이순신": 45,
+    "강감찬": 35
+}
+
+print("data_dict1: {0} {1}".format(type(data_dict1), data_dict1))
+
+
+data_set1 = {item for item in data_dict1.items()}
+print("data_set1: {0} {1}".format(type(data_set1), data_set1))
+# [결과] data_set1: <class 'set'> {('홍길동', 20), ('강감찬', 35), ('이순신', 45)}
+
+
+data_dict2 = {key: data_dict1[key] for key in data_dict1}
+print("data_dict2: {0} {1}".format(type(data_dict2), data_dict2))
+# [결과] data_dict2: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_dict3 = {key: data_dict1[key] for key in data_dict1.keys()}
+print("data_dict3: {0} {1}".format(type(data_dict3), data_dict3))
+# [결과] data_dict3: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_dict4 = {item[0]: item[1] for item in data_dict1.items()}
+print("data_dict4: {0} {1}".format(type(data_dict4), data_dict4))
+# [결과] data_dict4: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+
+
+data_dict5 = {key: value for key, value in data_dict1.items()}
+print("data_dict5: {0} {1}".format(type(data_dict5), data_dict5))
+# [결과] data_dict5: <class 'dict'> {'홍길동': 20, '이순신': 45, '강감찬': 35}
+```
+
+<br />
+
+## 실습
+
+### 문제
+
+- 학생 정보는 리스트 객체 이용
+- 점수 정보는 딕셔너리 객체 이용
+- 총점과 평균 계산
+- 각 과목별 총점 및 평균 계산
+
+```python
+[결과1]
+총 학생수를 입력하세요: 2
+학생의 이름을 입력하세요: 홍길동
+홍길동 학생의 국어 점수를 입력하세요: 100
+홍길동 학생의 수학 점수를 입력하세요: 90
+홍길동 학생의 영어 점수를 입력하세요: 80
+학생의 이름을 입력하세요: 이순신
+이순신 학생의 국어 점수를 입력하세요: 90
+이순신 학생의 수학 점수를 입력하세요: 90
+이순신 학생의 영어 점수를 입력하세요: 98
+홍길동 => 총점: 270, 평균: 90.00
+이순신 => 총점: 278, 평균: 92.67
+국어 => 총점: 190, 평균 95.0
+수학 => 총점: 180, 평균 90.0
+영어 => 총점: 178, 평균 89.0
+```
+
+<br />
+
+### 나의 Sol
+
+```python
+# -*- coding: utf-8 -*-
+# students_score.py
+
+
+student = []
+scores = {}
+sum_sub, sum_kor, sum_mat, sum_eng = 0, 0, 0, 0
+avg_sub, avg_kor, avg_mat, avg_eng = 0, 0, 0, 0
+
+num_student = int(input("총 학생수를 입력하세요: "))
+
+for i in range(0, num_student):
+    score = ()
+    name = input("학생의 이름을 입력하세요: ")
+    student.append(name)
+
+    kor = int(input("{0} 학생의 국어 점수를 입력하세요: ".format(name)))
+    mat = int(input("{0} 학생의 수학 점수를 입력하세요: ".format(name)))
+    eng = int(input("{0} 학생의 영어 점수를 입력하세요: ".format(name)))
+
+    sum_sc = kor + mat + eng
+    avg_sc = sum_sc / 3
+
+    score = (name, kor, mat, eng, sum_sc, avg_sc)
+    scores[name] = score
+
+    sum_kor += kor
+    sum_mat += mat
+    sum_eng += eng
+
+avg_kor = sum_kor / num_student
+avg_mat = sum_mat / num_student
+avg_eng = sum_eng / num_student
+
+scores[sum_sub] = (sum_kor, sum_mat, sum_eng)
+scores[avg_sub] = (avg_kor, avg_mat, avg_eng)
+scores["sub"] = ("국어", "수학", "영어")
+
+
+for idx, name in enumerate(student):
+    score = scores[name]
+    print("{0} => 총점: {1}, 평균: {2:.2f}".format(score[0], score[4], score[5]))
+```
+
+음... 과목별 총점, 평균은 계산도 못했고, 너무 하드코딩에 비효율적으로 짰다. 차라리 리스트였으면 for문이라도 제대로 써봤을텐데 왜 딕셔너리로 하라는지 알 수 없었다. 함수를 만들어 효율적으로 짜보려했으나 실패했다. 내 실력의 벽이 느껴진다. 일단 답을 보기로 했다.
+
+<br />
+
+### 모범답안
+
+```python
+# -*- coding: utf-8 -*-
+# students_score.py
+
+scores = []
+count = int(input("총 학생수를 입력하세요: "))
+
+for i in range(1, count + 1):
+    score = {}
+    score["name"] = input("학생의 이름을 입력하세요: ")
+    score["kor"] = int(input("{0} 학생의 국어 점수를 입력하세요: ".format(score["name"])))
+    score["mat"] = int(input("{0} 학생의 수학 점수를 입력하세요: ".format(score["name"])))
+    score["eng"] = int(input("{0} 학생의 영어 점수를 입력하세요: ".format(score["name"])))
+    scores.append(score)
+
+for score in scores:
+    total = 0
+    for key in score:
+        if key != "name":
+            total += score[key]
+    print("{0} => 총점: {1}, 평균: {2:0.2f}".format(
+        score["name"], total, total / 3))
+
+kor_total, mat_total, eng_total = 0, 0, 0
+for score in scores:
+    for key in score:
+        if key == "kor":
+            kor_total += score[key]
+        elif key == "mat":
+            mat_total += score[key]
+        elif key == "eng":
+            eng_total += score[key]
+
+print("국어 => 총점: {0}, 평균 {1}".format(kor_total, kor_total / len(scores)))
+print("수학 => 총점: {0}, 평균 {1}".format(mat_total, mat_total / len(scores)))
+print("영어 => 총점: {0}, 평균 {1}".format(eng_total, eng_total / len(scores)))
+```

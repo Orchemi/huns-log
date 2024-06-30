@@ -1,0 +1,88 @@
+---
+title: "[Python] 패키지(Package)"
+
+categories:
+  - Python Youtube
+
+tags:
+  - [BE Language, Python Lang, Python Youtube, NadoCoding]
+
+date: 2021-07-20T00:00
+last_modified_at: 2021-07-20T00:00
+
+author_profile: true
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+# 패키지(Package)
+
+- 모듈들을 모아놓은 집합
+- 하나에 디렉토리에 여러 모듈 파일들을 모아놓은 것
+
+- package 명 : travel
+- module 명 : thailand, vietnam
+
+## 가. module 설정
+
+```python
+* thailand.py
+
+class ThailandPackage:
+    def detail(self):
+        print("[태국 패키지 3박 5일] 방콕, 파타야 여행 (야시장 투어) 50만원")
+
+
+* vietnam.py
+
+class VietnamPackage:
+    def detail(self):
+        print("[베트남 패키지 3박 5일] 다낭 효도 여행 60만원")
+```
+
+<br />
+
+## 나. package의 사용
+
+- travel package 내 thailand.py의 ThailandPackage class의 detail() 함수 사용
+- **※ import를 쓸 때 맨 뒤에는 모듈이나 패키지만 가능 / 클래스나 함수는 바로 import 불가능**
+
+```python
+import travel.thailand
+trip_to = travel.thailand.ThailandPackage()
+trip_to.detail()
+```
+
+출력값은 다음과 같다.
+
+```markdown
+[태국 패키지 3박 5일] 방콕, 파타야 여행 (야시장 투어) 50만원
+```
+
+<br />
+
+## 다. 함수/클래스의 호출
+
+- from ~~ import ~~ 의 끝에는 함수/클래스가 와도 된다.
+
+```python
+# from 모듈 import 클래스
+from travel.thailand import ThailandPackage
+trip_to = ThailandPackage()
+trip_to.detail()
+
+
+# from 패키지 import 모듈
+from travel import vietnam
+trip_to = vietnam.VietnamPackage()
+trip_to.detail()
+```
+
+<br />
+
+## Reference
+
+- `[나도코딩 파이썬 무료 강의(기본편)](https://www.youtube.com/watch?v=kWiCuklohdY&t=750s)`
