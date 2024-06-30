@@ -1,0 +1,175 @@
+---
+title: "[Volunteer] 언택트 걷기대회 홈페이지 제작 -2-"
+
+categories:
+  - PSR
+
+tags:
+  - HTML
+  - WalkingFest
+  - Volunteer
+
+author_profile: true
+
+date: 2021-07-23T23:30
+last_modified_at: 2021-07-23T23:30
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 4. Upgrade
+
+우선 지부 로고 사진을 얻었고, chrome 검사를 통해 지부 홈페이지 소스를
+참고했다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126784168-ce288ba0-aedf-4e09-b5c4-597a7c09d9f9.png)`
+
+크기를 80%로 조정하면 다음과 같다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126784276-8d643139-c126-422f-8997-744ae993a061.png)`
+
+위의 참가 신청 버튼은 margin-right: 10%로 두어서 확대 전후로도 적당한
+위치를 가지도록 하였다.
+
+<br />
+
+### 4.1. 하드코딩
+
+실력이 모자라서 하드코딩을 할 수 밖에 없었다. 로고와 네비게이션이 있는
+상단바 header에 head div를 따로 두어서 로고와 네비게이션을 head 안에
+넣었다. header는 body 내에서 최상위에 해당하기 때문에 id로 정의하였고,
+position은 relative를 사용했다. 그리고 head는 position: relative
+를 사용하고 margin-top을 두어 중앙으로 설정하였다.
+
+```css
+/*header ----------------------------------------------------*/
+#header {
+  position: relative;
+  width: 100%;
+  height: 90px;
+}
+
+#header .head {
+  position: relative;
+  display: block;
+  top: 30px;
+  height: 30px;
+}
+
+#header .head .logo {
+  position: relative;
+  display: inline-block;
+  float: left;
+  margin-left: 100px;
+}
+
+#header .head .navs {
+  position: relative;
+  margin-top: 5px;
+  font-size: 20px;
+  font-family: "Recipekorea", "sans-serif";
+  float: right;
+  display: inline;
+  color: gray;
+  margin-right: 10%;
+}
+
+#header .head .navs:hover {
+  color: black;
+}
+```
+
+<br />
+
+### 4.2. 폰트
+
+폰트는 웹 폰트 사이트 `['눈누'](https://noonnu.cc/)` 를 사용했다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126785326-c5ab7c5c-0ec0-413a-81e0-64f0f6b25bdd.png)`
+
+웹 폰트로 사용을 눌러 css 파일에 그대로 반영하면 바로 폰트로써 사용할 수
+있다.
+
+```css
+@font-face {
+  font-family: "Cafe24Oneprettynight";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Oneprettynight.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BMDOHYEON";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "KOTRA_BOLD-Bold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.1/KOTRA_BOLD-Bold.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+```
+
+<br />
+
+## 5. 애로사항
+
+html, css를 공부할 때 가장 이해가 어려웠던 position의 relative,
+absolute 그리고 float 개념을 실제로 활용해볼 수 있는 기회였다.
+공부할 때 실습을 하면서도 조금은 체감하였으나, 실제로 웹 사이트를 만들어보니까
+내가 원하는 요소를 원하는 곳에 배치하는 것이 코드를 통해서는 이렇게 어렵다는
+사실을 다시 한 번 체감하게 되었다.
+
+<br />
+
+## 6. 향후 계획
+
+오늘 본부장님과 사이트에서 행해져야 하는 여러 기능들을 보니 다음과 같은
+기능들이 필요했다.
+
+- 참가자들의 주소나 여러 정보들을 받아서 저장해야 한다.
+- 상품 신청은 500명이 넘으면 자동으로 신청 버튼이 비활성화되어야 한다.
+- 모은 정보들을 관리하는 관리자 페이지가 있어야 한다.
+
+그리고 가장 큰 이유였던, 서울 본부와 별개의 행사가 아니라 같은 성격의
+행사였기 때문에 서로의 시너지가 요구되었다. 즉, 본부 홈페이지에서
+우리 쪽의 홍보페이지로도 이동할 수 있어야 하고, 우리 홈페이지에서 본부 쪽의
+홈페이지로 이동할 수 있어야 했다.
+
+내 웹 사이트에서는 본부 홈페이지에 링크를 거는 버튼을 하나 만들면 되는
+일이었지만, 본부 홈페이지에서 우리 홈페이지에 링크를 거는 것만으로도
+비용이 발생하는 문제가 있었다.
+
+내 프로그래밍 실력이 아직 웹에서 정보를 받고, 서버에서 관리하는 백엔드
+기술과의 융합까지는 도달하지 못했기 때문에 고민이 되었지만, 본부장님이
+여러 시너지 효과들이나 완성도, 그리고 내가 웹 사이트를 맡으면 자원봉사자인
+내가 계속 서버를 관리하고 지켜봐야 한다는 것이 자원봉사자의 일시성과 충돌하기
+때문에 큰 금액을 감수하고 서울 본부와 함께 홍보 사이트를 진행하는 방향을
+추가로 생각하기로 되었다.
+
+따라서 본 홈페이지 제작은 방향이 잡힐 때까지 당분간 보류하고,
+정보처리기사와 파이썬 공부에 집중해보고자 한다.
+
+<br />
+
+## 7. 느낀 점
+
+역시 요소들의 배치가 코드를 통해서는 굉장히 어렵다는 점이 가장 체감되었다.
+파워포인트에서 작업을 하는 것처럼 내가 원하는대로 크고 작아지고, 이리 가고
+저리 가고 하면 정말 편할텐데..
+
+하지만 다행인 것은 오늘 하루 종일 잡고 있었던 것 치고는 꽤나 빨리 기술을 습득했다는
+것이다. 내 일이었고, 즐겁게 공부할 수 있었다. 프론트엔드 개발자가 되면
+이런 일을 직업으로 삼을 수 있을 것이라는 생각을 하니 뭔가 두근댔다.
+내가 지금은 서툴고 조금은 무지하더라도 업으로 삼으면 뚝딱뚝딱 만들어낼 수
+있지 않을까. 지금은 방향을 잡고 있기 때문에 조금 더 여러 영역을 조금씩
+맛보고 더 깊이를 만들어보고 싶다.

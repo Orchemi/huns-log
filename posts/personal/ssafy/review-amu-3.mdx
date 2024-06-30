@@ -1,0 +1,166 @@
+---
+title: "[SSAFY Project] AMU 프로젝트간 학습 내용"
+excerpt: "SSAFY 7기 1학기 관통 프로젝트 페어프로그래밍 기록"
+
+categories:
+- SSAFY
+
+tags:
+  - SSAFY
+  - SSAFY Project
+
+date: 2022-06-02T17:00
+last_modified_at: 2022-06-02T17:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## AMU 프로젝트 게시물 목록
+
+- [[SSAFY Project] 영화 추천 커뮤니티 사이트 AMU 총정리](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-1/)
+
+- [[SSAFY Project] AMU 회고](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-2/)
+
+- [[SSAFY Project] AMU 프로젝트간 학습 내용](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-3/)
+
+- [[SSAFY Project] AMU 프로젝트 삽질 기록](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-4/)
+
+<br />
+
+## I LEARNED
+
+### Vue의 self 수정자
+
+- Vue의 이벤트에서 .self 수정자를 추가하면 자식 컴포넌트를 제외한 그 자신만 확인하는 것. Event Bubbling(자식이 한 일을 부모가 아는 것)을 억제하는 역할
+- **Vue 이벤트리스너 여러 함수 사용하는 방법**
+  - @submit.prevent=”[funcA(), funcB()]” 로 array 형식으로 넣어주면 된다.
+  - 기존 이벤트리스너 콜백함수와 달리 함수형으로 괄호를 붙여주어야 한다.
+
+<br />
+
+### Vue view 재호출
+
+- navigationDuplicated 에러 없이 router에서 자기 경로를 재호출하는 방법
+
+```js
+this.$router.go(this.$router.currentRoute);
+```
+
+<br />
+
+### SCSS calc 내부에서 변수 사용하기
+
+```scss
+@mixin flex-line ($grow:1, $ju-co:center) {
+  display: flex;
+  flex-basis: calc(1000px * #{$grow});
+  justify-content: $ju-co;
+  flex-grow: $grow;
+}
+```
+
+- 위처럼 calc 내부에 변수로 사친연산 등의 계산을 해야할 때 사용
+- `#{변수}` 형식으로 자바스크립트에서 `${변수}` 처럼 사용하는 것과 같다.
+
+<br />
+
+### 사진이 1대1이 아니어도 중앙으로 배치되게 하는 방법
+
+- 프로필로 저장되는 사진이 1대1이 아니어도 주변을 잘라 div 크기에 맞게 배치하는 방법
+
+```scss
+.fill {
+  width: 300px;
+  height: 300px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden
+}
+.fill img {
+  flex-shrink: 0;
+  min-width: 100%;
+  min-height: 100%
+}
+```
+
+```html
+<div class="fill">
+  <img src="https://picsum.photos/id/237/320/240" alt="" />
+</div>
+```
+
+- `[참고 링크](https://stackoverflow.com/questions/14142378/how-can-i-fill-a-div-with-an-image-while-keeping-it-proportional)`
+
+<br />
+
+### CSS 비율 고정
+
+```scss
+#user-profile-image {
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  ...
+}
+```
+
+- 1:1 비율 등에서 반응형을 구현할 때 사용
+- 기존에는 `calc()` 로 계산하여 구현했으나 번거롭다.
+- `aspect-ratio` 로 `가로 / 세로` 를 지정
+- 참고 : `[CSS📚 이미지 비율 고정하는 방법 aspect ratio](https://inpa.tistory.com/entry/CSS-%F0%9F%93%9A-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B9%84%EC%9C%A8-%EA%B3%A0%EC%A0%95%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-aspect-ratio#%EC%B5%9C%EC%8B%A0_aspect-ratio_%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C_%EB%B9%84%EC%9C%A8_%EC%A1%B0%EC%A0%95%EB%B2%95)`
+
+<br />
+
+### div에 이미지 넣는 방법
+
+img src를 computed에서 계산해 객체에 넣고, 이를 style에 그대로 바인딩하는 방법이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/171416079-e7614e5b-af37-40eb-ab73-e9e042055a56.png)`
+
+위와 같이 프로필 사진을 넣어보자.
+
+```html
+<div
+  id="user-profile-image"
+  :style="profileImageSrc"
+>
+```
+
+id를 다음과 같이 지정하고, style을 바인딩해주었다.
+
+<br />
+
+```js
+// ArticleDetailView.vue computed
+
+profileImageSrc() {
+  const profile_image = this.articleInfo.user.profile.profile_image
+  return {
+    'background-image': `url("http://localhost:8000${profile_image}")`,
+    'background-size': 'cover'
+  }
+}
+```
+
+자료구조 내에 path가 있는 위치까지 내려간다.
+
+이는 상당히 복잡한 구조이므로 상수에 임시 저장한 뒤, url에 넣을 때 처리해주어 넣어준다.
+
+<br />
+
+```scss
+#user-profile-image {
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+}
+```
+
+div 태그의 크기와 border 설정을 해준다.

@@ -1,0 +1,166 @@
+---
+title: "[SSAFY Project] AMU 프로젝트 삽질 기록"
+excerpt: "SSAFY 7기 1학기 관통 프로젝트 페어프로그래밍 기록"
+
+categories:
+- SSAFY
+
+tags:
+  - SSAFY
+  - SSAFY Project
+
+date: 2022-06-02T18:00
+last_modified_at: 2022-06-02T18:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## AMU 프로젝트 게시물 목록
+
+- [[SSAFY Project] 영화 추천 커뮤니티 사이트 AMU 총정리](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-1/)
+
+- [[SSAFY Project] AMU 회고](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-2/)
+
+- [[SSAFY Project] AMU 프로젝트간 학습 내용](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-3/)
+
+- [[SSAFY Project] AMU 프로젝트 삽질 기록](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-4/)
+
+<br />
+
+## 220517
+
+> TMDB 데이터 가공
+
+- json 파일 형식으로 저장해서 DB에 loaddata하려 했으나 model instance에 직접 데이터를 넣어주어야 해서 field별로 데이터를 가공해 넣어주었다.
+
+- 최초 django의 template에서 script 태그를 만들어 axios로 TMDB API를 호출해 정보를 저장하려 했으나, TMDB 자료 구조에 의해 영화를 20개씩 받아오고, 이를 forEach로 각각을 response해주어야 하는 상황에서 비동기 처리에 의한 순서 섞임 문제를 해결할 수가 없었다.
+
+- python의 동기적 방식을 활용하기 위해 requests 모듈로 api 정보를 받아오고, 이를 model instance에 직접 부여하여 save하는 방식으로 변경했다.
+
+- 영화 데이터마다 key값이 없는 것도 있어서 python의 .get 메서드를 사용해 key 값이 없는 데이터에 대해 오류 없이 예외처리를 해주어야 했다.
+
+<br />
+
+## 220518
+
+> git branch... 쉽지 않았다
+
+**git branch**를 사용해 협업을 하려고 했지만, branch에 대한 이해가 부족해 실패. master로 작업 후 추후 branch 추가 학습 후 도입하기로 했다.
+
+<br />
+
+> 오타는 개발자의 주적
+
+ArticleSerializer 정의 시, 상속받는 serializer을 serializers.ModelSerializer 대신 serializer.serializer로 작성해서 1시간 넘게 헤맸다.
+
+<br />
+
+## 220519
+
+> Django Serializer의 field
+
+count를 위한 IntegerField(source=”~~”)에서 fields에 지정을 해주지 않아 오류가 발생하는 것을 오래 잡지 못했다.
+
+<br />
+
+> Django 중개테이블
+
+N:M의 중개테이블 속성인 character를 불러오는 serializer 제작이 어려웠는데, 역참조를 이용한 복잡한 serializer를 구현해서 actor 정보에 character를 추가할 수 있었다.
+
+<br />
+
+## 220520
+
+> localhost와 네트워크 호스트
+
+- CORS POLICY 문제로 회원가입이 되지 않았다. 몇 시간을 고민하며 머리를 싸맸는데, CORS_ORIGIN으로 ALLOW해준 localhost가 아닌 네트워크 호스트로 접속한 탓이었다. 허무하다.
+
+`![image](https://user-images.githubusercontent.com/86189596/171412624-8d607459-15b6-4a60-b0aa-7fec1f522f40.png)`
+
+- 위의 이유로 새 폴더에서 gitlab을 그대로 pull 받아오기도 하고, 직접 카톡으로 알집 파일을 받아 서버를 돌려 회원가입했음에도 불구하고 동작하지 않았던 것이다. 해결 이후 Vue의 View 파일들을 만들고 git init해서 pull 했는 때 commit history가 연결되지 않은 탓에 작업 내용이 git push되지 않았다.
+
+- 이전에 다 밀고 gitlab에서 pull 받은 폴더를 다시 pull 받고 그곳에 작업 내용을 붙여넣어 push했다. 이제는 완벽히 동기화가 되었고, 작업 내용도 살릴 수 있었다.
+
+<br />
+
+## 220521
+
+> Django ORM으로 필터링
+
+- 자유게시판이나 영화게시판은 category를 하나씩 파악해서 필터링하면 되는데, total에서는 멀티 필터가 되어야 했다. 그래서 Q 객체를 공부해서 orm을 사용하였다.
+
+- 정렬 기준 선택에서 -pk 같은 경우 pk가 article에 있는 field이므로 그대로 사용해도 됐지만, 좋아요 순(-likes_count)이나 댓글 많은 순(-comments_count)에서는 serializer로 계산되었을 뿐 model에는 field가 없어서 바로 사용할 수 없었다. 그래서 orm의 annotate를 사용해 like_users와 comments를 각각 Count한 새 field를 만들고, 이를 기준으로 내림차순 정렬하여 정렬을 구현했다.
+
+<br />
+
+## 220522
+
+> ArticleSerializer 오류
+
+ArticleSerializer 구성에서 게시물을 생성할 때, movie_id를 받으면 뿌려줄 때 movie_id를 이용해 상세 정보를 전달해주어야 하는데, 이 부분에서 에러가 발생했다. 저장할 때와 뿌려줄 때의 구조가 다르기 때문에 뿌려주기 위해 MovieSerializer로 상세화하면 정보를 받을 때 딕셔너리가 아닌 movie_id(숫자)만 전달되므로 validation 체크에서 오류가 발생한다.  
+
+이를 ArticleSerializer 구성에서 정보를 받아 valid 체크하는 serializer와 서버에 구체화해서 뿌려주는 serializer 를 나누어 create할 때는 movie에 숫자를 받아 저장하는 MovieSaveSerailizer를, rendering할 때는 MovieSerializer를 통한 영화 정보를 구체화해 보내는 ArticleSerializer를 분리해 해결했다.
+
+<br />
+
+> ORM Annotate 오류
+
+Hot 게시판에서 article의 댓글의 개수를 세는 annotate와 좋아요의 개수를 세는 annotate를 사용하여 모두 계산해보려 했는데, 댓글의 개수가 좋아요의 개수와 결합하여 이상하게 충돌해서 몇 시간 고민하다가 해결하지 못했다. 추후에 프론트엔드 부분을 마치고 백엔드 리팩토링 시에 재도전해봐야겠다.
+
+<br />
+
+## 220523
+
+> 여기선 되는데 저기선 왜 안 되지?
+
+프로필 페이지에 pagination을 만드는 과정에서 이전에 사용했던 article의 pagination을 활용해 작성했는데, 똑같은 로직임에도 router.push로 router 이동 과정에서 404 오류가 계속 발생했다. 이 문제로 몇 시간을 고민했음에도 문제를 해결하지 못했다.
+
+<br />
+
+> SCSS 전역 파일 등록의 어려움
+
+scss를 프로젝트에 도입해 전역에서 사용하기 위해 몇몇 파일을 등록하는데, 블로그나 공식문서에서 안내하는 방식인 webpack.config나 vue.config 등의 파일에서 관련 코드들을 삽입했는데도 잘 되지 않았다. 여러 오류 필드를 변경하여 금방 문제를 해결할 수 있었다.
+
+<br />
+
+## 220524
+
+> password input visibility icon layout
+
+`![image](https://user-images.githubusercontent.com/86189596/171414387-bb8700ba-0219-4aea-9a49-2d07b793ec59.png)`
+
+- 우선 컴포넌트화에 실패해서 로직이 같은 함수를 중복해서 사용해야 했다. 이유는 두 비밀번호의 값을 인자로 사용할 수가 없었기 때문이다.
+
+- 또한 아이콘을 input 태그 내에 배치할 수 없으므로 input과 icon을 포함하는 div 태그를 다른 input 태그와 같은 레이아웃으로 정의하고, 이를 flex를 이용해 row, shrink를 활용하여 반응형에도 안전하도록 구성하였다.
+
+- vue 내에서 아이콘을 사용하려는 과정 자체가 번거로웠지만, 한 번 material icon을 npm에 install 하니 v-icon 태그로 쉽게 icon을 추가할 수 있었다.
+
+<br />
+
+## 220525
+
+> 레이아웃의 어려움
+
+`![image](https://user-images.githubusercontent.com/86189596/171415704-3607faca-692f-469a-b9e7-aaa14e605629.png)`
+
+태그 추적을 위해 border 속성을 주어 반응형 구현
+
+<br />
+
+## 220526
+
+> 반응형의 완벽한 구현
+
+정교한 반응형을 구현해보려 했으나, font부분에서 em 단위가 아닌 rem 단위로 변수를 지정하고 max-width에 따라 크기를 불연속적으로 조정하는 media query를 사용해 지정하였다. 때문에 화면 크기의 축소에도 일부 px에서는 레이아웃이 깨지는 현상을 발견할 수 있었고, 이를 해결하기에는 시간이 부족해 감안했던 점이 아쉽다.
+
+<br />
+
+> SCSS 모듈 100% 활용
+
+SCSS 모듈을 직접 짜보는 것이 처음이라 뇌피셜대로 컴포넌트를 짰는데, 물론 잘 활용한 부분도 있지만, 실제로 내가 설계한 모듈들이 잘 짜여진 모듈들인지에 대한 확신이 없었고, 활용도가 높은 mixin이나 변수들을 작성하는 방법에 대한 방법론을 더 공부하고 싶다.

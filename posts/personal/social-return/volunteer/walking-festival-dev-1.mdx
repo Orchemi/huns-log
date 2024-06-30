@@ -1,0 +1,96 @@
+---
+title: "[Volunteer] 언택트 걷기대회 홈페이지 제작 -1-"
+
+categories:
+  - PSR
+
+tags:
+  - HTML
+  - WalkingFest
+  - Volunteer
+
+author_profile: true
+
+date: 2021-07-22T23:30
+last_modified_at: 2021-07-22T23:30
+
+toc: true
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## 1. 시작 배경
+
+사랑의장기기증운동본부 대전충남세종지부에서 제 1회 언택트 걷기대회 행사를
+9월 초에 연다고 하는데 그 홍보사이트를 만들려면 300만원이 든다고 본부에서
+전했다고 한다. 본부장님은 가격을 듣고 기겁을 하셨다.
+사실상 정보 전달을 위한 페이지 하나만 있으면 되는데...
+
+아무리 간단한 작업이더라도,
+기존 사랑의장기기증운동본부 html 파일에 접근하는 권한이 없고, 그 권한에
+대한 로얄티로 고액의 비용을 요구하는 것이라 판단했다.
+그래서 문뜩 내가 공부했던 HTML과 CSS 실력으로 페이지를 만들 수 있지
+않을까 생각해보았다.
+
+<br />
+
+## 2. 접근
+
+github page가 아닌 개인 웹은 처음 접해보는 것이었지만 도메인을 사야한다는
+것만 알았고, 웹 호스팅이라는 개념을 처음 접하게 되었다. 인터넷에서 조사를
+실시했다. **웹 호스팅 업체는 cafe24, 도메인은 가비아를 선택**했다.
+
+domain은 기존 사랑의장기기증운동본부 기본 도메인인 donor.or.kr 과 비슷하게
+donornet.~~으로 선택했고, 가장 저렴했던 것은 1년에 500원인
+donornet.shop 이었으나, 너무 별로여서 차선인 1년 1,900원짜리
+donornet.site 를 선택해 결제하였다.
+
+웹 호스팅은 가장 저렴한 모델인 월 500원짜리를 선택하였으나, 설치비
+5,000원이 기본적으로 빠지기 때문에 6개월 해서 8천원이 들었다.
+
+웹 사이트를 구성하는데에 총 만원정도의 비용이 들었다. 무료 웹 호스팅 사이트나
+무료 도메인도 구할 수 있었지만, 나름 단체의 홈페이지이니만큼 조금은
+신경을 쓰고 싶었던 것이 사실이다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126646617-304733fd-b7d5-4e34-aa12-17ba49e24288.png)`
+
+결제 후 몇 시간 뒤에 이렇게 donornet.site 도메인에 호스팅이 되었다.
+개인정보 보호를 위해 아이디와 개인적인 부분은 가렸다.
+html 파일을 웹 호스팅과 연동하는 방법을 찾기 위해 인터넷을 뒤지다가
+filezilla 프로그램을 다운받고 FTP 연결에 성공하였다.
+생활코딩님과 기타 블로그를 참고하였다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126647382-0c5e4b95-3ed8-4d0f-9941-822a553b2df5.png)`
+
+그리고서 다시 donornet.site에 접속하니까 아래처럼 보안 경고가 나왔다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126648628-c54ace38-7d75-4406-a90a-f45d877e4026.png)`
+
+<br />
+
+## 3. 시작
+
+서버 컴퓨터의 기본 파일에서의 문제가 있는지 혹은 내가 설정을 새롭게 해야
+하는 것인지를 확인하기 위해 다짜고짜 index.html 파일을 집어넣어보기로 했다.
+
+<br />
+index.html 파일을 다음과 같이,
+
+`![image](https://user-images.githubusercontent.com/86189596/126654413-4213ce27-24ea-438c-bef4-88bc87dee948.png)`
+
+styles.css 파일을 다음과 같이 코딩하였다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126654535-0dc09203-13b0-481d-85b5-9d805411f91b.png)`
+`![image](https://user-images.githubusercontent.com/86189596/126654543-fe732e77-820a-4ec7-abc5-ba1f65ef9462.png)`
+
+<br />
+
+이를 통해 웹사이트의 기본이 되는 html, css파일을 제작하여 FTP를 이용해
+서버 컴퓨터의 파일을 업데이트하였고, 다음과 같은 화면을 얻어낼 수 있었다.
+
+`![image](https://user-images.githubusercontent.com/86189596/126655097-f3483e7d-b25b-4921-8bae-42a6daffeda5.png)`
+
+**나의 첫 홈페이지 생성!**
+
+앞으로 본부장님과 방향을 정해서 웹 사이트를 꾸며나갈 것이다.

@@ -1,0 +1,397 @@
+---
+title: "[SSAFY Project] 영화 추천 커뮤니티 사이트 AMU 총정리"
+excerpt: "SSAFY 7기 1학기 관통 프로젝트 페어프로그래밍 기록"
+
+categories:
+  - SSAFY
+
+tags:
+  - SSAFY
+  - SSAFY Project
+
+date: 2022-06-02T12:00
+last_modified_at: 2022-06-02T12:00
+
+author_profile: true
+
+toc: true
+
+toc_label: "목차"
+toc_icon: "bars"
+toc_sticky: true
+---
+
+## AMU 프로젝트 게시물 목록
+
+- [[SSAFY Project] 영화 추천 커뮤니티 사이트 AMU 총정리](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-1/)
+
+- [[SSAFY Project] AMU 회고](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-2/)
+
+- [[SSAFY Project] AMU 프로젝트간 학습 내용](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-3/)
+
+- [[SSAFY Project] AMU 프로젝트 삽질 기록](https://orchemi.github.io/ssafy%20project/SSAFY_Project_amu-4/)
+
+<br />
+
+## 기록 종합
+
+> AMU Github
+
+- `[AMU Github 링크](https://github.com/team-amu/amu)`
+- 전반적인 프로젝트 코드 및 문서 종합
+
+<br />
+
+> AMU Notion
+
+- `[AMU Notion 링크](https://www.notion.so/bf74a7a8e0b64b8eb48b500552949ba0)`
+- 페어 프로그래밍 개발 과정 기록
+
+<br />
+
+> AMU Figma
+
+- `[AMU Figma 링크](https://www.figma.com/file/pWza1eRvuregdvFmTDtYIi/AMU-%EC%98%81%ED%99%94-tutorial)` 
+- 와이어프레임, 컴포넌트 구조 가시화 디자인 tool
+- 댓글 기능을 활용한 쌍방향 소통
+
+<br />
+
+> 파일 구조
+
+- `[Django 컴포넌트 구조 Notion 링크](https://www.notion.so/Django-95a89ac00eb74715bcb7351985d5f205)`
+- `[Vue 컴포넌트 구조 Notion 링크](https://www.notion.so/Vue-0bc8f957f1eb4bdda836a7cad85de169)`
+
+<br />
+
+## 프로젝트 소개
+
+`![image-20220527025518107](https://user-images.githubusercontent.com/86189596/170598806-7a23584d-81af-46a8-be8c-19cac5fa7950.png)`
+
+<br />
+
+> 아무의 어원
+
+영화 추천 커뮤티니 사이트인 **아무**는, 영화에 대한 기록들을 남긴다는 의미인 **아**카이브 오브 **무**비(Archive of Movie)와, 고대 그리스의 소통의 장이라는 의미로 **아**고라 오브 **무**비(Agora of Movie), 그리고 **아무 영화나 추천해준다**는 말장난을 이용하여 만들어진 이름
+
+<br />
+
+> 강조점
+
+커뮤니티에서 자신과 비슷한 취향의 유저, 혹은 정반대의 유저들을 만나 다양한 영화 추천
+
+<br />
+
+## 가. 개발 단계
+
+### 1) 개발 기간
+
+📅2022.05.11 ~ 2022.05.26
+
+<br />
+
+### 2) 와이어 프레임
+
+> 디자인 툴 **Figma**를 이용하여 제작(`[📂Figma 링크](https://www.figma.com/file/pWza1eRvuregdvFmTDtYIi/AMU-%EC%98%81%ED%99%94-tutorial?node-id=0%3A1)`)
+
+`![image-20220527023739252](https://user-images.githubusercontent.com/86189596/170598797-c5505937-11bb-431f-a91f-9eeed24a5c6b.png)`
+
+- 페이지별 UI 구성 기획
+- 댓글 기능을 활용해 팀원간의 비동기적 쌍방향 소통
+
+<br />
+
+### 3) ERD
+
+> draw.io 
+
+`![ERD drawio](https://user-images.githubusercontent.com/86189596/170598865-631d2fe2-b490-4e1d-a0a9-5e77fafb1483.png)`
+
+- Django DB 구성에 필요한 roadmap 설계
+
+<br />
+
+### 4) API 설계
+
+#### ㄱ. main project
+
+| HTTP verb | URL 패턴                  | 설명 및 연결 urls/함수                             |
+| --------- | ------------------------- | -------------------------------------------------- |
+|           | `admin/`                  | admin.site.url                                     |
+|           | `api/v1/community/`       | include(’community.urls’)                          |
+|           | `api/v1/movies/`          | include(’movies.urls’)                             |
+|           | `api/v1/accounts/`        | include(’accounts.urls’)                           |
+|           | `api/v1/accounts/`        | include(’dj_rest_auth.urls’)                       |
+|           | `api/v1/accounts/signup/` | include(’dj_rest_auth.registration.urls’) 회원가입 |
+
+<br />
+
+#### ㄴ. accounts app
+
+| HTTP verb | URL 패턴                       | 설명                                                         |
+| --------- | ------------------------------ | ------------------------------------------------------------ |
+| GET       | `profile/<username>/`          | user의 프로필 페이지로 이동 (좋아요한 영화들 출력이 기본)    |
+| POST      | `profile/<username>/follow/`   | user에 대한 follow 상태 변화 (로그인 상태가 아닐 시 로그인 필요 알림 띄우기 or 팔로우 버튼 없애기) |
+| POST      | `profile/<username>/update/`   | 본인일 때만 profile img, nickname, introduce 프로필 생성     |
+| PUT       | `profile/<username>/update/`   | 본인일 때만 profile img, nickname, introduce 상태 변화       |
+| GET       | `profile/<username>/bookmark/` | 북마크한 영화들이 출력 되고 있는 user의 프로필 페이지        |
+| GET       | `profile/<username>/article/`  | user가 작성한 게시물이 출력 되고 있는 user의 프로필 페이지   |
+| GET       | `profile/<username>/comment/`  | user가 작성한 댓글이 출력 되고 있는 user의 프로필 페이지     |
+
+<br />
+
+#### ㄷ. community app
+
+| HTTP verb | URL 패턴                                      | 설명                    |
+| --------- | --------------------------------------------- | ----------------------- |
+| GET       | `total/<int:page>`                            | 전체 게시판 페이지      |
+| GET       | `hot/<int:page>/`                             | 인기 있는 게시물 페이지 |
+| GET       | `review/<int:page>/`                          | 영화 리뷰 페이지        |
+| GET       | `free/<int:page>/`                            | 자유 게시물 페이지      |
+| POST      | `''`                                          | 게시물 생성             |
+| GET       | `<int:article_id>/`                           | 게시물의 디테일 페이지  |
+| PUT       | `<int:article_id>/`                           | 본인인 경우 게시물 수정 |
+| DELETE    | `<int:article_id>/`                           | 본인인 경우 게시물 삭제 |
+| POST      | `<int:article_id>/like/`                      | 게시물 좋아요           |
+| POST      | `<int:article_id>/comments/`                  | 댓글 생성               |
+| PUT       | `<int:article_id>/comments/<int:comment_id>/` | 본인인 경우 댓글 수정   |
+| DELETE    | `<int:article_id>/comments/<int:comment_id>/` | 본인인 경우 댓글 삭제   |
+
+<br />
+
+#### ㄹ. movies app
+
+| HTTP verb | URL 패턴                      | 설명                                                         |
+| --------- | ----------------------------- | ------------------------------------------------------------ |
+| GET       | `/`                           | HOME화면 (추천 영화)                                         |
+| GET       | `hot/`                        | 최근 HOT(최근 좋아요가 많이 눌린)한 영화 리스트 데이터 전송  |
+| GET       | `like/`                       | 팔로우한 사람들이 좋아하는 영화 리스트 데이터 전송           |
+| GET       | `bookmark/`                   | 팔로우한 사람들이 북마크한 영화 리스트 데이터 전송           |
+| GET       | `genres/`                     | DB의 장르 데이터 전송                                        |
+| GET       | `search/<int:search_page>/`   | 전체 영화 검색 페이지 /                                      |
+| GET       | `<int:movie_id>/`             | 단일 영화 디테일 조회 페이지                                 |
+| POST      | `<int:movie_id>/like/`        | 단일 영화에 대한 like 상태 변화 (로그인 상태가 아닐 시 로그인 필요 알림 띄우기 or like 버튼 없애기) |
+| POST      | `<int:movie_id>/bookmark/`    | 단일 영화 bookmark기능 상태 변화 (로그인 상태가 아닐 시 로그인 필요 알림 띄우기 or bookmark 버튼 없애기) |
+| GET       | `anonymous/recommend/recent/` | 비로그인 유저가 받는 추천 영화 리스트(최신 순)               |
+| GET       | `anonymous/recommend/hot/`     | 비로그인 유저가 받는 추천 영화 리스트(인기 순)               |
+
+<br />
+
+## 나. 프로젝트 소개
+
+### 1) 개발 도구
+
+`![image-20220527015930633](https://user-images.githubusercontent.com/86189596/170598792-6d07b075-0cf4-4a80-8874-b7b4646c3dd4.png)`
+
+- BE: Django
+- DB: Sqlite3
+- FE: Vue, Vuex, Vuetify, SCSS
+- UI tool: Figma
+
+<br />
+
+### 2) 주요 기능
+
+> Github에 asset으로 저장된 gif 파일이 있어 일부 gif가 보이지 않습니다.
+
+정확한 gif는 Github README(`[링크](https://github.com/team-amu/amu)`)를 참고해주세요!
+
+<br />
+
+#### ㄱ. 회원가입 페이지
+
+`![회원가입페이지(사진x)](https://user-images.githubusercontent.com/97648019/171079936-cccf3905-64ac-4a22-94c1-f94db7ff885c.gif)`
+
+- 보기 설정 구현: 눈 모양 아이콘 클릭 시 비밀번호 확인 가능, 눈 모양 아이콘 토글 변경
+- 오타 및 비밀번호 확인과 일치 여부 확인 가능
+- 가입 시 프로필 사진 생략 가능
+- 이 경우 기본 이미지로 최초 설정
+
+<br />
+
+#### ㄴ. 로그인 페이지
+
+`![로그인](https://user-images.githubusercontent.com/97648019/171079781-909e5237-85ca-47e6-850d-a84856464ceb.gif)`
+
+- 회원가입과 마찬가지로 비밀번호 확인 가능
+- 회원가입 페이지 이동 버튼 배치
+
+<br />
+
+#### ㄷ. 네비게이션 바
+
+`![네비게이션바](https://user-images.githubusercontent.com/97648019/171079778-e497f2b4-670d-4223-97e1-13be924c238d.gif)`
+
+- 아무 영화 사이트의 모든 페이지로 이동 가능
+- 비로그인 유저는 마이페이지 링크 생략
+- 프로필 사진 미등록 유저: 프로필 사진 자리에 기본 이미지 배치
+
+<br />
+
+#### ㄹ. 메인 페이지
+
+`![메인페이지1](./readme_asset/메인페이지1.gif)`
+
+- 다양한 기준에 의한 영화 추천
+  - `AMU 인기 영화` : 서비스 사이트에서 최근 한 달간 가장 많이 좋아요/북마크가 기록된 영화
+  - `최근 개봉 영화` : 가장 최근 개봉한 영화들
+  - `인기 영화` : TMDB 영화 API의 popular(관객 수) 기준으로 높은 점수를 받은 영화
+
+<br />
+
+- 로그인 사용자에게는 **팔로우 기능을 기반으로 한 영화들**을 추가로 추천 제공
+  - `팔로워들이 좋아하는 영화`
+  - `팔로워들이 북마크한 영화`
+
+<br />
+
+`![메인페이지2](https://user-images.githubusercontent.com/97648019/171079919-60f8629f-3adf-4417-a1a8-2c557ae74013.gif)`
+
+- 검색바 검색을 통해 영화 검색 결과 페이지로 이동
+- 검색어는 영화 제목과 배우 이름 중 선택해 검색
+- 검색하고 있는 글자가 포함된 제목의 영화들을 검색창 하단에 표시
+- 표시된 영화 제목을 클릭 시 해당 영화의 상세페이지로 이동
+
+<br />
+
+#### ㅁ. 영화 검색 페이지
+
+`![상세 검색 페이지](./readme_asset/상세검색페이지.gif)`
+
+- 검색된 영화들의 결과 페이지
+- 배우 이름으로 검색 시, 해당 배우가 출연한 영화들을 표시
+- 정렬 기준
+  - 최신순, 오래된 순
+  - 평점 높은 순, 평점 낮은 순
+  - 제목 오름차순, 제목 내림차순
+
+- 필터 기준
+  - 영화 장르
+  - 최소 평점
+
+<br />
+
+#### ㅂ. 영화 상세 페이지
+
+`![영화상세페이지](./readme_asset/영화상세페이지.gif)`
+
+- UI 및 기능
+  - 포스터와 영화의 트레일러를 상단에 표시
+  - 로그인한 유저만 좋아요와 북마크 버튼을 클릭 가능
+
+- 출연진
+  - 출연진 사진에 마우스를 올리면, 배우 이름과 배역 표시
+  - 출연진 사진을 클릭 시 해당 배우가 출연한 영화들을 표시하는 검색페이지로 이동
+
+- 리뷰
+  - 해당 영화에 대해 커뮤니티에 연결된 리뷰들을 확인 가능
+  - 리뷰 클릭 시 커뮤니티의 해당 리뷰 게시글로 이동
+
+<br />
+
+#### ㅅ. 커뮤니티 페이지
+
+`![커뮤니티페이지](https://user-images.githubusercontent.com/97648019/171079941-bfa6b85d-3185-4cce-a485-a3e9ae7d98c9.gif)`
+
+- 아래의 여러 카테고리들로 구분
+  - `영화게시판` : 영화와 관련된 게시글. 게시글에 영화를 검색해 제목을 입력하면 게시글에서 영화 포스터를 확인 가능
+  - `자유게시판` : 영화와 무관한 내용의 글을 작성하는 공간
+  - `전체게시판` : 영화게시판의 게시물과 자유게시판의 게시물을 모두 확인 가능
+  - `인기게시판` : 댓글 수, 좋아요 수를 기준으로 10개, 50개, 100개가 넘는 게시물만 필터해 확인 가능
+
+<br />
+
+- 정렬기준 선택 가능
+  - `최신순` : 가장 최근에 등록된 게시물부터 차례로 표시
+  - `좋아요 많은 순` : 좋아요 개수가 많은 게시물부터 차례로 표시
+  - `댓글 많은 순` : 댓글 개수가 많은 게시물부터 차례로 표시
+
+<br />
+
+- 페이지 당 표시되는 게시물의 개수를 설정 가능
+  - 5개, 10개, 20개 단위
+
+<br />
+
+#### ㅇ. 게시물 작성 페이지
+
+`![게시글작성페이지](https://user-images.githubusercontent.com/97648019/171079776-d028e76d-6e07-4ecb-97a7-d00ca5bc1719.gif)`
+
+- 영화 리뷰와 일반 게시물 중 선택해서 작성
+- 리뷰의 경우 특정 영화를 검색해서 등록해야만 작성 가능
+- 귀여운 별을 이용해 평점 등록
+- 자유게시판 선택 시, 영화 검색바와 평점 선택 별 미표시
+
+<br />
+
+#### ㅈ. 게시물 수정 페이지
+
+`![게시글수정페이지](https://user-images.githubusercontent.com/97648019/171079774-c2d07af9-2a4e-4835-abe6-299960f09bd0.gif)`
+
+- 본인이 작성한 게시물을 수정
+- 기존 작성 내용이 자동으로 폼에 표시
+- 이전 버튼 클릭 시 수정 중이던 내용 취소 가능
+
+<br />
+
+#### ㅊ. 게시물 상세 페이지
+
+`![게시글상세페이지](https://user-images.githubusercontent.com/97648019/171079768-8eb47c22-19c6-4062-80b7-9311890eba7e.gif)`
+
+- 게시물 작성 유저만 수정/삭제 버튼을 확인 가능
+- 유저들은 좋아요 및 댓글 작성 가능
+- 커뮤니티로서의 정체성으로 소통 기능 확보
+- 영화 리뷰 게시물일 경우 해당 영화의 포스터까지 확인 가능
+- 영화 포스터를 클릭 시 해당 영화의 상세 페이지로 이동
+
+<br />
+
+#### ㅋ. 프로필 페이지
+
+`![프로필페이지](./readme_asset/프로필페이지.gif)`
+
+> 좋아요한 영화
+
+- 유저의 프로필 페이지 진입 시 기본적으로 유저가 좋아요를 누른 영화 표시
+- 대상 유저를 팔로우/언팔로우 가능
+- 본인 프로필 페이지인 경우, 사이트 내의 활동명과 자기소개, 프로필 사진을 수정 가능
+
+<br />
+
+> 북마크한 영화
+
+- 프로필 페이지의 유저가 북마크한 영화 표시
+
+<br />
+
+> 작성한 게시글
+
+- 프로필 페이지의 유저가 작성한 게시글 표시
+- 가장 최근 작성한 게시글부터 상단에 배치해 나열
+- 게시글 제목 클릭 시 해당 게시물로 이동
+
+<br />
+
+> 작성한 댓글
+
+- 유저가 작성한 댓글 표시
+- 댓글을 달은 원글의 제목을 하단에 표시하여 확인 가능
+- 해당 댓글 영역 클릭 시 해당 댓글이 달린 게시물로 이동
+
+<br />
+
+#### ㅌ. 반응형 구현
+
+| `![프로필반응형](https://user-images.githubusercontent.com/97648019/171082289-425285f5-6aaa-4869-a6bb-380d12ce99fe.gif)` | `![검색페이지반응형](https://user-images.githubusercontent.com/97648019/171082293-995f2393-9569-4953-9d18-b4349fc69785.gif)` | `![영화상세페이지반응형](https://user-images.githubusercontent.com/97648019/171082297-79125298-f0fc-4245-9522-8bfefcc3b15f.gif)` | `![커뮤니티페이지반응형](https://user-images.githubusercontent.com/97648019/171082301-14e12703-33cf-4182-a181-eba2987436d4.gif)` |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+
+<br />
+
+## 다. 협업 과정
+
+### 1. 팀원 및 업무 분담
+
+|           |           공통            | `![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/86189596/170598870-4611e24c-f6fa-4c12-ae6d-c6786c886e60.png)`<br/>박승훈 | `![ezgif com-gif-maker](https://user-images.githubusercontent.com/86189596/170598875-a654c734-4ad7-44d2-adcf-f64444eaa4c0.png)`<br/>이윤경 |
+| :-------: | :-----------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| **BACK**  | ERD설계<br/>API 설계<br/> | 데이터 소스 구축<br/>Pagination 로직 구현<br/>게시글 정렬 및 필터 기능 구현 | 추천 알고리즘 구현<br/>영화 검색 기능 구현<br/>영화 정렬, 필터 구현<br/>데이터 모델링<br/> |
+| **FRONT** |    와이어 프레임 제작     | 컴포넌트 설계 및 시각화<br/>SCSS 모듈화<br/>Community 컴포넌트 <br/>Profile 컴포넌트 | Django-Vue 연동<br/>Movie 컴포넌트  <br/> 로고 및 캐릭터 디자인 |
